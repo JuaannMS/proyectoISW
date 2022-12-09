@@ -4,7 +4,7 @@ const Usuario = require('../controllers/usuarioController');
 const createPublicacion = (req, res) => {
 const Usuario = require('../models/usuario')
 
-  const { titulo, descripcion,cantLikes,etiqueta,diasVisible,idUsuario } = req.body
+  const { titulo, descripcion,etiqueta,idUsuario,diasVisible } = req.body
   const fechaExp = new Date()
   fechaExp.setDate(fechaExp.getDate() + diasVisible)
   // sacar cantLikes, esta solo para probar
@@ -12,11 +12,10 @@ const Usuario = require('../models/usuario')
     titulo,
     descripcion,
     idUsuario,
-    cantLikes,
     etiqueta,
     estado: true,
     diasVisible,
-    fechaExp
+    fechaExp,
   })
 
   newPublicacion.save((error, publicacion) => {
@@ -28,10 +27,6 @@ const Usuario = require('../models/usuario')
     Usuario.findByIdAndUpdate(idUsuario, { $push: { idPublicacion: publicacion.id } }, (error, usuario) => {
       if (error) {
         return res.status(400).send({ message: "No se pudo crear la publicacion" })
-      }
-
-      if (!usuario) {
-        return res.status(404).send({ message: "No se encontro el usuario" })
       }
     })
       return res.status(201).send(publicacion)

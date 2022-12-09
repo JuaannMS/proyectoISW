@@ -1,0 +1,48 @@
+.publicacion{
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0px 0px 16px -8px;
+    margin: 30px;
+}
+
+.publicacionWrapper{
+    padding: auto;
+}
+
+.publicacionTop{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.postNombreUsuario{
+    font-size: 15;
+    font-weight: 500;
+    margin: 0px;
+}
+
+.publicacionFecha{
+    font-size: 12px;
+}
+
+.publicacionCentro{
+    margin: 20px;
+}
+
+.postImage{
+    margin-top: 20px;
+    width: 100%;
+    max-height: 500px;
+}
+
+.postBoton{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.likeIcono{
+    width: 24px;
+    height: 24px;
+    margin-top: 5px;
+}
