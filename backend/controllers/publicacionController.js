@@ -35,7 +35,11 @@ const Usuario = require('../models/usuario')
 
 }
 
-const getPublicaciones = (req, res) => {  //publicaciones activas y con margen de tiempo
+const getPublicaciones = (req, res) => { 
+  
+  
+  
+    //publicaciones activas y con margen de tiempo
     const now = new Date()
     now.setDate(now.getDate() - 7); //filtro de tiemppo ,segundo parametro son los dias anteriores
   Publicacion.find({

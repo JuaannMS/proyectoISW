@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 
 export default function Home() {
 
-  const [publicaciones, setPublicaciones] = useState([])
+  	const [publicaciones, setPublicaciones] = useState([])
 	const router = useRouter()
 
 	const getPublicaciones = async () => {
@@ -18,7 +18,7 @@ export default function Home() {
 		getPublicaciones()
 	}, [])
 
-  const mostrarPublicaciones = () => {
+  	const mostrarPublicaciones = () => {
 		return publicaciones.map(publicaciones => {
 			return (
 				<Tr key={publicaciones._id}>
@@ -44,7 +44,11 @@ export default function Home() {
                 {mostrarPublicaciones() }
               </Thead>
           </Table>
+
+		  
     </Container>
+
+	
   )
 
 }

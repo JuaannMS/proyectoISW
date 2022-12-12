@@ -1,32 +1,42 @@
 .publicacion{
-    width: 100%;
-    border-radius: 10px;
-    box-shadow: 0px 0px 16px -8px;
-    margin: 30px;
+    justify-content: center
 }
 
 .publicacionWrapper{
-    padding: auto;
+    padding: 10px;
+    width: 75%;
 }
 
-.publicacionTop{
+.publicacionBarra{
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.postNombreUsuario{
-    font-size: 15;
+.publicacionTitulo{
+    font-size: 20;
+    margin: 2px;
+}
+
+.publicacionNombreUsuario{
+    font-size: 20;
     font-weight: 500;
-    margin: 0px;
+    left:0%;
+    margin: 2px;
 }
 
 .publicacionFecha{
-    font-size: 12px;
+    font-size: 14px;
+    position: relative;
+    left:95%;
 }
 
 .publicacionCentro{
     margin: 20px;
+}
+
+.publicacionDescripcion{
+    margin: 2px;
 }
 
 .postImage{
@@ -35,6 +45,9 @@
     max-height: 500px;
 }
 
+.publicacionNumLikes{
+    font-size: 14px;
+}
 .postBoton{
     display: flex;
     align-items: center;
