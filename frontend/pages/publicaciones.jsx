@@ -19,6 +19,7 @@ const publicaciones = () => {
 		setPublicaciones(response.data)
 	}
 
+
 	useEffect(() => {
 		getPublicaciones()
 	}, [])
@@ -26,10 +27,14 @@ const publicaciones = () => {
   const mostrarPublicaciones = () => {
 		return publicaciones.map(publicaciones => {
 			return (
-      <Box  borderWidth='2px' borderRadius='lg'>
-        <Image src= 'https://bit.ly/dan-abramov' left='50%'/>
+      <Box  borderWidth='2px' borderRadius='lg' >
+		<Select placeholder=' ' size='xs' onChange={onChange}>
+		<option value='eliminar'>Eliminar</option>
+  		<option value='editar'>Editar</option>
+		</Select>
+        <Image src= 'https://bit.ly/dan-abramov' />
 				<Box p='2' key={publicaciones._id}>
-          <Box 
+          <Box 	
               color='gray.500'
               fontWeight='semibold'
               letterSpacing='wide'
@@ -56,25 +61,25 @@ const publicaciones = () => {
 		})
 	}
 
-  
-
     const [values, setValues] = useState({
-        idUsuario: '636ef3d8ef0ab5b27774fcda',
+		idUsuario:'636ef3d8ef0ab5b27774fcda',
         titulo: '',
-		    descripcion: '',
-		    etiqueta: '',
-        diasVisibles:''
+		descripcion: '',
+		etiqueta: '',
+        diasVisible: ''
 	})
+
+	
 
     const router = useRouter()
 
 
-    const onSubmit = async (e) => { 
+    const onSubmit = async (e) => {
 		e.preventDefault()
-		console.log("jaja  "+values)
+		console.log(values)
 		try {
 			const response = await axios.post(`${process.env.API_URL}/publicacion`, values)
-			console.log("que su   "+response)
+			console.log(response)
 			if (response.status === 201) {
 				Swal.fire({
 					title: 'Publicacion creada',
@@ -103,43 +108,42 @@ const publicaciones = () => {
 		}
 	}
 
-    const onChange = (e) => {
-		    setValues({
-			      ...values,
-			      [e.target.name]: e.target.value // sirve para que los atributos del useState sean inicializados desde el placeholder
-		    })
-	}
 
+
+	
+	const onChange = (e) => {
+		setValues({
+			...values,
+			[e.target.name]: e.target.value
+		})
+		// sirve para que los atributos del useState sean inicializados desde el placeholder
+	}
 
 
     return(
 
   <VStack>
 
-    <Container>
-		{mostrarPublicaciones()}
-		  </Container>
-
 	<Container maxW="Container.xl" width={500} >
                 <Stack>
                     <FormControl isRequired>
                         <FormLabel>Titulo</FormLabel>
-                        <Input placeholder='Ingrese un titulo' type={"text"} onChange={onChange} titulo={"titulo"} />
+                        <Input placeholder="Ingrese un titulo" type={"text"} onChange={onChange} name={"titulo"} />
                     </FormControl>
 
                     <FormControl isRequired>
                         <FormLabel>Descripcion</FormLabel>
-                        <Textarea placeholder='Ingrese una descripcion' type={"text"} onChange={onChange} descripcion={"descripcion"} />
+                        <Textarea placeholder="Ingrese una descripcion" type={"text"} onChange={onChange} name="descripcion" />
                     </FormControl>
 
                     <FormControl>
                         <FormLabel>Etiqueta</FormLabel>
-                        <Input placeholder='Ingrese una etiqueta' type={"text"} onChange={onChange} etiqueta={"etiqueta"} />
+                        <Input placeholder="Ingrese una etiqueta" type={"text"} onChange={onChange} name="etiqueta" />
                     </FormControl>
 
                     <FormControl isRequired>
                         <FormLabel>Dias activa</FormLabel>
-                        <Select placeholder='Numero de dias activa' type={"number"}  onChange={onChange}>
+                        <Select placeholder="Numero de dias activa" type={"number"} onChange={onChange} name="diasVisible">
                             <option values='4'> 4 </option>
                             <option values='7'> 7 </option>
                             <option values='14'> 14 </option>
@@ -148,6 +152,10 @@ const publicaciones = () => {
                 </Stack>
             <Button colorScheme="blue" size="md" type="submit" my={5} onClick={onSubmit}>Crear publicacion</Button>
         </Container>
+
+		<Container>
+		{mostrarPublicaciones()}
+		  </Container>
 	</VStack>
     )
 

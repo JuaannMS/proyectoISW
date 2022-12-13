@@ -7,6 +7,7 @@ const Usuario = require('../models/usuario')
   const { titulo, descripcion,etiqueta,idUsuario,diasVisible } = req.body
   const fechaExp = new Date()
   fechaExp.setDate(fechaExp.getDate() + diasVisible)
+  console.log(fechaExp) 
   // sacar cantLikes, esta solo para probar
   const newPublicacion = new Publicacion({
     titulo,

@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react'
-import { Button, Container, Input, Stack, Text, HStack, Table, Thead, Tbody, Tfoot, Tr, Th, Td, Heading, } from '@chakra-ui/react'
-import axios from 'axios'
+import React from 'react'
+import { useState,useEffect } from 'react'
+import { Badge,StarIcon,Textarea, Button, Container, Input, Stack, Text, HStack, Heading, FormControl, FormLabel,Select, VStack } from '@chakra-ui/react'
+import Swal from 'sweetalert2'
 import { useRouter } from 'next/router'
+import axios from 'axios'
+import {Box,Image } from '@chakra-ui/react'
 //import styles from '../styles/publicaciones.css'
 
 export default function Home() {
@@ -14,39 +17,84 @@ export default function Home() {
 		setPublicaciones(response.data)
 	}
 
+	const [values, setValues] = useState({
+		idPubli:'',
+	})
+
+	const [publicacionSeleccionada, setPublicacionSel] = useState({
+		id:''
+	})
+
 	useEffect(() => {
 		getPublicaciones()
 	}, [])
 
-  	const mostrarPublicaciones = () => {
+	
+
+	const onChange = async (e) => {
+		setValues({
+			...values,
+			[e.target.name]: e.target.value
+			
+		})
+
+		console.log("aa"+e.target.name)
+
+		if(e.target.value=="Eliminar"){
+
+			console.log("vamos a eliminar")
+			const response = await axios.delete(`${process.env.API_URL}/publicacion/delete/${publicacionSeleccionada.id}`, values)
+		}
+		if(e.target.value=="Editar"){
+
+			console.log("vamos a editar")
+			//const response = await axios.put(`${process.env.API_URL}/publicacion/`, values)
+		}
+		// sirve para que los atributos del useState sean inicializados desde el placeholder
+	}
+
+
+	const mostrarPublicaciones = () => {
 		return publicaciones.map(publicaciones => {
 			return (
-				<Tr key={publicaciones._id}>
-					<Td>{publicaciones.titulo}</Td>
-					<Td>{publicaciones.descripcion}</Td>
-					<Td>{publicaciones.cantLikes}</Td>
-					<Td><Button onClick={() => router.push(`/publicaciones/${publicaciones._id}`)}>Ver mas</Button></Td>
-				</Tr>
+      <Box  borderWidth='2px' borderRadius='lg' >
+		<Select placeholder=' ' size='xs' onChange={onChange}>
+		<option values='eliminar'>Eliminar</option>
+  		<option values='editar'>Editar</option>
+		</Select>
+        <Image src= 'https://bit.ly/dan-abramov' />
+				<Box p='2' key={publicaciones._id}  >
+          <Box 	
+              color='gray.500'
+              fontWeight='semibold'
+              letterSpacing='wide'
+              fontSize='xs'
+              textTransform='uppercase'
+              ml='200'>
+                {publicaciones.createdAt}</Box>
+					<Box
+              mt='1'
+              fontWeight='semibold'
+              as='h4'
+              lineHeight='tight'
+              noOfLines='1'>
+                {publicaciones.titulo}</Box>
+					<Box >{publicaciones.descripcion}</Box>
+					<Box 
+              as='span' 
+              color='gray.600' 
+              fontSize='sm'>
+                {publicaciones.cantLikes} likes</Box>
+				</Box>
+      </Box>
 			)
 		})
 	}
 
   return (
-    <Container>
-          <Heading textAlign={"center"} my={10}>Publicaciones</Heading>
-          <Table variant = "simple"> 
-              <Thead>
-                <Tr> 
-                  <Td> Titulo</Td>
-                  <Td> Descripcion</Td>
-                  <Td> Numero de Likes</Td>
-                </Tr>
-                {mostrarPublicaciones() }
-              </Thead>
-          </Table>
-
-		  
-    </Container>
+<Container>
+	{mostrarPublicaciones()}
+</Container>
 
 	
   )
