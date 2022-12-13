@@ -8,6 +8,8 @@ api.put('/publicacion/update/:id', publicacionController.updatePublicacion );
 api.delete('/publicacion/delete/:id' , publicacionController.deletePublicacion);
 api.get('/publicacion/:id' , publicacionController.getPublicacion);
 api.get('/publicacionesx/:etiqueta' , publicacionController.getPublicacionesporEtiqueta);
+api.get('/publicacionesAdmi', publicacionController.getPublicacionesAdmi); //plural para evitar problemas con la url de creacion
+
 
 
 module.exports = api

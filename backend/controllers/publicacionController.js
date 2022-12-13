@@ -1,6 +1,7 @@
 const Publicacion = require('../models/publicacion');
 const Usuario = require('../controllers/usuarioController');
 
+
 const createPublicacion = (req, res) => {
 const Usuario = require('../models/usuario')
 
@@ -36,10 +37,8 @@ const Usuario = require('../models/usuario')
 
 }
 
-const getPublicaciones = (req, res) => { 
-  
-  
-  
+const getPublicaciones = (req, res) => {
+
     //publicaciones activas y con margen de tiempo
     const now = new Date()
     now.setDate(now.getDate() - 7); //filtro de tiemppo ,segundo parametro son los dias anteriores
@@ -58,6 +57,20 @@ function(error, publicaciones) {
     return res.status(200).send(publicaciones);
   }
   )
+}
+
+const getPublicacionesAdmi = (req,res) => {
+
+    Publicacion.find().exec((error, publicaciones) => { // va un populate de usuario
+        if (error) {
+            return res.status(400).send({ message: "No se pudo realizar la busqueda" })
+        }
+        if (publicaciones.length === 0) {
+            return res.status(404).send({ message: "No se encontraron publicaciones" })
+        }
+        return res.status(200).send(publicaciones)
+    })
+
 }
 
 const getPublicacionesporEtiqueta = (req, res) => {
@@ -139,5 +152,6 @@ module.exports = {
   deletePublicacion,
   getPublicacion,
   getPublicacionesporEtiqueta,
-  numPublicacionesActXUsuario
+  numPublicacionesActXUsuario,
+  getPublicacionesAdmi
 }

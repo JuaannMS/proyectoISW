@@ -19,15 +19,12 @@ const publicaciones = () => {
 		setPublicaciones(response.data)
 	}
 
-	const getPublicacion = async () => {
-		const response = await axios.get(`${process.env.API_URL}/publicacion`)
-		
-	}
-
 
 	useEffect(() => {
 		getPublicaciones()
 	}, [])
+
+	
 
   	const mostrarPublicaciones = () => {
 		return publicaciones.map(publicaciones => {
