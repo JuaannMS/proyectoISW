@@ -19,12 +19,17 @@ const publicaciones = () => {
 		setPublicaciones(response.data)
 	}
 
+	const getPublicacion = async () => {
+		const response = await axios.get(`${process.env.API_URL}/publicacion`)
+		
+	}
+
 
 	useEffect(() => {
 		getPublicaciones()
 	}, [])
 
-  const mostrarPublicaciones = () => {
+  	const mostrarPublicaciones = () => {
 		return publicaciones.map(publicaciones => {
 			return (
       <Box  borderWidth='2px' borderRadius='lg' >
@@ -61,6 +66,8 @@ const publicaciones = () => {
 		})
 	}
 
+	
+
     const [values, setValues] = useState({
 		idUsuario:'636ef3d8ef0ab5b27774fcda',
         titulo: '',
@@ -69,7 +76,9 @@ const publicaciones = () => {
         diasVisible: ''
 	})
 
-	
+	const[etiqueta, setEtiqueta]= useState({
+		
+	})
 
     const router = useRouter()
 
@@ -109,8 +118,6 @@ const publicaciones = () => {
 	}
 
 
-
-	
 	const onChange = (e) => {
 		setValues({
 			...values,
@@ -119,6 +126,42 @@ const publicaciones = () => {
 		// sirve para que los atributos del useState sean inicializados desde el placeholder
 	}
 
+	const onEtiqueta = (e) => {
+		setEtiqueta({
+			...etiqueta,
+			[e.target.name]: e.target.value
+		})
+		// sirve para que los atributos del useState sean inicializados desde el placeholder
+	}
+
+	const busquedaEtiqueta = async(e)=>{
+		e.preventDefault()
+		console.log(etiqueta)
+		try {
+			const response = await axios.get(`${process.env.API_URL}/publicaciones/`, etiqueta)
+			console.log(response)
+			if (response.status === 201) {
+
+				router.push('/')
+
+			} else {
+				Swal.fire({
+					title: 'Error',
+					text: 'Ha ocurrido un error',
+					icon: 'error',
+					confirmButtonText: 'Ok'
+				})
+			}
+		} catch (err) {
+			Swal.fire({
+				title: 'Error',
+				text: 'Ha ocurrido un error',
+				icon: 'error',
+				confirmButtonText: 'Ok'
+			})
+		}
+
+	}
 
     return(
 
@@ -152,6 +195,14 @@ const publicaciones = () => {
                 </Stack>
             <Button colorScheme="blue" size="md" type="submit" my={5} onClick={onSubmit}>Crear publicacion</Button>
         </Container>
+
+		<Container>
+				<FormControl>
+                    <FormLabel>Filtrar por Etiqueta</FormLabel>
+                    <Input placeholder="Ingrese etiqueta" type={"text"} onChange={onEtiqueta} name="etiqueta" />
+                </FormControl>
+				<Button colorScheme="red" size="md" ml='400'type="submit" my={5} onClick={busquedaEtiqueta}>Buscar</Button>
+		</Container>
 
 		<Container>
 		{mostrarPublicaciones()}

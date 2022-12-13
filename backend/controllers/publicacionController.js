@@ -63,9 +63,8 @@ function(error, publicaciones) {
 const getPublicacionesporEtiqueta = (req, res) => {
 
 Publicacion.find({
-  etiqueta: " ", //se cambiara por la caja de texto del frontend
-  estado:true
-
+  estado:true,
+  etiqueta:req.params
 }, (error, publicacionesx) => {
   if(error){
       return res.status(400).send({message: "No se realizó la busqueda"})
