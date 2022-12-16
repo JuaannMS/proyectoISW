@@ -7,9 +7,12 @@ const usuario = require('../models/usuario');
 /*#####################################
 Roles creados:
    name   | id
-
    admin    638e8c823fdb04c7747adbe8
    user     638d75db5792a7fe98e9cb9e
+
+Admin creados:
+rut: 19.896.942-7
+nombre: Gabriel Norambuena Muñoz
 ######################################*/
 
 

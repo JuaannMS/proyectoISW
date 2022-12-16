@@ -8,14 +8,15 @@ app.use(express.json());
 const createUsuario = (req,res) => {
     let errores = []
     var x = JSON.stringify(errores)
-    const {rut,nombre, direccion, fechaCumpleanio, correo, telefono,admi } = req.body
+    const {rut,nombre, direccion, fechaCumpleanio, correo, telefono, rol } = req.body
     const newUsuario = new Usuario({
         rut,
         nombre,
         direccion,
         fechaCumpleanio,
         correo,
-        telefono
+        telefono,
+        rol
     })
 
     const validarCorreo = (correo)=>{
