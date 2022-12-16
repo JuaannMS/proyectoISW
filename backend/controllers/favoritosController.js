@@ -18,7 +18,7 @@ const createFavorito = (req, res) => {
                 if (error) {
                     return res.status(400).send({ message: "No se pudo crear el favorito" })
                 }
-                return res.status(200).send({ message: "Favorito creado" })
+                return res.status(201).send({ message: "Favorito creado" })
             })
         }
         //si existe
@@ -31,7 +31,7 @@ const createFavorito = (req, res) => {
                     if (error) {
                         return res.status(400).send({ message: "No se pudo crear el favorito" })
                     }
-                    return res.status(200).send({ message: "Favorito creado" })
+                    return res.status(201).send({ message: "Favorito creado" })
                 })
             }
         }
