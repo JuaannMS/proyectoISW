@@ -4,9 +4,6 @@
 import React from 'react'
 import Cookies from 'universal-cookie'
 import Router from 'next/router'
-import { hydrate, render } from 'react-dom';
-import { useState, useEffect } from 'react'
-const ExecutionEnvironment = require('exenv');
 
 const verificarCookies = () => {
     const cookies = new Cookies;
@@ -29,8 +26,7 @@ const Dashboard = () => {
     const [fechaCumpleanio, setFechaCumpleanio] = useState();
     const [fechaIngreso, setFechaIngreso] = useState();
     const [rol, setRol] = useState();
-    
- 
+
 
     //let id = session["id"];
 
@@ -61,7 +57,7 @@ const Dashboard = () => {
             <h2>fechaCumpleanio: {fechaCumpleanio}</h2>
             <h2>fechaIngreso: {fechaIngreso}</h2>
             <h2>rol: {rol}</h2>
-            
+
         </div>
     )
 }
