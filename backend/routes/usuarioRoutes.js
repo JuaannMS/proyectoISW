@@ -7,6 +7,7 @@ api.post('/usuario', usuarioController.createUsuario);
 api.get('/usuarios', usuarioController.getUsuarios);
 api.put('/usuario/update/:id', usuarioController.updateUsuario);
 api.delete('/usuario/delete/:id', usuarioController.deleteUsuario);
+api.get('/usuario/usr/:rut', usuarioController.getUsuario);
 //los get terminaran con s para que no haya fallos con los post
 
 
