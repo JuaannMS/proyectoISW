@@ -43,6 +43,12 @@ const usuarioSchema = new Schema({
         type: Schema.ObjectId,
         ref: 'rol',
         default: "638d75db5792a7fe98e9cb9e"
+    },
+
+    estado:{
+        type:Boolean,
+        required: true,
+        default:true
     }
 
 },
