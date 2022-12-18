@@ -4,6 +4,7 @@
 import React from 'react'
 import Cookies from 'universal-cookie'
 import Router from 'next/router'
+import { useState, useEffect } from 'react'
 
 const verificarCookies = () => {
     const cookies = new Cookies;
