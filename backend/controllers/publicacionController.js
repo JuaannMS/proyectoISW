@@ -1,14 +1,16 @@
 const Publicacion = require('../models/publicacion');
 const Usuario = require('../controllers/usuarioController');
+const { create } = require('../models/publicacion');
 
 
 const createPublicacion = (req, res) => {
 const Usuario = require('../models/usuario')
 
-  const { titulo, descripcion,etiqueta,idUsuario,diasVisible } = req.body
+  const { titulo, descripcion,etiqueta,idUsuario,diasVisible} = req.body
   const fechaExp = new Date()
   fechaExp.setDate(fechaExp.getDate() + diasVisible)
   console.log(fechaExp) 
+ 
   // sacar cantLikes, esta solo para probar
   const newPublicacion = new Publicacion({
     titulo,
@@ -19,6 +21,8 @@ const Usuario = require('../models/usuario')
     diasVisible,
     fechaExp,
   })
+
+  console.log(createdAt)
 
   newPublicacion.save((error, publicacion) => {
 
@@ -36,7 +40,6 @@ const Usuario = require('../models/usuario')
   )
 
 }
-
 const getPublicaciones = (req, res) => {
 
     //publicaciones activas y con margen de tiempo
@@ -74,10 +77,10 @@ const getPublicacionesAdmi = (req,res) => {
 }
 
 const getPublicacionesporEtiqueta = (req, res) => {
-
+  const {tag} = req.params // tiene el mismo nombre que el puesto en publicacionRoutes
 Publicacion.find({
   estado:true,
-  etiqueta:req.params
+  etiqueta:tag
 }, (error, publicacionesx) => {
   if(error){
       return res.status(400).send({message: "No se realizó la busqueda"})
@@ -104,6 +107,8 @@ const updatePublicacion = (req, res) => {
     return res.status(200).send({ message: "Se modifico correctamente la publicacion" })
   }
   )
+
+
 
 }
 

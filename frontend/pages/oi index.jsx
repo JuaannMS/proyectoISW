@@ -58,10 +58,6 @@ export default function Home() {
 		return publicaciones.map(publicaciones => {
 			return (
 				<Box borderWidth='2px' borderRadius='lg' >
-					<Select placeholder=' ' size='xs' onChange={onChange}>
-						<option values='eliminar'>Eliminar</option>
-						<option values='editar'>Editar</option>
-					</Select>
 					<Image src='https://bit.ly/dan-abramov' />
 					<Box p='2' key={publicaciones._id}  >
 						<Box
