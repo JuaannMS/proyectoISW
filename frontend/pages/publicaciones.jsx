@@ -13,8 +13,6 @@ import {Menu,MenuButton,MenuList,MenuItem} from '@chakra-ui/react'
 const publicaciones = () => {
 
 
-
-	  
   const [publicaciones, setPublicaciones] = useState([])
 
 	const getPublicaciones = async () => {
@@ -43,10 +41,10 @@ const publicaciones = () => {
 		return publicaciones.map(publicaciones => {
 			return (
       <Box  borderWidth='2px' borderRadius='lg' my={8}>
-		<Button size='xs' colorScheme='blackAlpha' left="85%" >Reportar</Button>
-        <Image src= 'https://bit.ly/dan-abramov' />
-				<Box p='2' key={publicaciones._id}>
-          <Box 
+		<Button  size='xs' colorScheme='blackAlpha' left="85%" >Reportar</Button>
+        <Image src= 'https://bit.ly/dan-abramov' className={styles.postImage} /> //css de imagen
+				<Box p='2' key={publicaciones._id} >
+          <Box
               color='gray.500'
               fontWeight='semibold'
               letterSpacing='wide'
@@ -144,12 +142,9 @@ const publicaciones = () => {
 		e.preventDefault()
 		console.log(tag)
 		try {
-			const response = await axios.get(`${process.env.API_URL}/publicaciones/`, tag)
 
-			//router.push('/publicacionesEtiqueta')
-			console.log(response)
 			if (response.status === 201) {
-				router.push('/')
+				router.push(`/publicacionesEtiqueta/${e.target.value}`)
 
 			} else {
 				Swal.fire({
@@ -177,7 +172,7 @@ const publicaciones = () => {
   <VStack>
 
 <Menu>
-  <MenuButton as={Button} right="45%">
+  <MenuButton as={Button} right="49%">
     =
   </MenuButton>
   <MenuList>
@@ -207,20 +202,24 @@ const publicaciones = () => {
 
                     <FormControl isRequired>
                         <FormLabel>Dias activa</FormLabel>
-                        <Select placeholder="Numero de dias activa" type={"number"} onChange={onChange} name="diasVisible">
+                        <Select my={2} placeholder="Numero de dias activa" type={"number"} onChange={onChange} name="diasVisible">
                             <option values='4'> 4 </option>
                             <option values='7'> 7 </option>
                             <option values='14'> 14 </option>
                         </Select >
                         </FormControl>
+					<Button type="submit" size="sm" width="40%">Seleccionar imagen</Button>
                 </Stack>
             <Button colorScheme="blue" size="md" type="submit" my={5} onClick={onSubmit}>Crear publicacion</Button>
         </Container>
 
 		<Container borderWidth='2px'>
 				<FormControl>
-                    <FormLabel fontSize={20}>Filtrar por Etiqueta</FormLabel>
-                    <Input placeholder="Ingrese etiqueta" type={"text"} onChange={onEtiqueta} name="etiqueta" /><Button colorScheme="red" size="md" ml='400'type="submit" my={2} onClick={busquedaEtiqueta}>Buscar</Button>
+                    <FormLabel fontSize={20} my={2}>Filtrar por Etiqueta</FormLabel>
+					<HStack>
+					<Input placeholder="Ingrese etiqueta" type={"text"}my={3} onChange={onEtiqueta} name="etiqueta" />
+					<Button colorScheme="red" size="md" ml='400'type="submit" my={2} onClick={busquedaEtiqueta}>Buscar</Button>
+					</HStack>
                 </FormControl>
 				
 		</Container>

@@ -6,16 +6,9 @@ import { useRouter } from 'next/router'
 import axios from 'axios'
 import {Box,Image } from '@chakra-ui/react'
 import publicacion from '../../backend/models/publicacion'
-import {
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	MenuItemOption,
-	MenuGroup,
-	MenuOptionGroup,
-	MenuDivider,
-  } from '@chakra-ui/react'
+import {Menu,MenuButton,MenuList,MenuItem} from '@chakra-ui/react'
+
+
 const publicacionesAdmi = () => {
 
     const [publicaciones, setPublicaciones] = useState([])
@@ -131,7 +124,7 @@ const publicacionesAdmi = () => {
     return (
 <VStack>
   <Menu>
-    <MenuButton as={Button} right="45%">
+    <MenuButton as={Button} right="49%">
       =
     </MenuButton>
       <MenuList>
