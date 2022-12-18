@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { useState,useEffect } from 'react'
 import { Badge,StarIcon,Textarea, Button, Container, Input, Stack, Text, HStack, Heading, FormControl, FormLabel,Select, VStack } from '@chakra-ui/react'
@@ -7,11 +6,15 @@ import { useRouter } from 'next/router'
 import axios from 'axios'
 import {Box,Image } from '@chakra-ui/react'
 import styles from '../components/publicaciones.module.css'
+import {Menu,MenuButton,MenuList,MenuItem} from '@chakra-ui/react'
 
 
 
 const publicaciones = () => {
 
+
+
+	  
   const [publicaciones, setPublicaciones] = useState([])
 
 	const getPublicaciones = async () => {
@@ -24,26 +27,33 @@ const publicaciones = () => {
 		getPublicaciones()
 	}, [])
 
-	
+
+	const onSelect = async (e) => {
+		if(e.target.value=="eliminar"){
+			const response = await axios.delete(`${process.env.API_URL}/publicacion/`)
+
+		}
+		if(e.target.value=="editar"){
+			console.log("vamos a editar")
+		}
+		// sirve para que los atributos del useState sean inicializados desde el placeholder
+	}
 
   	const mostrarPublicaciones = () => {
 		return publicaciones.map(publicaciones => {
 			return (
-      <Box  borderWidth='2px' borderRadius='lg' >
-		<Select placeholder=' ' size='xs' onChange={onChange}>
-		<option value='eliminar'>Eliminar</option>
-  		<option value='editar'>Editar</option>
-		</Select>
+      <Box  borderWidth='2px' borderRadius='lg' my={8}>
+		<Button size='xs' colorScheme='blackAlpha' left="85%" >Reportar</Button>
         <Image src= 'https://bit.ly/dan-abramov' />
 				<Box p='2' key={publicaciones._id}>
-          <Box 	
+          <Box 
               color='gray.500'
               fontWeight='semibold'
               letterSpacing='wide'
               fontSize='xs'
               textTransform='uppercase'
               ml='200'>
-                {publicaciones.fechaExp}</Box>
+                {publicaciones.createdAt}</Box>
 					<Box
               mt='1'
               fontWeight='semibold'
@@ -51,6 +61,7 @@ const publicaciones = () => {
               lineHeight='tight'
               noOfLines='1'>
                 {publicaciones.titulo}</Box>
+				<Box>#{publicaciones.etiqueta}</Box>
 					<Box >{publicaciones.descripcion}</Box>
 					<Box 
               as='span' 
@@ -73,9 +84,7 @@ const publicaciones = () => {
         diasVisible: ''
 	})
 
-	const[etiqueta, setEtiqueta]= useState({
-		
-	})
+	const[tag, setTag]= useState({})
 
     const router = useRouter()
 
@@ -124,8 +133,8 @@ const publicaciones = () => {
 	}
 
 	const onEtiqueta = (e) => {
-		setEtiqueta({
-			...etiqueta,
+		setTag({
+			...tag,
 			[e.target.name]: e.target.value
 		})
 		// sirve para que los atributos del useState sean inicializados desde el placeholder
@@ -133,12 +142,13 @@ const publicaciones = () => {
 
 	const busquedaEtiqueta = async(e)=>{
 		e.preventDefault()
-		console.log(etiqueta)
+		console.log(tag)
 		try {
-			const response = await axios.get(`${process.env.API_URL}/publicaciones/`, etiqueta)
+			const response = await axios.get(`${process.env.API_URL}/publicaciones/`, tag)
+
+			//router.push('/publicacionesEtiqueta')
 			console.log(response)
 			if (response.status === 201) {
-
 				router.push('/')
 
 			} else {
@@ -162,10 +172,24 @@ const publicaciones = () => {
 
     return(
 
+
+
   <VStack>
+
+<Menu>
+  <MenuButton as={Button} right="45%">
+    =
+  </MenuButton>
+  <MenuList>
+    <MenuItem>Ver mis publicaciones</MenuItem>
+    <MenuItem>Mi perfil</MenuItem>
+    <MenuItem></MenuItem>
+  </MenuList>
+</Menu>
 
 	<Container maxW="Container.xl" width={500} >
                 <Stack>
+				<FormLabel fontSize={25}>Crea una publicacion</FormLabel>
                     <FormControl isRequired>
                         <FormLabel>Titulo</FormLabel>
                         <Input placeholder="Ingrese un titulo" type={"text"} onChange={onChange} name={"titulo"} />
@@ -193,12 +217,12 @@ const publicaciones = () => {
             <Button colorScheme="blue" size="md" type="submit" my={5} onClick={onSubmit}>Crear publicacion</Button>
         </Container>
 
-		<Container>
+		<Container borderWidth='2px'>
 				<FormControl>
-                    <FormLabel>Filtrar por Etiqueta</FormLabel>
-                    <Input placeholder="Ingrese etiqueta" type={"text"} onChange={onEtiqueta} name="etiqueta" />
+                    <FormLabel fontSize={20}>Filtrar por Etiqueta</FormLabel>
+                    <Input placeholder="Ingrese etiqueta" type={"text"} onChange={onEtiqueta} name="etiqueta" /><Button colorScheme="red" size="md" ml='400'type="submit" my={2} onClick={busquedaEtiqueta}>Buscar</Button>
                 </FormControl>
-				<Button colorScheme="red" size="md" ml='400'type="submit" my={5} onClick={busquedaEtiqueta}>Buscar</Button>
+				
 		</Container>
 
 		<Container>

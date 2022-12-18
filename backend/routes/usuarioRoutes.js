@@ -1,14 +1,14 @@
 const express = require('express');
-const { validate, clean, format, getCheckDigit } = require('rut.js')
-const usuarioController = require('../controllers/usuarioController');
+const publicacionController = require('../controllers/publicacionController');
 const api = express.Router();
 
-api.post('/usuario', usuarioController.createUsuario);
-api.get('/usuarios', usuarioController.getUsuarios);
-api.put('/usuario/update/:id', usuarioController.updateUsuario);
-api.delete('/usuario/delete/:id', usuarioController.deleteUsuario);
-api.get('/usuario/usr/:rut', usuarioController.getUsuario);
-//los get terminaran con s para que no haya fallos con los post
+api.post('/publicacion', publicacionController.createPublicacion);
+api.get('/publicaciones', publicacionController.getPublicaciones); //plural para evitar problemas con la url de creacion
+api.put('/publicacion/update/:id', publicacionController.updatePublicacion );
+api.delete('/publicacion/delete/:id' , publicacionController.deletePublicacion);
+api.get('/publicacion/:id' , publicacionController.getPublicacion);
+api.get('/publicacionesx/:tag' , publicacionController.getPublicacionesporEtiqueta);
+api.get('/publicacionesAdmi', publicacionController.getPublicacionesAdmi); //plural para evitar problemas con la url de creacion
 
 
 module.exports = api
