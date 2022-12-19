@@ -3,10 +3,8 @@
 
 import React from 'react'
 import Cookies from 'universal-cookie'
-import Router from 'next/router'
-import { useState, useEffect } from 'react'
 import verificarCookies from './comprobarCookies'
-
+import { useEffect, useState } from 'react'
 
 const Dashboard = () => {
     // si no hay cookies lo redirijo a login
