@@ -25,9 +25,9 @@ const publicacionSchema = new Schema({
         maxLength:400
     },
     estado:{
-        type: Boolean,
+        type: String,
         required: true,
-        default: true
+        default: "Activa"
     },
     cantLikes:{
         type: Number,

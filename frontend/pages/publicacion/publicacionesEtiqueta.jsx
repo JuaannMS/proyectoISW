@@ -24,7 +24,7 @@ const publicacionesEtiqueta = () => {
 			return (
       <Box  borderWidth='2px' borderRadius='lg' my={8}>
 		<Button size='xs' colorScheme='blackAlpha' left="85%" >Reportar</Button>
-        <Image src= 'https://bit.ly/dan-abramov' />
+        <Image src= 'https://bit.ly/dan-abramov'  />
 				<Box p='2' key={publicaciones._id}>
           <Box 
               color='gray.500'

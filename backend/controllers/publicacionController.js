@@ -17,12 +17,10 @@ const Usuario = require('../models/usuario')
     descripcion,
     idUsuario,
     etiqueta,
-    estado: true,
+    estado: "Activa",
     diasVisible,
     fechaExp,
   })
-
-  console.log(createdAt)
 
   newPublicacion.save((error, publicacion) => {
 
@@ -46,7 +44,7 @@ const getPublicaciones = (req, res) => {
     const now = new Date()
     now.setDate(now.getDate() - 7); //filtro de tiemppo ,segundo parametro son los dias anteriores
   Publicacion.find({
-  estado:true, //comentar para que aparezcan todos mostrar solamente los activos
+  estado:"Activa", //comentar para que aparezcan todos mostrar solamente los activos
   fechaExp: { $gt:now } //fecha exp > hoy
 }
 ).sort({cantLikes : -1}).exec(
@@ -79,7 +77,7 @@ const getPublicacionesAdmi = (req,res) => {
 const getPublicacionesporEtiqueta = (req, res) => {
   const {tag} = req.params // tiene el mismo nombre que el puesto en publicacionRoutes
 Publicacion.find({
-  estado:true,
+  estado:"Activa",
   etiqueta:tag
 }, (error, publicacionesx) => {
   if(error){
@@ -108,13 +106,11 @@ const updatePublicacion = (req, res) => {
   }
   )
 
-
-
 }
 
 const deletePublicacion = (req, res) => { //puede pausar el admi y el usuario creador
   const { id } = req.params
-  Publicacion.findByIdAndUpdate(id,{ $set: { estado: false }}//cambia estado de estadopublicacion
+  Publicacion.findByIdAndUpdate(id,{ $set: { estado: "Inactiva" }}//cambia estado de estadopublicacion
     , (error, Publicacion) => {
     if (error) {
       return res.status(400).send({ message: "No se pudo eliminar la publicacion" })

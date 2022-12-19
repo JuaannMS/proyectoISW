@@ -9,11 +9,26 @@ import styles from '../components/publicaciones.module.css'
 import { Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react'
 import comprobarCookies from '../utils/comprobarCookies'
 import Cookies from "universal-cookie";
+import { FaBlackTie } from 'react-icons/fa'
+import Router from "next/router";
 
 
 const publicaciones = () => {
 
 	const cookies = new Cookies;
+	const comprobarCookies = () => {
+		const cookies = new Cookies;
+		if (!cookies.get("id")) {
+			Router.push("/login");
+		}
+		else if (cookies.get("id") && window.location.pathname == "/login") {
+			Router.push("../");
+		}
+	}
+
+
+
+
 	const [publicaciones, setPublicaciones] = useState([])
 	const [id, setId] = useState()
 
@@ -91,10 +106,17 @@ const publicaciones = () => {
 		console.log(id)
 	}
 
-	const nuevoComentario = (id) => {
+	const nuevoComentario = (idPublicacion) => {
 		var comentario = prompt("Comentario", '');
+		const json = JSON.stringify({ idPublicacion: idPublicacion, contenido: comentario, idUsuario: id })
+		console.log(json)
 		if (comentario) {
-			alert("Has escrito " + comentario);
+			const response = axios.post(`${process.env.API_URL}/comentario`, json, {
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+
 		}
 		console.log(comentario)
 	}
