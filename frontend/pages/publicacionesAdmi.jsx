@@ -98,7 +98,7 @@ const publicacionesAdmi = () => {
               fontSize='xs'
               textTransform='uppercase'
               ml='200'>
-                {publicacion.createdAt}</Box>
+                {publicacion.fechaCreacion}</Box>
 					<Box
               mt='1'
               fontWeight='semibold'

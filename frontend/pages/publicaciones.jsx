@@ -27,10 +27,9 @@ const publicaciones = () => {
 	}
 
 
-
-
 	const [publicaciones, setPublicaciones] = useState([])
 	const [id, setId] = useState()
+	const [nombre, setNombre] = useState()
 
 
 	const getPublicaciones = async () => {
@@ -43,7 +42,10 @@ const publicaciones = () => {
 		comprobarCookies();
 		getPublicaciones();
 		setId(cookies.get("id"));
+		setNombre(cookies.get("nombre"))
 	}, [])
+
+	
 
 	const onSelect = async (e) => {
 		if (e.target.value == "eliminar") {
@@ -58,19 +60,24 @@ const publicaciones = () => {
 
 	const mostrarPublicaciones = () => {
 		return publicaciones.map(publicaciones => {
+
 			return (
-				<Box borderWidth='2px' borderRadius='lg' my={8} color='Blue' border='1px'>
-					<Button size='xs' colorScheme='blackAlpha' left="85%" >Reportar</Button>
-					<Image src='https://bit.ly/dan-abramov' className={styles.postImage} /> //css de imagen
+				<Box borderWidth='2px' borderRadius='lg' my={6} color='Blue' border='1px'>
+					<HStack my={2}>
+					<Box className={styles.nombreUsuario}>{publicaciones.nombreUsuario}</Box>
+					<Button size='xs' colorScheme='blackAlpha' left="43%" >Reportar</Button>
+					</HStack>
+					<Image src='https://bit.ly/dan-abramov' className={styles.postImage} />
 					<Box p='2' key={publicaciones._id} >
 						<Box
 							color='gray.500'
 							fontWeight='semibold'
 							letterSpacing='wide'
-							fontSize='xs'
+							fontSize='15'
 							textTransform='uppercase'
-							ml='200'>
-							{publicaciones.createdAt}</Box>
+							ml='380'>
+							{publicaciones.fechaCreacion}</Box>
+
 						<Box
 							mt='1'
 							fontWeight='semibold'
@@ -122,7 +129,8 @@ const publicaciones = () => {
 	}
 
 	const [values, setValues] = useState({
-		idUsuario: id,
+		idUsuario: '',
+		nombreUsuario: '',
 		titulo: '',
 		descripcion: '',
 		etiqueta: '',
@@ -172,7 +180,10 @@ const publicaciones = () => {
 	const onChange = (e) => {
 		setValues({
 			...values,
-			[e.target.name]: e.target.value
+			[e.target.name]: e.target.value,
+			idUsuario:id,
+			nombreUsuario:nombre
+
 		})
 		// sirve para que los atributos del useState sean inicializados desde el placeholder
 	}
