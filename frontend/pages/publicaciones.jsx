@@ -8,10 +8,23 @@ import { Box, Image, button } from '@chakra-ui/react'
 import styles from '../components/publicaciones.module.css'
 import { Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react'
 import { FaBlackTie } from 'react-icons/fa'
-
+import Cookies from "universal-cookie";
+import Router from "next/router";
 
 
 const publicaciones = () => {
+
+const comprobarCookies = () => {
+    const cookies = new Cookies;
+    if (!cookies.get("id")) {
+        Router.push("/login");
+    }
+    else if (cookies.get("id") && window.location.pathname == "/login") {
+        Router.push("../");
+    }
+}
+
+
 
 
 	const [publicaciones, setPublicaciones] = useState([])

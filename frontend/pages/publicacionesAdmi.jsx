@@ -7,7 +7,7 @@ import axios from 'axios'
 import {Box,Image } from '@chakra-ui/react'
 import publicacion from '../../backend/models/publicacion'
 import {Menu,MenuButton,MenuList,MenuItem} from '@chakra-ui/react'
-
+import styles from '../components/publicaciones.module.css'
 
 const publicacionesAdmi = () => {
 
@@ -83,10 +83,13 @@ const publicacionesAdmi = () => {
 			return (
       <Box  borderWidth='2px' borderRadius='lg' >
 		<Select placeholder=' ' size='xs' onChange={onSelect}>
-		<option value='eliminar'>Eliminar</option>
+		  <option value='eliminar'>Eliminar</option>
   		<option value='editar'>Editar</option>
+      <option value='reportar'>Reportar</option>
+
+
 		</Select>
-        <Image src= 'https://bit.ly/dan-abramov' left="50%"/>
+        <Image src= 'https://bit.ly/dan-abramov' className={styles.postImage}/>
 				<Box p='2' key={publicacion._id} >
           <Box
               color='gray.500'
@@ -124,7 +127,7 @@ const publicacionesAdmi = () => {
     return (
 <VStack>
   <Menu>
-    <MenuButton as={Button} right="49%">
+    <MenuButton as={Button}   className={styles.botonIzquierdaSup}  >
       =
     </MenuButton>
       <MenuList>

@@ -60,3 +60,8 @@
     height: 24px;
     margin-top: 5px;
 }
+
+.botonIzquierdaSup{
+    position: absolute;
+    right: 49%;    
+}
