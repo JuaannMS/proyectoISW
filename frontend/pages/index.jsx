@@ -3,7 +3,7 @@
 
 import React from 'react'
 import Cookies from 'universal-cookie'
-import verificarCookies from './comprobarCookies'
+import verificarCookies from '../utils/comprobarCookies'
 import { useEffect, useState } from 'react'
 
 const Dashboard = () => {

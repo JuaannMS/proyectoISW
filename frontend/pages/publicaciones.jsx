@@ -7,14 +7,16 @@ import axios from 'axios'
 import { Box, Image, button } from '@chakra-ui/react'
 import styles from '../components/publicaciones.module.css'
 import { Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react'
-import { FaBlackTie } from 'react-icons/fa'
-
+import comprobarCookies from '../utils/comprobarCookies'
+import Cookies from "universal-cookie";
 
 
 const publicaciones = () => {
 
-
+	const cookies = new Cookies;
 	const [publicaciones, setPublicaciones] = useState([])
+	const [id, setId] = useState()
+
 
 	const getPublicaciones = async () => {
 		const response = await axios.get(`${process.env.API_URL}/publicaciones`)
@@ -23,9 +25,10 @@ const publicaciones = () => {
 
 
 	useEffect(() => {
-		getPublicaciones()
+		comprobarCookies();
+		getPublicaciones();
+		setId(cookies.get("id"));
 	}, [])
-
 
 	const onSelect = async (e) => {
 		if (e.target.value == "eliminar") {
@@ -40,7 +43,6 @@ const publicaciones = () => {
 
 	const mostrarPublicaciones = () => {
 		return publicaciones.map(publicaciones => {
-			console.log(publicaciones)
 			return (
 				<Box borderWidth='2px' borderRadius='lg' my={8} color='Blue' border='1px'>
 					<Button size='xs' colorScheme='blackAlpha' left="85%" >Reportar</Button>
@@ -68,22 +70,17 @@ const publicaciones = () => {
 							color='gray.600'
 							fontSize='sm'>
 							{publicaciones.cantLikes} likes</Box>
-
+					</Box>
+					<Box alignItems='left' color='Blue' border='1px' textAlign='center'>
+						<button onClick={() => { nuevoComentario(publicaciones._id) }}>
+							Nuevo comentario
+						</button>
 
 					</Box>
-					<Box display='flex' flexDirection='row' justifyContent='center'  >
-						<Box alignItems='left' color='Blue' border='1px' width='50%' textAlign='center'>
-					<button
-						onClick={() => { nuevoComentario(publicaciones._id) }}>
-						Nuevo comentario</button>
-
-						</Box>
-						<Box alignItems='left' color='Blue' border='1px' width='50%'textAlign='center'>
-					<button
-						onClick={() => { cargarComentarios(publicaciones._id) }}>
-						Mostrar comentarios
-					</button>
-						</Box>
+					<Box alignItems='left' color='Blue' border='1px' textAlign='center'>
+						<button onClick={() => { cargarComentarios(publicaciones._id) }}>
+							Mostrar comentarios
+						</button>
 					</Box>
 				</Box>
 			)
@@ -103,7 +100,7 @@ const publicaciones = () => {
 	}
 
 	const [values, setValues] = useState({
-		idUsuario: '636ef3d8ef0ab5b27774fcda',
+		idUsuario: id,
 		titulo: '',
 		descripcion: '',
 		etiqueta: '',

@@ -17,8 +17,7 @@ import {
 import axios from "axios";
 import Router from "next/router";
 import Cookies from "universal-cookie";
-
-import comprobarCookies from "./comprobarCookies";
+import comprobarCookies from "../utils/comprobarCookies";
 
 const CFaUserAlt = chakra(FaUserAlt);
 
