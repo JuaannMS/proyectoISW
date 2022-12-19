@@ -15,7 +15,6 @@ if(null == Likes.find({
 
 {
 
-    console.log("entro aca")
 newLikes.save((error, Likes) => {
     if(error) {
         return res.status(400).send({ message: "No se pudo dar like" +error })
