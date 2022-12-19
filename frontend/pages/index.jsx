@@ -5,14 +5,7 @@ import React from 'react'
 import Cookies from 'universal-cookie'
 import Router from 'next/router'
 import { useState, useEffect } from 'react'
-
-const verificarCookies = () => {
-    const cookies = new Cookies;
-    if (cookies.get("id") === undefined) {
-        Router.push("/login");
-    }
-
-}
+import verificarCookies from './comprobarCookies'
 
 
 const Dashboard = () => {

@@ -18,27 +18,20 @@ import axios from "axios";
 import Router from "next/router";
 import Cookies from "universal-cookie";
 
+import comprobarCookies from "./comprobarCookies";
+
 const CFaUserAlt = chakra(FaUserAlt);
 
 
-const verificarCookies = () => {
-    const cookies = new Cookies;
-    if (cookies.get("id") !== undefined) {
-        Router.push("../")
-    }
-}
 
 const Login = () => {
 
 
     const cookies = new Cookies;
-    const [usuarios, setUsuarios] = useState();
     const [rutUsuario, setRutUsuario] = useState();
 
-
-
     useEffect(() => {
-        verificarCookies();
+        comprobarCookies();
     }, []);
 
 
