@@ -24,7 +24,15 @@ const createFavorito = (req, res) => {
         //si existe
         else {
             if (favorito.idFavoritos.includes(idPublicacion)) {
-                return res.status(200).send({ message: "Ya existe el favorito" })
+                Favoritos.findOneAndUpdate({ idUsuario: idUsuario }, { $pull: { idFavoritos: idPublicacion } }, (error, favorito) => {
+                    if (error) {
+                        return res.status(400).send({ message: "No se pudo eliminar el favorito" })
+                    }
+                    if (!favorito) {
+                        return res.status(404).send({ message: "No se encontro el favorito" })
+                    }
+                    return res.status(200).send({ message: "Favorito eliminado" })
+                })
             }
             else {
                 Favoritos.findOneAndUpdate({ idUsuario: idUsuario }, { $push: { idFavoritos: idPublicacion } }, (error, favorito) => {

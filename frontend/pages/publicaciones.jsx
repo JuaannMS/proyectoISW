@@ -56,11 +56,35 @@ const publicaciones = () => {
 		// sirve para que los atributos del useState sean inicializados desde el placeholder
 	}
 
+	const darLike = async (idPublicacion) => {
+		const json = JSON.stringify({ idPublicacion: idPublicacion, idUsuario: id })
+		const response = await axios.post(`${process.env.API_URL}/like`, json, {
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+		alert(response.data.message, null)
+	}
+
+	const darFavorito = async (idPublicacion) => {
+		const json = JSON.stringify({ idPublicacion: idPublicacion, idUsuario: id })
+		const response = await axios.put(`${process.env.API_URL}/favorito/put/createFavorito`, json, {
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+		alert(response.data.message, null)
+	}
+
 	const mostrarPublicaciones = () => {
 		return publicaciones.map(publicaciones => {
 			return (
 				<Box borderWidth='2px' borderRadius='lg' my={8} color='Blue' border='1px'>
 					<Button size='xs' colorScheme='blackAlpha' left="85%" >Reportar</Button>
+					<Box>
+					<button onClick={() => {darLike(publicaciones._id)}}><img src ="like.png" /></button>
+					<button onClick={() => {darFavorito(publicaciones._id)}}><img src ="star.png" /></button>
+					</Box>
 					<Image src='https://bit.ly/dan-abramov' className={styles.postImage} /> //css de imagen
 					<Box p='2' key={publicaciones._id} >
 						<Box
@@ -96,29 +120,31 @@ const publicaciones = () => {
 						<button onClick={() => { cargarComentarios(publicaciones._id) }}>
 							Mostrar comentarios
 						</button>
+						
 					</Box>
 				</Box>
 			)
 		})
 	}
 
-	const cargarComentarios = (id) => {
-		console.log(id)
+	const cargarComentarios = async (idPublicacion) => {
+		const response = await axios.get(`${process.env.API_URL}/comentario/getFromPublicacion/${idPublicacion}`)
+		console.log(response.data)
 	}
 
-	const nuevoComentario = (idPublicacion) => {
+	const nuevoComentario = async (idPublicacion) => {
 		var comentario = prompt("Comentario", '');
 		const json = JSON.stringify({ idPublicacion: idPublicacion, contenido: comentario, idUsuario: id })
-		console.log(json)
 		if (comentario) {
-			const response = axios.post(`${process.env.API_URL}/comentario`, json, {
+			const response = await axios.post(`${process.env.API_URL}/comentario`, json, {
 				headers: {
 					'Content-Type': 'application/json'
 				}
+			}).then(() => {
+				alert("Comentario agregado")
 			})
 
 		}
-		console.log(comentario)
 	}
 
 	const [values, setValues] = useState({
