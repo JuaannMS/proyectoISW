@@ -24,6 +24,10 @@ const publicacionSchema = new Schema({
         minLength:1,
         maxLength:400
     },
+    nombreUsuario:{
+        type: String,
+        require:true,
+    },
     estado:{
         type: String,
         required: true,
@@ -38,6 +42,10 @@ const publicacionSchema = new Schema({
     diasVisible:{
         type:Number,
         required: true
+    },
+    fechaCreacion:{
+        type:String,
+        require:true
     },
     fechaExp:{
         type:Date,

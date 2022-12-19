@@ -40,7 +40,7 @@
 }
 
 .postImage{
-    margin-top: 20px;
+    margin-top: 10px;
     width: 100%;
     max-height: 500px;
     justify-content: center;
@@ -64,4 +64,12 @@
 .botonIzquierdaSup{
     position: absolute;
     right: 49%;    
+}
+
+.nombreUsuario{
+
+    font-size: 18px;
+    font-family: arial;
+    font-weight: bold;
+    right: 10%;
 }

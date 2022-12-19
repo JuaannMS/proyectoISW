@@ -6,10 +6,15 @@ const { create } = require('../models/publicacion');
 const createPublicacion = (req, res) => {
 const Usuario = require('../models/usuario')
 
-  const { titulo, descripcion,etiqueta,idUsuario,diasVisible} = req.body
+
+  const { titulo, descripcion,etiqueta,nombreUsuario,idUsuario,diasVisible} = req.body
+
+  const fechaCreacion = new Date().toLocaleDateString()
   const fechaExp = new Date()
+  //console.log(fechaExp)
+
   fechaExp.setDate(fechaExp.getDate() + diasVisible)
-  console.log(fechaExp) 
+  //console.log(fechaExp)
  
   // sacar cantLikes, esta solo para probar
   const newPublicacion = new Publicacion({
@@ -17,9 +22,11 @@ const Usuario = require('../models/usuario')
     descripcion,
     idUsuario,
     etiqueta,
+    nombreUsuario,
     estado: "Activa",
     diasVisible,
     fechaExp,
+    fechaCreacion
   })
 
   newPublicacion.save((error, publicacion) => {
@@ -125,10 +132,11 @@ const deletePublicacion = (req, res) => { //puede pausar el admi y el usuario cr
 }
 
 const getPublicacion = (req, res) => {
+
   const { id } = req.params
   Publicacion.findById(id, (error, publicacion) => {
       if (error) {
-          return res.status(400).send({ message: "No se ha podido cambiar la publicacion" })
+          return res.status(400).send({ message: "No se ha podido mostrar la publicacion" })
       }
       if (!publicacion) {
           return res.status(404).send({ message: "No se ha podido encontrar la publicacion" })
