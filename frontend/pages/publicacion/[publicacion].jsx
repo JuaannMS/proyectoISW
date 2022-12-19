@@ -25,7 +25,7 @@ export async function getServerSideProps(context) {
 const publicacion = (data) => {
 
     const router = useRouter()
-    const { publicacion } = router.query
+    //const { publicacion } = router.query
     const [publicacion] = useState(data)
     console.log(publicacion)
 
