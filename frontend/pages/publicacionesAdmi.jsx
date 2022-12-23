@@ -5,9 +5,9 @@ import Swal from 'sweetalert2'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import {Box,Image } from '@chakra-ui/react'
-import publicacion from '../../backend/models/publicacion'
 import {Menu,MenuButton,MenuList,MenuItem} from '@chakra-ui/react'
 import styles from '../components/publicaciones.module.css'
+import Router from "next/router";
 
 const publicacionesAdmi = () => {
 
@@ -21,35 +21,22 @@ const publicacionesAdmi = () => {
     useEffect(() => {
 		getPublicaciones()
 	}, [])
+  
 
-
-
-
-  const [publicacionSeleccionada, setPublicacionSeleccionada] = useState({
-		idPubli: ''
-	})
-
-
-  const onSelect = async (e) => {
-
-
-    e.preventDefault()
-    console.log("aa"+publicacionSeleccionada.idPubli)
-    console.log(publicacionSeleccionada.idPubli)
-    
-		if(e.target.value=="eliminar"){
+  const onEliminar = async (idPublicacion) => {
+      console.log(idPublicacion)
 			//const response = await axios.delete(`${process.env.API_URL}/publicacion/`)
       try {
-        const response = await axios.delete(`${process.env.API_URL}/publicacion/`, values) //values tiene que tener idPublicacion para eliminar
+        const response = await axios.delete(`${process.env.API_URL}/publicacion/delete/${idPublicacion}`) //values tiene que tener idPublicacion para eliminar
         console.log(response)
-        if (response.status === 201) {
+        if (response.status === 200) {
           Swal.fire({
             title: 'Publicacion eliminada',
             text: 'La publicacion se ha eliminado correctamente',
             icon: 'success',
             confirmButtonText: 'Ok'
           }).then((result) => {
-            router.push('/')
+            //router.push('/publicaciones')
           })
   
         } else {
@@ -68,27 +55,25 @@ const publicacionesAdmi = () => {
           confirmButtonText: 'Ok'
         })
       }
-
-		}
-		if(e.target.value=="editar"){
-			console.log("vamos a editar")
-		}
-		// sirve para que los atributos del useState sean inicializados desde el placeholder
 	}
 
-  
+  const pushCrearPublicacion = () => {
+		Router.push("/crearPublicacion")
+	}
+
+  const pushPublicacionesReportadas = () => {
+		Router.push("/publicacionesReportadas")
+	}
+
+  const pushVerMisPublicaciones = () =>{
+		Router.push("/verMisPublicaciones")
+	}
 
     const mostrarPublicaciones = () => {
 		return publicaciones.map(publicacion => {
 			return (
       <Box  borderWidth='2px' borderRadius='lg' >
-		<Select placeholder=' ' size='xs' onChange={onSelect}>
-		  <option value='eliminar'>Eliminar</option>
-  		<option value='editar'>Editar</option>
-      <option value='reportar'>Reportar</option>
-
-
-		</Select>
+        <Box color='red'>Estado: {publicacion.estado}</Box>
         <Image src= 'https://bit.ly/dan-abramov' className={styles.postImage}/>
 				<Box p='2' key={publicacion._id} >
           <Box
@@ -99,25 +84,30 @@ const publicacionesAdmi = () => {
               textTransform='uppercase'
               ml='200'>
                 {publicacion.fechaCreacion}</Box>
-					<Box
-              mt='1'
-              fontWeight='semibold'
-              as='h4'
-              lineHeight='tight'
-              noOfLines='1'>
-                ID Publicacion: {publicacion._id}</Box>
-                <Box>Titulo: {publicacion.titulo}</Box>
-					<Box>Descripcion: {publicacion.descripcion}</Box>
-                    <Box>Etiqueta: {publicacion.etiqueta}</Box>
-                    <Box>Estado: {publicacion.estado}</Box>
-                    <Box>Numero de dia visible: {publicacion.diasVisible}</Box>
-                    <Box>Fecha Expiracion: {publicacion.fechaExp}</Box>
-                    <Box>ID Usuario: {publicacion.idUsuario}</Box>
+					        <Box
+                  mt='1'
+                  fontWeight='semibold'
+                  as='h4'
+                  lineHeight='tight'
+                  noOfLines='1'>
+                  ID Publicacion: {publicacion._id}</Box>
+                  <Box>Usuario Nombre: {publicacion.nombreUsuario}</Box>
+                  <Box>Titulo: {publicacion.titulo}</Box>
+					        <Box>Descripcion: {publicacion.descripcion}</Box>
+                  <Box>Etiqueta: {publicacion.etiqueta}</Box>
+                  <Box>Numero de dia visible: {publicacion.diasVisible}</Box>
+                  <Box>Fecha Expiracion: {publicacion.fechaExp}</Box>
+                    
 				<Box
               as='span'
               color='gray.600'
               fontSize='sm'>
                 {publicacion.cantLikes} likes</Box>
+              <HStack className={styles.publicacionLabelHorizontal}>
+                <Button > Editar</Button>
+                <Button onClick={() => onEliminar(publicacion._id)}> Eliminar</Button>
+                <Button> Reportar</Button>
+              </HStack>
 				</Box>
       </Box>
 			)
@@ -131,9 +121,10 @@ const publicacionesAdmi = () => {
       =
     </MenuButton>
       <MenuList>
-        <MenuItem>Ver publicaciones reportadas</MenuItem>
+        <MenuItem onClick={pushPublicacionesReportadas}>Ver publicaciones reportadas</MenuItem>
+        <MenuItem onClick={pushCrearPublicacion}>Crear Publicacion</MenuItem>
+        <MenuItem onClick={pushVerMisPublicaciones}>Mis Publicaciones</MenuItem>
         <MenuItem>Mi perfil</MenuItem>
-        <MenuItem></MenuItem>
       </MenuList>
   </Menu>
 

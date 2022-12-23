@@ -83,7 +83,7 @@ const getPublicacionesAdmi = (req,res) => {
 
 const getPublicacionesporEtiqueta = (req, res) => {
   const {tag} = req.params // tiene el mismo nombre que el puesto en publicacionRoutes
-Publicacion.find({
+  Publicacion.find({
   estado:"Activa",
   etiqueta:tag
 }, (error, publicacionesx) => {
@@ -146,6 +146,36 @@ const getPublicacion = (req, res) => {
 }
 
 
+const getPublicacionesPersonales = (req,res) => {
+
+  const {idU} = req.params
+  console.log(idU)
+  const now = new Date()
+  now.setDate(now.getDate() - 7);
+  Publicacion.find({
+    estado:"Activa",
+    idUsuario:idU,
+    fechaExp: { $gt:now }
+  }
+  ).sort({cantLikes : -1}).exec(
+  function(error, publicaciones) {
+      if (error) {
+        return res.status(400).send({ message: "No se realizo la busqueda" })
+      }
+      if (publicaciones.length == 0) {
+        return res.status(404).send({ message: "No se han encontrado publicaciones" })
+      }
+      return res.status(200).send(publicaciones);
+    }
+    )
+
+}
+
+const getPublicacionesReportadas = (req,res) => {
+
+
+}
+
 const numPublicacionesActXUsuario = (idUsuario) => {
 
 //console.log(idUsuario)
@@ -162,5 +192,7 @@ module.exports = {
   getPublicacion,
   getPublicacionesporEtiqueta,
   numPublicacionesActXUsuario,
-  getPublicacionesAdmi
+  getPublicacionesAdmi,
+  getPublicacionesPersonales,
+  getPublicacionesReportadas
 }

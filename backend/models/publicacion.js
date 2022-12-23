@@ -56,6 +56,12 @@ const publicacionSchema = new Schema({
     required: true,
     ref: 'usuario'
     },
+    numReportes:{
+        type:Number,
+        require:true,
+        minLength:0,
+        default:0
+    },
     idReportes:{
         type: [Schema.ObjectId],
         ref: 'reporte',

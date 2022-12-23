@@ -29,31 +29,6 @@ export default function Home() {
 		getPublicaciones()
 	}, [])
 
-
-
-	const onChange = async (e) => {
-		setValues({
-			...values,
-			[e.target.name]: e.target.value
-
-		})
-
-		console.log("aa" + e.target.name)
-
-		if (e.target.value == "Eliminar") {
-
-			console.log("vamos a eliminar")
-			const response = await axios.delete(`${process.env.API_URL}/publicacion/delete/${publicacionSeleccionada.id}`, values)
-		}
-		if (e.target.value == "Editar") {
-
-			console.log("vamos a editar")
-			//const response = await axios.put(`${process.env.API_URL}/publicacion/`, values)
-		}
-		// sirve para que los atributos del useState sean inicializados desde el placeholder
-	}
-
-
 	const mostrarPublicaciones = () => {
 		return publicaciones.map(publicaciones => {
 			return (

@@ -1,5 +1,9 @@
 import { useRouter } from "next/router"
 import { useState } from "react"
+import { useEffect } from 'react'
+import axios from 'axios'
+import { VStack } from "@chakra-ui/react"
+
 
 const publicacionesEtiqueta = () => {
 
@@ -8,8 +12,8 @@ const publicacionesEtiqueta = () => {
 	const router = useRouter()
 	const {publicacion} = router.query
 
+  console.log(router.query)
 	const getPublicaciones = async () => {
-
 		const response = await axios.get(`${process.env.API_URL}/publicacionesx/${publicacion}`)
 		setPublicaciones(response.data)
 	}
@@ -19,7 +23,7 @@ const publicacionesEtiqueta = () => {
 	}, [publicacion])
 
 
-	
+  const mostrarPublicaciones = () => {
 	return (publicaciones.map(publicaciones => {
 			return (
       <Box  borderWidth='2px' borderRadius='lg' my={8}>
@@ -54,9 +58,15 @@ const publicacionesEtiqueta = () => {
 		})
 
 	)
+  }
+
+  return (
+
+   <div>hola</div>
+
+  )
 
 
-    
-} 
+}
 
 export default publicacionesEtiqueta

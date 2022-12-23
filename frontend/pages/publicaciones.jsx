@@ -45,19 +45,6 @@ const publicaciones = () => {
 		setNombre(cookies.get("nombre"))
 	}, [])
 
-	
-
-	const onSelect = async (e) => {
-		if (e.target.value == "eliminar") {
-			const response = await axios.delete(`${process.env.API_URL}/publicacion/`)
-
-		}
-		if (e.target.value == "editar") {
-			console.log("vamos a editar")
-		}
-		// sirve para que los atributos del useState sean inicializados desde el placeholder
-	}
-
 	const darLike = async (idPublicacion) => {
 		const json = JSON.stringify({ idPublicacion: idPublicacion, idUsuario: id })
 		const response = await axios.post(`${process.env.API_URL}/like`, json, {
@@ -65,9 +52,11 @@ const publicaciones = () => {
 				'Content-Type': 'application/json'
 			}
 		})
+		
 		alert(response.data.message, null)
-	}
+		}
 
+		
 	const darFavorito = async (idPublicacion) => {
 		const json = JSON.stringify({ idPublicacion: idPublicacion, idUsuario: id })
 		const response = await axios.put(`${process.env.API_URL}/favorito/put/createFavorito`, json, {
@@ -83,52 +72,43 @@ const publicaciones = () => {
 
 			return (
 				<Box borderWidth='2px' borderRadius='lg' my={6} color='Blue' border='1px'>
-					<HStack my={2}>
+					<HStack className={styles.publicacionLabelHorizontal}>
 					<Box className={styles.nombreUsuario}>{publicaciones.nombreUsuario}</Box>
-					<Button size='xs' colorScheme='blackAlpha' left="43%" >Reportar</Button>
+					<Button  >Reportar</Button>
 					</HStack>
-					<Box>
-					<button onClick={() => {darLike(publicaciones._id)}}><img src ="like.png" /></button>
-					<button onClick={() => {darFavorito(publicaciones._id)}}><img src ="star.png" /></button>
-					</Box>
+					<HStack className={styles.publicacionLabelHorizontal}>
+					<Box p='1'>#{publicaciones.etiqueta}</Box>
+					<Box className={styles.publicacionFecha}>
+						{publicaciones.fechaCreacion}</Box>
+					</HStack>
 					<Image src='https://bit.ly/dan-abramov' className={styles.postImage} />
 					<Box p='2' key={publicaciones._id} >
-						<Box
-							color='gray.500'
-							fontWeight='semibold'
-							letterSpacing='wide'
-							fontSize='15'
-							textTransform='uppercase'
-							ml='380'>
-							{publicaciones.fechaCreacion}</Box>
-
-						<Box
-							mt='1'
-							fontWeight='semibold'
-							as='h4'
-							lineHeight='tight'
-							noOfLines='1'>
+						<HStack className={styles.publicacionLabelHorizontal}>
+							<Box className={styles.publicacionTitulo}>
 							{publicaciones.titulo}</Box>
-						<Box>#{publicaciones.etiqueta}</Box>
+						</HStack>
 						<Box >{publicaciones.descripcion}</Box>
+						<HStack className={styles.publicacionLabelHorizontal}>
 						<Box
 							as='span'
 							color='gray.600'
 							fontSize='sm'>
 							{publicaciones.cantLikes} likes</Box>
-					</Box>
-					<Box alignItems='left' color='Blue' border='1px' textAlign='center'>
+						<HStack>
+						<button onClick= {() => {darLike(publicaciones._id)}}><img src ="like.png" /></button>
+						<button onClick={() => {darFavorito(publicaciones._id)}}><img src ="star.png" /></button>
+						</HStack>
+						</HStack>
+						
+						</Box>
+						<HStack className={styles.publicacionBotonComentarios}>
 						<button onClick={() => { nuevoComentario(publicaciones._id) }}>
 							Nuevo comentario
 						</button>
-
-					</Box>
-					<Box alignItems='left' color='Blue' border='1px' textAlign='center'>
 						<button onClick={() => { cargarComentarios(publicaciones._id) }}>
-							Mostrar comentarios
+							Ver comentarios
 						</button>
-						
-					</Box>
+						</HStack>
 				</Box>
 			)
 		})
@@ -163,7 +143,9 @@ const publicaciones = () => {
 		diasVisible: ''
 	})
 
-	const [tag, setTag] = useState({})
+	const [tag, setTag] = useState({
+		etiqueta: ''
+	})
 
 	const router = useRouter()
 
@@ -181,7 +163,7 @@ const publicaciones = () => {
 					icon: 'success',
 					confirmButtonText: 'Ok'
 				}).then((result) => {
-					router.push('/')
+					router.push('/publicaciones') //refrescar pagina
 				})
 
 			} else {
@@ -219,15 +201,18 @@ const publicaciones = () => {
 			...tag,
 			[e.target.name]: e.target.value
 		})
+		
 		// sirve para que los atributos del useState sean inicializados desde el placeholder
 	}
 
 	const busquedaEtiqueta = async (e) => {
 		e.preventDefault()
-		console.log(tag)
+		//console.log(tag.etiqueta)
 		try {
 
-			if (response.status === 201) {
+			const response = await axios.get(`${process.env.API_URL}/publicacionesx/${tag.etiqueta}`)
+			//console.log(response.status)
+			if (response.status === 200) {
 				router.push(`/publicacionesEtiqueta/${e.target.value}`)
 
 			} else {
@@ -249,6 +234,13 @@ const publicaciones = () => {
 
 	}
 
+	const pushCrearPublicacion = () => {
+		Router.push("/crearPublicacion")
+	}
+
+	const pushVerMisPublicaciones = () =>{
+		Router.push("/verMisPublicaciones")
+	}
 	return (
 
 
@@ -260,42 +252,12 @@ const publicaciones = () => {
 					=
 				</MenuButton>
 				<MenuList>
-					<MenuItem>Ver mis publicaciones</MenuItem>
-					<MenuItem>Mi perfil</MenuItem>
+					<MenuItem onClick={pushVerMisPublicaciones}>Ver mis publicaciones</MenuItem>
+					<MenuItem  onClick={pushCrearPublicacion}>Crear Publicacion</MenuItem>
+					<MenuItem >Mi perfil</MenuItem>
 					<MenuItem></MenuItem>
 				</MenuList>
 			</Menu>
-
-			<Container maxW="Container.xl" width={500} >
-				<Stack>
-					<FormLabel fontSize={25}>Crea una publicacion</FormLabel>
-					<FormControl isRequired>
-						<FormLabel>Titulo</FormLabel>
-						<Input placeholder="Ingrese un titulo" type={"text"} onChange={onChange} name={"titulo"} />
-					</FormControl>
-
-					<FormControl isRequired>
-						<FormLabel>Descripcion</FormLabel>
-						<Textarea placeholder="Ingrese una descripcion" type={"text"} onChange={onChange} name="descripcion" />
-					</FormControl>
-
-					<FormControl>
-						<FormLabel>Etiqueta</FormLabel>
-						<Input placeholder="Ingrese una etiqueta" type={"text"} onChange={onChange} name="etiqueta" />
-					</FormControl>
-
-					<FormControl isRequired>
-						<FormLabel>Dias activa</FormLabel>
-						<Select my={2} placeholder="Numero de dias activa" type={"number"} onChange={onChange} name="diasVisible">
-							<option values='4'> 4 </option>
-							<option values='7'> 7 </option>
-							<option values='14'> 14 </option>
-						</Select >
-					</FormControl>
-					<Button type="submit" size="sm" width="40%">Seleccionar imagen</Button>
-				</Stack>
-				<Button colorScheme="blue" size="md" type="submit" my={5} onClick={onSubmit}>Crear publicacion</Button>
-			</Container>
 
 			<Container borderWidth='2px'>
 				<FormControl>
