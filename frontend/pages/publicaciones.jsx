@@ -9,7 +9,7 @@ import styles from '../components/publicaciones.module.css'
 import { Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react'
 import comprobarCookies from '../utils/comprobarCookies'
 import Cookies from "universal-cookie";
-import { FaBlackTie } from 'react-icons/fa'
+import { FaAlignJustify, FaBlackTie } from 'react-icons/fa'
 import Router from "next/router";
 
 
@@ -74,39 +74,50 @@ const publicaciones = () => {
 				<Box borderWidth='2px' borderRadius='lg' my={6} color='Blue' border='1px'>
 					<HStack className={styles.publicacionLabelHorizontal}>
 					<Box className={styles.nombreUsuario}>{publicaciones.nombreUsuario}</Box>
-					<Button  >Reportar</Button>
+					<button onClick={() => {darFavorito(publicaciones._id)}}><img src ="star.png" /></button>
+					<Button  >:</Button>
 					</HStack>
+					<Box className={styles.publicacionTitulo}>
+							{publicaciones.titulo}</Box>
+							
+					<Image src='https://bit.ly/dan-abramov' className={styles.postImage} />
+					<Box p='2' key={publicaciones._id} >
 					<HStack className={styles.publicacionLabelHorizontal}>
 					<Box p='1'>#{publicaciones.etiqueta}</Box>
 					<Box className={styles.publicacionFecha}>
 						{publicaciones.fechaCreacion}</Box>
 					</HStack>
-					<Image src='https://bit.ly/dan-abramov' className={styles.postImage} />
-					<Box p='2' key={publicaciones._id} >
 						<HStack className={styles.publicacionLabelHorizontal}>
-							<Box className={styles.publicacionTitulo}>
-							{publicaciones.titulo}</Box>
+							
 						</HStack>
 						<Box >{publicaciones.descripcion}</Box>
+						
+						
 						<HStack className={styles.publicacionLabelHorizontal}>
+							<VStack className={styles.mostrarComentarios}>
+							<button  onClick={() => { cargarComentarios(publicaciones._id) }}>
+							Mostrar Publicacion
+							<  img src="flecha.png"/>
+						</button>
+							</VStack>
+						
+						<HStack className={styles.publicacionLikes}>
 						<Box
 							as='span'
 							color='gray.600'
-							fontSize='sm'>
+							fontSize='sm'
+							marginLeft='7px'>
 							{publicaciones.cantLikes} likes</Box>
-						<HStack>
-						<button onClick= {() => {darLike(publicaciones._id)}}><img src ="like.png" /></button>
-						<button onClick={() => {darFavorito(publicaciones._id)}}><img src ="star.png" /></button>
+						<button  onClick= {() => {darLike(publicaciones._id)}}><img src ="like.png" /></button>
 						</HStack>
+						
 						</HStack>
+						
 						
 						</Box>
 						<HStack className={styles.publicacionBotonComentarios}>
 						<button onClick={() => { nuevoComentario(publicaciones._id) }}>
 							Nuevo comentario
-						</button>
-						<button onClick={() => { cargarComentarios(publicaciones._id) }}>
-							Ver comentarios
 						</button>
 						</HStack>
 				</Box>
@@ -242,9 +253,6 @@ const publicaciones = () => {
 		Router.push("/verMisPublicaciones")
 	}
 	return (
-
-
-
 		<VStack>
 
 			<Menu>

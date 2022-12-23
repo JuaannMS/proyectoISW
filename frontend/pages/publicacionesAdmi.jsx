@@ -1,11 +1,11 @@
 import React from 'react'
 import { useState,useEffect } from 'react'
-import { Badge,StarIcon,Textarea, Button, Container, Input, Stack, Text, HStack, Heading, FormControl, FormLabel,Select, VStack } from '@chakra-ui/react'
+import { useDisclosure,ChakraProvider,Badge,StarIcon,Textarea, Button, Container, Input, Stack, Text, HStack, Heading, FormControl, FormLabel,Select, VStack, Modal, ModalHeader,ModalOverlay,ModalContent,ModalCloseButton,ModalBody,ModalFooter} from '@chakra-ui/react'
 import Swal from 'sweetalert2'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import {Box,Image } from '@chakra-ui/react'
-import {Menu,MenuButton,MenuList,MenuItem} from '@chakra-ui/react'
+import {Menu,MenuButton,MenuList,MenuItem,Lorem} from '@chakra-ui/react'
 import styles from '../components/publicaciones.module.css'
 import Router from "next/router";
 
@@ -19,7 +19,7 @@ const publicacionesAdmi = () => {
 	}
 
     useEffect(() => {
-		getPublicaciones()
+		getPublicaciones();
 	}, [])
   
 
@@ -57,6 +57,8 @@ const publicacionesAdmi = () => {
       }
 	}
 
+
+
   const pushCrearPublicacion = () => {
 		Router.push("/crearPublicacion")
 	}
@@ -69,10 +71,20 @@ const publicacionesAdmi = () => {
 		Router.push("/verMisPublicaciones")
 	}
 
+  const editarPublicacion = () => {
+    Router.push("/verMisPublicaciones")
+  }
+
     const mostrarPublicaciones = () => {
 		return publicaciones.map(publicacion => {
 			return (
       <Box  borderWidth='2px' borderRadius='lg' >
+         <Select placeholder=' '>
+            <option value='option1'>Reportar</option>
+            <option value='option2'>Editar</option>
+            <option onChange={() => onEliminar(publicacion._id)}>Eliminar</option>
+            <option value='option3'>Favoritos</option>
+          </Select> 
         <Box color='red'>Estado: {publicacion.estado}</Box>
         <Image src= 'https://bit.ly/dan-abramov' className={styles.postImage}/>
 				<Box p='2' key={publicacion._id} >
@@ -105,7 +117,7 @@ const publicacionesAdmi = () => {
                 {publicacion.cantLikes} likes</Box>
               <HStack className={styles.publicacionLabelHorizontal}>
                 <Button > Editar</Button>
-                <Button onClick={() => onEliminar(publicacion._id)}> Eliminar</Button>
+                <Button  onClick={() => onEliminar(publicacion._id)}> Eliminar</Button>
                 <Button> Reportar</Button>
               </HStack>
 				</Box>
@@ -114,10 +126,37 @@ const publicacionesAdmi = () => {
 		})
 	}
 
+  function BasicUsage() {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    return (
+      <>
+        <Button onClick={onOpen}>Open Modal</Button>
+  
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Modal Title</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Lorem count={2} />
+            </ModalBody>
+  
+            <ModalFooter>
+              <Button colorScheme='blue' mr={3} onClick={onClose}>
+                Close
+              </Button>
+              <Button variant='ghost'>Secondary Action</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </>
+    )
+  }
+
     return (
 <VStack>
   <Menu>
-    <MenuButton as={Button}   className={styles.botonIzquierdaSup}  >
+    <MenuButton as={Button}  className={styles.botonIzquierdaSup}>
       =
     </MenuButton>
       <MenuList>
@@ -127,7 +166,9 @@ const publicacionesAdmi = () => {
         <MenuItem>Mi perfil</MenuItem>
       </MenuList>
   </Menu>
-
+      <ChakraProvider>
+        <BasicUsage/>
+      </ChakraProvider>
       <Container>
         {mostrarPublicaciones()}
       </Container>
@@ -135,5 +176,6 @@ const publicacionesAdmi = () => {
 
     )
 }
+
 
 export default publicacionesAdmi

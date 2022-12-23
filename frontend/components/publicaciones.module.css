@@ -1,12 +1,3 @@
-.publicacion{
-    justify-content: center
-}
-
-.publicacionWrapper{
-    padding: 10px;
-    width: 75%;
-}
-
 .publicacionBarra{
     display: flex;
     align-items: center;
@@ -22,7 +13,8 @@
 .publicacionTitulo{
     font-size: 20;
     font-weight: bold;
-    margin-top: 2%;
+    margin-top: 1%;
+    justify-content: center;
 }
 
 .publicacionNombreUsuario{
@@ -36,16 +28,12 @@
     font-size: 14px;
 }
 
-.publicacionCentro{
-    margin: 20px;
-}
-
 .publicacionDescripcion{
     margin: 2px;
 }
 
 .postImage{
-    margin-top: 5px;
+    margin-top: 3px;
     width: 100%;
     max-height: 500px;
     justify-content: center;
@@ -60,11 +48,7 @@
     justify-content: space-between;
 }
 
-.likeIcono{
-    width: 24px;
-    height: 24px;
-    margin-top: 5px;
-}
+
 
 .botonIzquierdaSup{
     position: absolute;
@@ -84,7 +68,6 @@
     font-size: 15;
     color:darkgray;
     font-weight:bold;
-    margin-block-end: 20px;
 
 }
 
@@ -100,4 +83,30 @@
     justify-content: space-between;
     margin: 1px;
     border-radius: 5px;
+}
+
+.publicacionLikes{
+
+    border-width: 1px;
+    border-color: royalblue;
+    margin: 1px;
+    border-radius: 13px;
+    width:20%;
+    justify-content: right;
+}
+.likeIcono{
+    width: 24px;
+    height: 24px;
+}
+
+.mostrarComentarios{
+    border-width: 1px;
+    border-color: royalblue;
+    margin: 1px;
+    border-radius: 13px;
+    width:auto;
+}
+
+.flechaComentario{
+    justify-content: center;
 }
