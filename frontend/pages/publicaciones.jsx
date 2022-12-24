@@ -1,42 +1,23 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
-import { Badge, StarIcon, Textarea, Button, Container, Input, Stack, Text, HStack, Heading, FormControl, FormLabel, Select, VStack } from '@chakra-ui/react'
+import { React, useState, useEffect, useRef } from 'react'
+import { Badge, StarIcon, Textarea, Button, Container, Input, Stack, Text, HStack, Heading, FormControl, FormLabel, Select, VStack, Box, Image, button, Menu, MenuButton, MenuList, MenuItem, Modal } from '@chakra-ui/react'
 import Swal from 'sweetalert2'
 import { useRouter } from 'next/router'
 import axios from 'axios'
-import { Box, Image, button } from '@chakra-ui/react'
 import styles from '../components/publicaciones.module.css'
-import { Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react'
 import comprobarCookies from '../utils/comprobarCookies'
 import Cookies from "universal-cookie";
-import { FaAlignJustify, FaBlackTie } from 'react-icons/fa'
 import Router from "next/router";
-
+import { useDisclosure } from '@chakra-ui/react'
+import {
+	ModalOverlay,
+	ModalContent,
+	ModalHeader,
+	ModalFooter,
+	ModalBody,
+	ModalCloseButton,
+} from '@chakra-ui/react'
 
 const publicaciones = () => {
-
-	const cookies = new Cookies;
-	const comprobarCookies = () => {
-		const cookies = new Cookies;
-		if (!cookies.get("id")) {
-			Router.push("/login");
-		}
-		else if (cookies.get("id") && window.location.pathname == "/login") {
-			Router.push("../");
-		}
-	}
-
-
-	const [publicaciones, setPublicaciones] = useState([])
-	const [id, setId] = useState()
-	const [nombre, setNombre] = useState()
-
-
-	const getPublicaciones = async () => {
-		const response = await axios.get(`${process.env.API_URL}/publicaciones`)
-		setPublicaciones(response.data)
-	}
-
 
 	useEffect(() => {
 		comprobarCookies();
@@ -45,6 +26,128 @@ const publicaciones = () => {
 		setNombre(cookies.get("nombre"))
 	}, [])
 
+	const cookies = new Cookies;
+	const ref = useRef(null);
+
+	const [publicaciones, setPublicaciones] = useState([])
+	const [id, setId] = useState()
+	const [nombre, setNombre] = useState()
+	const [comentariosPublicacion, setcomentariosPublicacion] = useState([])
+	const [tituloModal, setTituloModal] = useState()
+	const [idPublicacion, setIdPublicacion] = useState()
+	const [comentario, setComentario] = useState()
+	const { isOpen, onOpen, onClose } = useDisclosure()
+	const [mensaje, setMensaje] = useState()
+
+	const handleInput = (e) => {
+		setComentario(e.target.value)
+	};
+	const mostrarPublicaciones = () => {
+		return publicaciones.map(publicaciones => {
+
+			return (
+				<Box borderWidth='2px' borderRadius='lg' my={6} color='Blue' border='1px'>
+					<HStack className={styles.publicacionLabelHorizontal}>
+						<Box className={styles.nombreUsuario}>{publicaciones.nombreUsuario}</Box>
+						<Button onClick={() => { darFavorito(publicaciones._id) }}><img src="star.png" /></Button>
+						<Button  >:</Button>
+					</HStack>
+					<Box className={styles.publicacionTitulo}>{publicaciones.titulo}</Box>
+					<Image src='https://bit.ly/dan-abramov' className={styles.postImage} />
+					<Box p='2' key={publicaciones._id} >
+						<HStack className={styles.publicacionLabelHorizontal}>
+							<Box p='1'>#{publicaciones.etiqueta}</Box>
+							<Box className={styles.publicacionFecha}>{publicaciones.fechaCreacion}</Box>
+						</HStack>
+						<HStack className={styles.publicacionLabelHorizontal}></HStack>
+						<Box >{publicaciones.descripcion}</Box>
+						<HStack className={styles.publicacionLabelHorizontal}>
+							<HStack className={styles.publicacionLikes}>
+								<Box
+									as='span'
+									color='gray.600'
+									fontSize='sm'
+									marginLeft='7px'>
+									{publicaciones.cantLikes} likes</Box>
+								<Button onClick={() => { darLike(publicaciones._id) }}><img src="like.png" /></Button>
+							</HStack>
+						</HStack>
+
+						<HStack className={styles.publicacionBotonComentarios}>
+						</HStack>
+						<VStack className={styles.mostrarComentarios}>
+							<Button onClick={() => { cargarComentarios(publicaciones._id) }}>
+								Comentarios<Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="xl">
+									<ModalOverlay />
+									<ModalContent>
+										<ModalHeader>{tituloModal}</ModalHeader>
+										<ModalCloseButton />
+										<ModalBody>
+											<Box>
+												<FormControl>
+													<FormLabel fontSize={20} my={2}>Nuevo comentario</FormLabel>
+													<Input placeholder="Ingrese comentario" type={"text"} my={3} onChange={handleInput} name="contenido" />
+													<Button colorScheme="red" size="md" type="submit" my={2} onClick={() => { nuevoComentario(idPublicacion, comentario) }}>Comentar</Button>
+												</FormControl>
+												{mensaje}
+											</Box>
+											<Box>
+												{comentariosPublicacion.map((comentario) => {
+													return (
+														<Container borderWidth='2px' my={2}>
+															<Text fontSize={20} my={2}>Fecha: {comentario.fecha}</Text>
+															<Text fontSize={20} my={2}>Comentario: {comentario.contenido}</Text>
+														</Container>
+													)
+												}
+												)}
+											</Box>
+										</ModalBody>
+										<ModalFooter>
+											<Button colorScheme='blue' mr={3} onClick={onClose}>
+												Cerrar
+											</Button>
+										</ModalFooter>
+									</ModalContent>
+								</Modal>
+								<  img src="flecha.png" />
+							</Button>
+						</VStack>
+
+					</Box>
+				</Box>
+			)
+		})
+	}
+
+	const modalMsj = (mensaje) => {
+		mensaje = "blabalbalba"
+		return (
+			<>
+				<Modal isOpen={isOpen} onClose={onClose}>
+					<ModalOverlay />
+					<ModalContent>
+
+						<ModalCloseButton />
+						<ModalBody>
+							{mensaje}
+						</ModalBody>
+
+						<ModalFooter>
+							<Button colorScheme='blue' mr={3} onClick={onClose}>
+								Close
+							</Button>
+						</ModalFooter>
+					</ModalContent>
+				</Modal>
+			</>
+		)
+	}
+	const getPublicaciones = async () => {
+		const response = await axios.get(`${process.env.API_URL}/publicaciones`)
+		setPublicaciones(response.data)
+	}
+
 	const darLike = async (idPublicacion) => {
 		const json = JSON.stringify({ idPublicacion: idPublicacion, idUsuario: id })
 		const response = await axios.post(`${process.env.API_URL}/like`, json, {
@@ -52,11 +155,11 @@ const publicaciones = () => {
 				'Content-Type': 'application/json'
 			}
 		})
-		
-		alert(response.data.message, null)
-		}
 
-		
+		alert(response.data.message, null)
+	}
+
+
 	const darFavorito = async (idPublicacion) => {
 		const json = JSON.stringify({ idPublicacion: idPublicacion, idUsuario: id })
 		const response = await axios.put(`${process.env.API_URL}/favorito/put/createFavorito`, json, {
@@ -67,92 +170,33 @@ const publicaciones = () => {
 		alert(response.data.message, null)
 	}
 
-	const mostrarPublicaciones = () => {
-		return publicaciones.map(publicaciones => {
-
-			return (
-				<Box borderWidth='2px' borderRadius='lg' my={6} color='Blue' border='1px'>
-					<HStack className={styles.publicacionLabelHorizontal}>
-					<Box className={styles.nombreUsuario}>{publicaciones.nombreUsuario}</Box>
-					<button onClick={() => {darFavorito(publicaciones._id)}}><img src ="star.png" /></button>
-					<Button  >:</Button>
-					</HStack>
-					<Box className={styles.publicacionTitulo}>
-							{publicaciones.titulo}</Box>
-							
-					<Image src='https://bit.ly/dan-abramov' className={styles.postImage} />
-					<Box p='2' key={publicaciones._id} >
-					<HStack className={styles.publicacionLabelHorizontal}>
-					<Box p='1'>#{publicaciones.etiqueta}</Box>
-					<Box className={styles.publicacionFecha}>
-						{publicaciones.fechaCreacion}</Box>
-					</HStack>
-						<HStack className={styles.publicacionLabelHorizontal}>
-							
-						</HStack>
-						<Box >{publicaciones.descripcion}</Box>
-						
-						
-						<HStack className={styles.publicacionLabelHorizontal}>
-							<VStack className={styles.mostrarComentarios}>
-							<button  onClick={() => { cargarComentarios(publicaciones._id) }}>
-							Mostrar Publicacion
-							<  img src="flecha.png"/>
-						</button>
-							</VStack>
-						
-						<HStack className={styles.publicacionLikes}>
-						<Box
-							as='span'
-							color='gray.600'
-							fontSize='sm'
-							marginLeft='7px'>
-							{publicaciones.cantLikes} likes</Box>
-						<button  onClick= {() => {darLike(publicaciones._id)}}><img src ="like.png" /></button>
-						</HStack>
-						
-						</HStack>
-						
-						
-						</Box>
-						<HStack className={styles.publicacionBotonComentarios}>
-						<button onClick={() => { nuevoComentario(publicaciones._id) }}>
-							Nuevo comentario
-						</button>
-						</HStack>
-				</Box>
-			)
+	const cargarComentarios = async (idPublicacion) => {
+		setTituloModal("Comentarios")
+		setMensaje("")
+		setIdPublicacion(idPublicacion)
+		const response = await axios.get(`${process.env.API_URL}/comentario/getFromPublicacion/${idPublicacion}`).then((res) => {
+			setcomentariosPublicacion(res.data)
+			onOpen()
 		})
 	}
 
-	const cargarComentarios = async (idPublicacion) => {
-		const response = await axios.get(`${process.env.API_URL}/comentario/getFromPublicacion/${idPublicacion}`)
-		console.log(response.data)
-	}
-
-	const nuevoComentario = async (idPublicacion) => {
-		var comentario = prompt("Comentario", '');
+	const nuevoComentario = async (idPublicacion, comentario) => {
 		const json = JSON.stringify({ idPublicacion: idPublicacion, contenido: comentario, idUsuario: id })
-		if (comentario) {
+		if (comentario && comentario.length > 0) {
 			const response = await axios.post(`${process.env.API_URL}/comentario`, json, {
 				headers: {
 					'Content-Type': 'application/json'
 				}
 			}).then(() => {
-				alert("Comentario agregado")
+				setMensaje('Comentario creado')
+			}).catch((err) => {
+				setMensaje('Error al crear el comentario')
 			})
-
+		} else {
+			setMensaje('Debe ingresar un comentario')
 		}
+		return modalMsj(mensaje, isOpen, onclose)
 	}
-
-	const [values, setValues] = useState({
-		idUsuario: '',
-		nombreUsuario: '',
-		titulo: '',
-		descripcion: '',
-		etiqueta: '',
-		diasVisible: ''
-	})
 
 	const [tag, setTag] = useState({
 		etiqueta: ''
@@ -196,12 +240,13 @@ const publicaciones = () => {
 	}
 
 
+
 	const onChange = (e) => {
 		setValues({
 			...values,
 			[e.target.name]: e.target.value,
-			idUsuario:id,
-			nombreUsuario:nombre
+			idUsuario: id,
+			nombreUsuario: nombre
 
 		})
 		// sirve para que los atributos del useState sean inicializados desde el placeholder
@@ -212,7 +257,7 @@ const publicaciones = () => {
 			...tag,
 			[e.target.name]: e.target.value
 		})
-		
+
 		// sirve para que los atributos del useState sean inicializados desde el placeholder
 	}
 
@@ -249,7 +294,7 @@ const publicaciones = () => {
 		Router.push("/crearPublicacion")
 	}
 
-	const pushVerMisPublicaciones = () =>{
+	const pushVerMisPublicaciones = () => {
 		Router.push("/verMisPublicaciones")
 	}
 	return (
@@ -261,7 +306,7 @@ const publicaciones = () => {
 				</MenuButton>
 				<MenuList>
 					<MenuItem onClick={pushVerMisPublicaciones}>Ver mis publicaciones</MenuItem>
-					<MenuItem  onClick={pushCrearPublicacion}>Crear Publicacion</MenuItem>
+					<MenuItem onClick={pushCrearPublicacion}>Crear Publicacion</MenuItem>
 					<MenuItem >Mi perfil</MenuItem>
 					<MenuItem></MenuItem>
 				</MenuList>
@@ -281,6 +326,9 @@ const publicaciones = () => {
 			<Container>
 				{mostrarPublicaciones()}
 			</Container>
+
+
+
 		</VStack>
 	)
 
