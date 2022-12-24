@@ -16,7 +16,6 @@ import {
 	ModalBody,
 	ModalCloseButton,
 } from '@chakra-ui/react'
-
 const publicaciones = () => {
 
 	useEffect(() => {
@@ -27,7 +26,6 @@ const publicaciones = () => {
 	}, [])
 
 	const cookies = new Cookies;
-	const ref = useRef(null);
 
 	const [publicaciones, setPublicaciones] = useState([])
 	const [id, setId] = useState()
@@ -38,10 +36,13 @@ const publicaciones = () => {
 	const [comentario, setComentario] = useState()
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const [mensaje, setMensaje] = useState()
+	const [mensajeSwall, setMensajeSwall] = useState()
 
 	const handleInput = (e) => {
 		setComentario(e.target.value)
 	};
+
+
 	const mostrarPublicaciones = () => {
 		return publicaciones.map(publicaciones => {
 
@@ -49,7 +50,9 @@ const publicaciones = () => {
 				<Box borderWidth='2px' borderRadius='lg' my={6} color='Blue' border='1px'>
 					<HStack className={styles.publicacionLabelHorizontal}>
 						<Box className={styles.nombreUsuario}>{publicaciones.nombreUsuario}</Box>
-						<Button onClick={() => { darFavorito(publicaciones._id) }}><img src="star.png" /></Button>
+
+						{<Button onClick={() => { darFavorito(publicaciones._id) }}><img src="star.png" /></Button>}
+
 						<Button  >:</Button>
 					</HStack>
 					<Box className={styles.publicacionTitulo}>{publicaciones.titulo}</Box>
@@ -69,7 +72,9 @@ const publicaciones = () => {
 									fontSize='sm'
 									marginLeft='7px'>
 									{publicaciones.cantLikes} likes</Box>
+
 								<Button onClick={() => { darLike(publicaciones._id) }}><img src="like.png" /></Button>
+
 							</HStack>
 						</HStack>
 
@@ -77,7 +82,9 @@ const publicaciones = () => {
 						</HStack>
 						<VStack className={styles.mostrarComentarios}>
 							<Button onClick={() => { cargarComentarios(publicaciones._id) }}>
-								Comentarios<Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="xl">
+								Comentarios
+								<  img src="flecha.png" />
+								<Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="xl">
 									<ModalOverlay />
 									<ModalContent>
 										<ModalHeader>{tituloModal}</ModalHeader>
@@ -87,9 +94,8 @@ const publicaciones = () => {
 												<FormControl>
 													<FormLabel fontSize={20} my={2}>Nuevo comentario</FormLabel>
 													<Input placeholder="Ingrese comentario" type={"text"} my={3} onChange={handleInput} name="contenido" />
-													<Button colorScheme="red" size="md" type="submit" my={2} onClick={() => { nuevoComentario(idPublicacion, comentario) }}>Comentar</Button>
+													<Button colorScheme="red" size="md" type="submit" my={2} onClick={() => {nuevoComentario(idPublicacion, comentario)}}>Comentar</Button>
 												</FormControl>
-												{mensaje}
 											</Box>
 											<Box>
 												{comentariosPublicacion.map((comentario) => {
@@ -110,7 +116,6 @@ const publicaciones = () => {
 										</ModalFooter>
 									</ModalContent>
 								</Modal>
-								<  img src="flecha.png" />
 							</Button>
 						</VStack>
 
@@ -120,29 +125,7 @@ const publicaciones = () => {
 		})
 	}
 
-	const modalMsj = (mensaje) => {
-		mensaje = "blabalbalba"
-		return (
-			<>
-				<Modal isOpen={isOpen} onClose={onClose}>
-					<ModalOverlay />
-					<ModalContent>
 
-						<ModalCloseButton />
-						<ModalBody>
-							{mensaje}
-						</ModalBody>
-
-						<ModalFooter>
-							<Button colorScheme='blue' mr={3} onClick={onClose}>
-								Close
-							</Button>
-						</ModalFooter>
-					</ModalContent>
-				</Modal>
-			</>
-		)
-	}
 	const getPublicaciones = async () => {
 		const response = await axios.get(`${process.env.API_URL}/publicaciones`)
 		setPublicaciones(response.data)
@@ -154,9 +137,19 @@ const publicaciones = () => {
 			headers: {
 				'Content-Type': 'application/json'
 			}
+		}).then((res) => {
+			Swal.fire({
+				title: "Exito",
+				html: res.data.message,
+				icon: 'success'
+			})
+		}).catch((err) => {
+			Swal.fire({
+				title: "Error",
+				html: err.response.data.message,
+				icon: 'error'
+			})
 		})
-
-		alert(response.data.message, null)
 	}
 
 
@@ -166,13 +159,24 @@ const publicaciones = () => {
 			headers: {
 				'Content-Type': 'application/json'
 			}
+		}).then((res) => {
+
+			Swal.fire({
+				title: "Exito",
+				html: res.data.message,
+				icon: 'success'
+			})
+		}).catch((err) => {
+			Swal.fire({
+				title: "Error",
+				html: err.response.data.message,
+				icon: 'error'
+			})
 		})
-		alert(response.data.message, null)
 	}
 
 	const cargarComentarios = async (idPublicacion) => {
 		setTituloModal("Comentarios")
-		setMensaje("")
 		setIdPublicacion(idPublicacion)
 		const response = await axios.get(`${process.env.API_URL}/comentario/getFromPublicacion/${idPublicacion}`).then((res) => {
 			setcomentariosPublicacion(res.data)
@@ -182,20 +186,31 @@ const publicaciones = () => {
 
 	const nuevoComentario = async (idPublicacion, comentario) => {
 		const json = JSON.stringify({ idPublicacion: idPublicacion, contenido: comentario, idUsuario: id })
-		if (comentario && comentario.length > 0) {
+		if (comentario && comentario.length !== 0) {
 			const response = await axios.post(`${process.env.API_URL}/comentario`, json, {
 				headers: {
 					'Content-Type': 'application/json'
 				}
-			}).then(() => {
-				setMensaje('Comentario creado')
+			}).then((res) => {
+				Swal.fire({
+					title: "Exito",
+					html: res.data.message,
+					icon: 'success'
+				})
 			}).catch((err) => {
-				setMensaje('Error al crear el comentario')
+				Swal.fire({
+					title: "Error",
+					html: err.response.data.message,
+					icon: 'error'
+				})
 			})
 		} else {
-			setMensaje('Debe ingresar un comentario')
+			Swal.fire({
+				title: "Alerta",
+				html: "El comentario no puede estar vacio",
+				icon: 'warning'
+			})
 		}
-		return modalMsj(mensaje, isOpen, onclose)
 	}
 
 	const [tag, setTag] = useState({
