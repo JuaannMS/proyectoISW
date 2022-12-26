@@ -88,14 +88,7 @@ const publicacionesAdmi = () => {
         <Box color='red'>Estado: {publicacion.estado}</Box>
         <Image src= 'https://bit.ly/dan-abramov' className={styles.postImage}/>
 				<Box p='2' key={publicacion._id} >
-          <Box
-              color='gray.500'
-              fontWeight='semibold'
-              letterSpacing='wide'
-              fontSize='xs'
-              textTransform='uppercase'
-              ml='200'>
-                {publicacion.fechaCreacion}</Box>
+                
 					        <Box
                   mt='1'
                   fontWeight='semibold'
@@ -103,7 +96,8 @@ const publicacionesAdmi = () => {
                   lineHeight='tight'
                   noOfLines='1'>
                   ID Publicacion: {publicacion._id}</Box>
-                  <Box>Usuario Nombre: {publicacion.nombreUsuario}</Box>
+                  <Box>Nombre Usuario: {publicacion.nombreUsuario}</Box>
+                  <Box>Fecha creacion:{publicacion.fechaCreacion}</Box>
                   <Box>Titulo: {publicacion.titulo}</Box>
 					        <Box>Descripcion: {publicacion.descripcion}</Box>
                   <Box>Etiqueta: {publicacion.etiqueta}</Box>
@@ -126,32 +120,7 @@ const publicacionesAdmi = () => {
 		})
 	}
 
-  function BasicUsage() {
-    const { isOpen, onOpen, onClose } = useDisclosure()
-    return (
-      <>
-        <Button onClick={onOpen}>Open Modal</Button>
-  
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Modal Title</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Lorem count={2} />
-            </ModalBody>
-  
-            <ModalFooter>
-              <Button colorScheme='blue' mr={3} onClick={onClose}>
-                Close
-              </Button>
-              <Button variant='ghost'>Secondary Action</Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      </>
-    )
-  }
+
 
     return (
 <VStack>
@@ -166,9 +135,7 @@ const publicacionesAdmi = () => {
         <MenuItem>Mi perfil</MenuItem>
       </MenuList>
   </Menu>
-      <ChakraProvider>
-        <BasicUsage/>
-      </ChakraProvider>
+      
       <Container>
         {mostrarPublicaciones()}
       </Container>

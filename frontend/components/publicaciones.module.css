@@ -5,23 +5,13 @@
 }
 
 .publicacionLabelHorizontal{
-
     justify-content: space-between;
 
 }
+.etiquetayfecha{
+    margin-top: -8px;
+    justify-content: space-between;
 
-.publicacionTitulo{
-    font-size: 20;
-    font-weight: bold;
-    margin-top: 1%;
-    justify-content: center;
-}
-
-.publicacionNombreUsuario{
-    font-size: 20;
-    font-weight: 500;
-    left:0%;
-    margin: 2px;
 }
 
 .publicacionFecha{
@@ -33,7 +23,7 @@
 }
 
 .postImage{
-    margin-top: 3px;
+    margin-top: 0px;
     width: 100%;
     max-height: 500px;
     justify-content: center;
@@ -55,17 +45,29 @@
     right: 49%;
 }
 
-.nombreUsuario{
 
-    font-size: 18px;
+.publicacionTitulo{
+    font-size: 23px;
+    font-weight: bold;
+    margin-top: 0%;
+    text-align: center;
+}
+
+.nombreUsuario{
+    font-size: 17px;
     font-family: arial;
     font-weight: bold;
     margin-left: 5px;
 }
 
+.publicacionEtiqueta{
+    
+    font-weight:bold;
+}
+
 .publicacionFecha{
 
-    font-size: 15;
+    
     color:darkgray;
     font-weight:bold;
 

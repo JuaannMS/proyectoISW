@@ -41,15 +41,18 @@ import Router from "next/router";
 import { useDisclosure } from "@chakra-ui/react";
 
 const publicaciones = () => {
+
   const cookies = new Cookies();
-  const [publicaciones, setPublicaciones] = useState([]);
   const [id, setId] = useState();
+  const [publicaciones, setPublicaciones] = useState([]);
   const [nombre, setNombre] = useState();
   const [comentariosPublicacion, setcomentariosPublicacion] = useState([]);
   const [tituloModal, setTituloModal] = useState();
   const [idPublicacion, setIdPublicacion] = useState();
   const [comentario, setComentario] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+
 
   useEffect(() => {
     comprobarCookies();
@@ -72,7 +75,7 @@ const publicaciones = () => {
                 {publicaciones.nombreUsuario}
               </Box>
 
-              <Button>:</Button>
+              <Button size='sm'>Reportar</Button>
             </HStack>
             <Box className={styles.publicacionTitulo}>
               {publicaciones.titulo}
@@ -83,13 +86,10 @@ const publicaciones = () => {
               alt="post image"
             />
             <Box p="2" key={publicaciones._id}>
-              <HStack className={styles.publicacionLabelHorizontal}>
-                <Box p="1">#{publicaciones.etiqueta}</Box>
-                <Box className={styles.publicacionFecha}>
-                  {publicaciones.fechaCreacion}
-                </Box>
+              <HStack className={styles.etiquetayfecha}>
+                <Box className={styles.publicacionEtiqueta}>#{publicaciones.etiqueta}</Box>
+                <Box className={styles.publicacionFecha}>{publicaciones.fechaCreacion}</Box>
               </HStack>
-
               <HStack className={styles.publicacionLabelHorizontal}></HStack>
               <Box>{publicaciones.descripcion}</Box>
               <HStack className={styles.publicacionLabelHorizontal}>
@@ -306,41 +306,7 @@ const publicaciones = () => {
 
   const router = useRouter();
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    console.log(values);
-    try {
-      const response = await axios.post(
-        `${process.env.API_URL}/publicacion`,
-        values
-      );
-      console.log(response);
-      if (response.status === 201) {
-        Swal.fire({
-          title: "Publicacion creada",
-          text: "La publicacion se ha creado correctamente",
-          icon: "success",
-          confirmButtonText: "Ok",
-        }).then((result) => {
-          router.push("/publicaciones"); //refrescar pagina
-        });
-      } else {
-        Swal.fire({
-          title: "Error",
-          text: "Ha ocurrido un error",
-          icon: "error",
-          confirmButtonText: "Ok",
-        });
-      }
-    } catch (err) {
-      Swal.fire({
-        title: "Error",
-        text: "Ha ocurrido un error",
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
-    }
-  };
+
 
   const onChange = (e) => {
     setValues({
@@ -370,7 +336,7 @@ const publicaciones = () => {
       );
       //console.log(response.status)
       if (response.status === 200) {
-        router.push(`/publicacionesEtiqueta/${e.target.value}`);
+        //router.push(`/publicacionesEtiqueta/${e.target.value}`);
       } else {
         Swal.fire({
           title: "Error",
@@ -397,7 +363,10 @@ const publicaciones = () => {
     Router.push("/verMisPublicaciones");
   };
   return (
+
+    
     <VStack>
+      
       <Menu>
         <MenuButton as={Button} right="49%">
           =

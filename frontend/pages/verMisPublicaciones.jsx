@@ -10,8 +10,23 @@ import { Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react'
 import comprobarCookies from '../utils/comprobarCookies'
 import Cookies from "universal-cookie";
 import Router from "next/router";
+import { useDisclosure } from "@chakra-ui/react";
+import {Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalCloseButton,Divider} from "@chakra-ui/react";
 
 const verMisPublicaciones = () =>{
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const cookies = new Cookies();
+	const [idU, setIdU] = useState();
+	const [values, setValues] = useState()
+	const router = useRouter();
+
+	useEffect(() => {
+		comprobarCookies();
+		setIdU(cookies.get("id"));
+		getPublicaciones();
+	}, [])
+
+	console.log(idU)
 
     const [publicaciones, setPublicaciones] = useState([])
 
@@ -20,16 +35,19 @@ const verMisPublicaciones = () =>{
 		setPublicaciones(response.data)
 	}
 
-    useEffect(() => {
-		getPublicaciones()
-	}, [])
+    const onChange = (e) => {
+		setValues({
+			...values,
+			[e.target.name]: e.target.value,
+		})
+	}
 
     const onEliminar = async (idPublicacion) => {
-        console.log(idPublicacion)
+        //console.log(idPublicacion)
               //const response = await axios.delete(`${process.env.API_URL}/publicacion/`)
         try {
           const response = await axios.delete(`${process.env.API_URL}/publicacion/delete/${idPublicacion}`) //values tiene que tener idPublicacion para eliminar
-          console.log(response)
+          //console.log(response)
           if (response.status === 200) {
             Swal.fire({
               title: 'Publicacion eliminada',
@@ -37,7 +55,7 @@ const verMisPublicaciones = () =>{
               icon: 'success',
               confirmButtonText: 'Ok'
             }).then((result) => {
-              //router.push('/publicaciones')
+              router.push('/verMisPublicaciones')
             })
     
           } else {
@@ -58,6 +76,40 @@ const verMisPublicaciones = () =>{
         }
       }
 
+	  const onGuardar = async (idPublicacion,e) => {
+	//	e.preventDefault()
+		console.log(values)
+		try {
+			const response = await axios.put(`${process.env.API_URL}/publicacion/update/${idPublicacion}`, values)
+			console.log(response)
+			if (response.status === 200) {
+				Swal.fire({
+					title: 'Publicacion modificada',
+					text: 'La publicacion se ha modificado correctamente',
+					icon: 'success',
+					confirmButtonText: 'Ok'
+				}).then((result) => {
+					router.push('/verMisPublicaciones') //refrescar pagina
+				})
+
+			} else {
+				Swal.fire({
+					title: 'Error',
+					text: 'Ha ocurrido un error',
+					icon: 'error',
+					confirmButtonText: 'Ok'
+				})
+			}
+		} catch (err) {
+			Swal.fire({
+				title: 'Error',
+				text: 'Ha ocurrido un error',
+				icon: 'error',
+				confirmButtonText: 'Ok'
+			})
+		}
+	}
+
 	const mostrarPublicaciones = () => {
 		return publicaciones.map(publicacion => {
 
@@ -65,7 +117,58 @@ const verMisPublicaciones = () =>{
 				<Box borderWidth='2px' borderRadius='lg' my={6} color='Blue' border='1px'>
 					<HStack className={styles.publicacionLabelHorizontal}>
 					<Box className={styles.nombreUsuario}>{publicacion.nombreUsuario}</Box>
-					<Button>Editar</Button>
+					<Button onClick={onOpen}>Editar</Button>
+					<Modal
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    scrollBehavior="inside"
+                  	>
+					<ModalOverlay />
+					<ModalContent>
+						<HStack className={styles.publicacionLabelHorizontal}>
+							<ModalHeader>
+                        	Editar_Publicacion
+                      		</ModalHeader>
+							
+							<ModalFooter>
+                        	<Button colorScheme="red" onClick={onClose}>
+                          	X
+                        	</Button>
+                      </ModalFooter>
+						
+						</HStack>
+					
+						  
+					<FormControl isRequired>
+						<FormLabel>Titulo</FormLabel>
+						<Input placeholder="Ingrese un titulo" type={"text"} onChange={onChange} name={"titulo"} />
+					</FormControl>
+
+					<FormControl isRequired>
+						<FormLabel>Descripcion</FormLabel>
+						<Textarea placeholder="Ingrese una descripcion" type={"text"} onChange={onChange} name="descripcion" />
+					</FormControl>
+
+					<FormControl>
+						<FormLabel>Etiqueta</FormLabel>
+						<Input placeholder="Ingrese una etiqueta" type={"text"} onChange={onChange} name="etiqueta" />
+					</FormControl>
+					<Button
+                              colorScheme="blue"
+                              size="md"
+                              type="submit"
+                              my={2}
+                              onClick={() => {
+                                onGuardar(publicacion._id)
+                                  onClose();
+                              }}
+                            >
+                              Guardar
+                            </Button>
+
+					
+					</ModalContent>
+					</Modal>
                     <Button onClick={() => onEliminar(publicacion._id)}>Eliminar </Button>
 					</HStack>
 					<HStack className={styles.publicacionLabelHorizontal}>
@@ -85,11 +188,8 @@ const verMisPublicaciones = () =>{
 							as='span'
 							color='gray.600'
 							fontSize='sm'>
-							{publicaciones.cantLikes} likes</Box>
-						<HStack>
-						<button onClick= {() => {darLike(publicacion._id)}}><img src ="like.png" /></button>
-						<button onClick={() => {darFavorito(publicacion._id)}}><img src ="star.png" /></button>
-						</HStack>
+							{publicacion.cantLikes} likes</Box>
+						
 						</HStack>
 						</Box>
 						<HStack className={styles.publicacionBotonComentarios}>
