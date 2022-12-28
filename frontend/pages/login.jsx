@@ -16,7 +16,6 @@ import {
 import axios from "axios";
 import Router from "next/router";
 import Cookies from "universal-cookie";
-import comprobarCookies from "../utils/comprobarCookies";
 import Swal from "sweetalert2";
 
 const CFaUserAlt = chakra(FaUserAlt);
@@ -28,11 +27,6 @@ const Login = () => {
 
     const cookies = new Cookies;
     const [rutUsuario, setRutUsuario] = useState();
-
-    useEffect(() => {
-        comprobarCookies();
-    }, []);
-
 
     const handleInput = (e) => {
         setRutUsuario(e.target.value)
@@ -48,7 +42,6 @@ const Login = () => {
                         html: "Ingresando...",
                         icon: "success",
                       });
-                    //console.log("Usuario encontrado");
                     cookies.set("id", res.data._id, { path: "/" });
                     cookies.set("rut", res.data.rut, { path: "/" });
                     cookies.set("nombre", res.data.nombre, { path: "/" });
