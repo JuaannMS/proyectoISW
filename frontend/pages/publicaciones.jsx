@@ -1,36 +1,10 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { React, useState, useEffect, useRef } from "react";
-import {
-  Badge,
-  StarIcon,
-  Textarea,
-  Button,
-  Container,
-  Input,
-  Stack,
-  Text,
-  HStack,
-  Heading,
-  FormControl,
-  FormLabel,
-  Select,
-  VStack,
-  Box,
-  Image,
-  button,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Divider,
+import {Button,Container,Input,Stack,Text,HStack,Heading,FormControl,FormLabel,Select,VStack,Box,Image,button,
+Menu,MenuButton,MenuList,MenuItem,Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalCloseButton,Divider,
 } from "@chakra-ui/react";
+import {Drawer,DrawerBody,DrawerFooter,DrawerHeader,DrawerOverlay,DrawerContent,DrawerCloseButton,
+} from '@chakra-ui/react'
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -64,6 +38,8 @@ const publicaciones = () => {
   const handleInput = (e) => {
     setComentario(e.target.value);
   };
+
+  const [estadoModal, setEstadoModal] = useState(false);
 
   const mostrarPublicaciones = () => {
     return publicaciones.map((publicaciones) => {
@@ -124,9 +100,11 @@ const publicaciones = () => {
                     onClose={onClose}
                     scrollBehavior="inside"
                     size="full"
+                    status={estadoModal}
+                    onChange={setEstadoModal}
                   >
-                    <ModalOverlay />
-                    <ModalContent>
+                    <ModalOverlay>
+                      <ModalContent>
                       <ModalHeader>
                         <Text>Comentarios</Text>
                       </ModalHeader>
@@ -162,11 +140,12 @@ const publicaciones = () => {
                         {comentariosPublicacion}
                       </ModalBody>
                       <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={onClose}>
+                        <Button colorScheme="blue" mr={3} onClick={onClose} >
                           Cerrar
                         </Button>
                       </ModalFooter>
                     </ModalContent>
+                    </ModalOverlay>
                   </Modal>
                 </Button>
               </VStack>
@@ -179,7 +158,9 @@ const publicaciones = () => {
 
   const getPublicaciones = async () => {
     const response = await axios.get(`${process.env.API_URL}/publicaciones`);
+    console.log(response.data)
     setPublicaciones(response.data);
+
   };
 
   const darLike = async (idPublicacion) => {
@@ -307,7 +288,6 @@ const publicaciones = () => {
   const router = useRouter();
 
 
-
   const onChange = (e) => {
     setValues({
       ...values,
@@ -318,6 +298,7 @@ const publicaciones = () => {
     // sirve para que los atributos del useState sean inicializados desde el placeholder
   };
 
+
   const onEtiqueta = (e) => {
     setTag({
       ...tag,
@@ -325,7 +306,7 @@ const publicaciones = () => {
     });
 
     // sirve para que los atributos del useState sean inicializados desde el placeholder
-  };
+  }
 
   const busquedaEtiqueta = async (e) => {
     e.preventDefault();
@@ -334,16 +315,9 @@ const publicaciones = () => {
       const response = await axios.get(
         `${process.env.API_URL}/publicacionesx/${tag.etiqueta}`
       );
-      //console.log(response.status)
+     
       if (response.status === 200) {
-        //router.push(`/publicacionesEtiqueta/${e.target.value}`);
-      } else {
-        Swal.fire({
-          title: "Error",
-          text: "Ha ocurrido un error",
-          icon: "error",
-          confirmButtonText: "Ok",
-        });
+        router.push(`/publicaciones/etiqueta/${tag.etiqueta}`)
       }
     } catch (err) {
       Swal.fire({
@@ -353,18 +327,19 @@ const publicaciones = () => {
         confirmButtonText: "Ok",
       });
     }
-  };
+
+  }
 
   const pushCrearPublicacion = () => {
-    Router.push("/crearPublicacion");
-  };
+    Router.push("/crearPublicacion")
+  }
 
   const pushVerMisPublicaciones = () => {
-    Router.push("/verMisPublicaciones");
-  };
+    router.push(`/publicaciones/personales/${id}`)
+  }
+
   return (
 
-    
     <VStack>
       
       <Menu>
@@ -404,6 +379,7 @@ const publicaciones = () => {
             >
               Buscar
             </Button>
+
           </HStack>
         </FormControl>
       </Container>

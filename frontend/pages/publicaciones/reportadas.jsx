@@ -5,9 +5,9 @@ import Swal from 'sweetalert2'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import { Box, Image, button } from '@chakra-ui/react'
-import styles from '../components/publicaciones.module.css'
+import styles from '../../components/publicaciones.module.css'
 import { Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react'
-import comprobarCookies from '../utils/comprobarCookies'
+import comprobarCookies from '../../utils/comprobarCookies'
 import Cookies from "universal-cookie";
 import { FaBlackTie } from 'react-icons/fa'
 import Router from "next/router";
