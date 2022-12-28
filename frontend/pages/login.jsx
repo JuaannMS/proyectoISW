@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import {
@@ -18,6 +17,7 @@ import axios from "axios";
 import Router from "next/router";
 import Cookies from "universal-cookie";
 import comprobarCookies from "../utils/comprobarCookies";
+import Swal from "sweetalert2";
 
 const CFaUserAlt = chakra(FaUserAlt);
 
@@ -40,28 +40,40 @@ const Login = () => {
 
 
     const verificarRut = async (e) => {
-
-        const response = await axios.get(`${process.env.API_URL}/usuario/usr/${rutUsuario}`).then((res) => {
-            console.log(res.data.rut);
-            if (res.data != null) {
-                //console.log("Usuario encontrado");
-                cookies.set("id", res.data._id, { path: "/" });
-                cookies.set("rut", res.data.rut, { path: "/" });
-                cookies.set("nombre", res.data.nombre, { path: "/" });
-                cookies.set("correo", res.data.correo, { path: "/" });
-                cookies.set("telefono", res.data.telefono, { path: "/" });
-                cookies.set("direccion", res.data.direccion, { path: "/" });
-                cookies.set("fechaCumpleanio", res.data.fechaCumpleanio, { path: "/" });
-                cookies.set("fechaIngreso", res.data.fechaIngreso, { path: "/" });
-                cookies.set("rol", res.data.rol, { path: "/" });
-                Router.push("../");
-            } else {
-                alert("Usuario no encontrado");
-            }
-        }).catch((err) => {
-            console.log(err);
-        });
-
+        if (rutUsuario) {
+            const response = await axios.get(`${process.env.API_URL}/usuario/usr/${rutUsuario}`).then((res) => {
+                if (res.data) {
+                    Swal.fire({
+                        title: "Exito",
+                        html: "Ingresando...",
+                        icon: "success",
+                      });
+                    //console.log("Usuario encontrado");
+                    cookies.set("id", res.data._id, { path: "/" });
+                    cookies.set("rut", res.data.rut, { path: "/" });
+                    cookies.set("nombre", res.data.nombre, { path: "/" });
+                    cookies.set("correo", res.data.correo, { path: "/" });
+                    cookies.set("telefono", res.data.telefono, { path: "/" });
+                    cookies.set("direccion", res.data.direccion, { path: "/" });
+                    cookies.set("fechaCumpleanio", res.data.fechaCumpleanio, { path: "/" });
+                    cookies.set("fechaIngreso", res.data.fechaIngreso, { path: "/" });
+                    cookies.set("rol", res.data.rol, { path: "/" });
+                    Router.push("../");
+                }
+            }).catch((err) => {
+                Swal.fire({
+                    title: "Error",
+                    html: "Usuario no encontrado",
+                    icon: "error",
+                });
+            });
+        }else {
+            Swal.fire({
+                title: "Advertencia",
+                html: "Debe ingresar un rut",
+                icon: "warning",
+            });
+        }
     }
 
     return (
