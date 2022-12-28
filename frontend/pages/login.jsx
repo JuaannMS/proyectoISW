@@ -42,17 +42,18 @@ const Login = () => {
     const verificarRut = async (e) => {
 
         const response = await axios.get(`${process.env.API_URL}/usuario/usr/${rutUsuario}`).then((res) => {
-            if (res.data.length > 0) {
+            console.log(res.data.rut);
+            if (res.data != null) {
                 //console.log("Usuario encontrado");
-                cookies.set("id", res.data[0]["_id"], { path: "/" });
-                cookies.set("rut", res.data[0]["rut"], { path: "/" });
-                cookies.set("nombre", res.data[0]["nombre"], { path: "/" });
-                cookies.set("correo", res.data[0]["correo"], { path: "/" });
-                cookies.set("telefono", res.data[0]["telefono"], { path: "/" });
-                cookies.set("direccion", res.data[0]["direccion"], { path: "/" });
-                cookies.set("fechaCumpleanio", res.data[0]["fechaCumpleanio"], { path: "/" });
-                cookies.set("fechaIngreso", res.data[0]["fechaIngreso"], { path: "/" });
-                cookies.set("rol", res.data[0]["rol"], { path: "/" });
+                cookies.set("id", res.data._id, { path: "/" });
+                cookies.set("rut", res.data.rut, { path: "/" });
+                cookies.set("nombre", res.data.nombre, { path: "/" });
+                cookies.set("correo", res.data.correo, { path: "/" });
+                cookies.set("telefono", res.data.telefono, { path: "/" });
+                cookies.set("direccion", res.data.direccion, { path: "/" });
+                cookies.set("fechaCumpleanio", res.data.fechaCumpleanio, { path: "/" });
+                cookies.set("fechaIngreso", res.data.fechaIngreso, { path: "/" });
+                cookies.set("rol", res.data.rol, { path: "/" });
                 Router.push("../");
             } else {
                 alert("Usuario no encontrado");

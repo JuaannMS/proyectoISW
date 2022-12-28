@@ -117,7 +117,7 @@ const deleteUsuario = (req, res) => {
 // gabo
 const getUsuario = (req, res) => {
    const {rut} = req.params
-    Usuario.find({rut : rut}, (error, usuario) => {
+    Usuario.findOne({rut : rut}, (error, usuario) => {
         if (error) {
             return res.status(400).send({ message: "No se pudo encontrar el usuario" })
         }
