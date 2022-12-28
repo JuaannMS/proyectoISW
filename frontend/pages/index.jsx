@@ -3,7 +3,6 @@
 
 import React from 'react'
 import Cookies from 'universal-cookie'
-import verificarCookies from '../utils/comprobarCookies'
 import { useEffect, useState } from 'react'
 
 const Dashboard = () => {
@@ -24,7 +23,6 @@ const Dashboard = () => {
 
 
     useEffect(() => {
-        verificarCookies();
         setId(cookies.get("id"));
         setRut(cookies.get("rut"));
         setNombre(cookies.get("nombre"));
