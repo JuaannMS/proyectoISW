@@ -56,6 +56,11 @@ const publicacionSchema = new Schema({
     required: true,
     ref: 'usuario'
     },
+    idImagen:{
+        type:Schema.ObjectId,
+        required: true,
+        ref: 'file'
+    },
     numReportes:{
         type:Number,
         require:true,

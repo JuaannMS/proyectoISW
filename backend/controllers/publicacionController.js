@@ -7,7 +7,7 @@ const createPublicacion = (req, res) => {
 const Usuario = require('../models/usuario')
 
 
-  const { titulo, descripcion,etiqueta,nombreUsuario,idUsuario,diasVisible} = req.body
+  const { titulo, descripcion,etiqueta,nombreUsuario,idUsuario, idImagen ,diasVisible} = req.body
 
   const fechaCreacion = new Date().toLocaleDateString()
   const fechaExp = new Date()
@@ -21,6 +21,7 @@ const Usuario = require('../models/usuario')
     titulo,
     descripcion,
     idUsuario,
+    idImagen,
     etiqueta,
     nombreUsuario,
     estado: "Activa",
@@ -171,6 +172,36 @@ const getPublicacionesPersonales = (req,res) => {
 
 }
 
+const eliminarPublicacionesInactivas = (req,res) =>{
+  
+  Publicacion.deleteMany( {estado: 'Inactiva'}, (error, Publicacion) => {
+    if (error) {
+      return res.status(400).send({ message: "No se pudo eliminar una publicacion" })
+    }
+    if (!Publicacion) { // no existe "!"
+      return res.status(404).send({ message: "No se encontraron publicaciones inactivas" })
+    }
+    return res.status(200).send({ message: "Se eliminaron correctamente las publicaciones inactivas" })
+  } )
+
+}
+
+const restaurarPublicacion = (req,res) => {
+
+  const { id } = req.params
+  Publicacion.findByIdAndUpdate(id,{ $set: { estado: "Activa" }}
+    , (error, Publicacion) => {
+    if (error) {
+      return res.status(400).send({ message: "No se pudo restaurar la publicacion" })
+    }
+    if (!Publicacion) { // no existe "!"
+      return res.status(404).send({ message: "No se encontro la publicacion" })
+    }
+    return res.status(200).send({ message: "Se restauro correctamente la publicacion" })
+  }
+  )
+}
+
 const getPublicacionesReportadas = (req,res) => {
 
 
@@ -194,5 +225,7 @@ module.exports = {
   numPublicacionesActXUsuario,
   getPublicacionesAdmi,
   getPublicacionesPersonales,
-  getPublicacionesReportadas
+  getPublicacionesReportadas,
+  eliminarPublicacionesInactivas,
+  restaurarPublicacion
 }

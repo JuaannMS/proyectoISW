@@ -11,6 +11,9 @@ api.get('/publicacionesx/:tag' , publicacionController.getPublicacionesporEtique
 api.get('/publicacionesAdmi', publicacionController.getPublicacionesAdmi); //plural para evitar problemas con la url de creacion
 api.get('/publicacionesP/:idU', publicacionController.getPublicacionesPersonales);
 api.get('/publicacionesReportadas', publicacionController.getPublicacionesReportadas);
+api.delete('/publicacionesDelete', publicacionController.eliminarPublicacionesInactivas);
+api.put('/publicacionRestaurar/:id' , publicacionController.restaurarPublicacion);
+
 
 
 
