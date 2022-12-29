@@ -1,26 +1,36 @@
-import React from 'react'
-import { useState,useEffect } from 'react'
-import {ChakraProvider,Badge,StarIcon,Textarea, Button, Container, Input, Stack, Text, HStack, Heading, FormControl, FormLabel,Select, VStack, Modal, ModalHeader,ModalOverlay,ModalContent,ModalCloseButton,ModalBody,ModalFooter} from '@chakra-ui/react'
-import Swal from 'sweetalert2'
-import { useRouter } from 'next/router'
-import axios from 'axios'
-import {Box,Image } from '@chakra-ui/react'
-import {Menu,MenuButton,MenuList,MenuItem,Lorem} from '@chakra-ui/react'
-import styles from '../components/publicaciones.module.css'
-import Router from "next/router";
-import { useDisclosure } from "@chakra-ui/react";
+import { React, useState, useEffect, useRef } from "react";
+import {Button,Container,Input,Stack,Text,HStack,Heading,FormControl,FormLabel,Select,VStack,Box,Image,button,Textarea,
+Menu,MenuButton,MenuList,MenuItem,Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalCloseButton,Divider,
+} from "@chakra-ui/react";
+import {Drawer,DrawerBody,DrawerFooter,DrawerHeader,DrawerOverlay,DrawerContent,DrawerCloseButton,
+} from '@chakra-ui/react'
+import Swal from "sweetalert2";
+import { useRouter } from "next/router";
+import axios from "axios";
+import styles from "../components/publicaciones.module.css";
 import comprobarCookies from "../utils/comprobarCookies";
 import Cookies from "universal-cookie";
+import Router from "next/router";
+import { useDisclosure } from "@chakra-ui/react";
 
 const publicacionesAdmi = () => {
 
   const cookies = new Cookies();
   const [id, setId] = useState();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [publicaciones, setPublicaciones] = useState([])
   const [values, setValues] = useState()
   const router = useRouter();
+  const [idPublicacion, setIdPublicacion] = useState();
+  const { isOpen: isEditOpen , onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
+  const { isOpen: isComentOpen , onOpen: onComentOpen, onClose: onComentClose } = useDisclosure()
+  const [comentario, setComentario] = useState();
+  const [tituloModal, setTituloModal] = useState();
+  const [comentariosPublicacion, setcomentariosPublicacion] = useState([]);
 
+  const handleInput = (e) => {
+    setComentario(e.target.value);
+  };
 
 	const getPublicaciones = async () => {
 		const response = await axios.get(`${process.env.API_URL}/publicacionesAdmi`)
@@ -30,8 +40,7 @@ const publicacionesAdmi = () => {
     useEffect(() => {
 		getPublicaciones();
     setId(cookies.get("id"));
-	}, [])
-
+  }, [])
 
   const onCambio = (e) => {
 		setValues({
@@ -40,32 +49,11 @@ const publicacionesAdmi = () => {
 		})
 	}
 
-  const onEliminar = async (idPublicacion) => {
-      console.log(idPublicacion)
-			//const response = await axios.delete(`${process.env.API_URL}/publicacion/`)
-      try {
-        const response = await axios.delete(`${process.env.API_URL}/publicacion/delete/${idPublicacion}`) //values tiene que tener idPublicacion para eliminar
-        console.log(response)
-        if (response.status === 200) {
-          Swal.fire({
-            title: 'Publicacion eliminada',
-            text: 'La publicacion se ha eliminado correctamente',
-            icon: 'success',
-            confirmButtonText: 'Ok'
-          })
-  
-        }
-      } catch (err) {
-        Swal.fire({
-          title: 'Error',
-          text: 'Ha ocurrido un errorzzz', //
-          icon: 'error',
-          confirmButtonText: 'Ok'
-        })
-      }
-	}
-
   const onChange = async (event,idPublicacion)=> {
+
+    if(event.target.value=='reportar'){
+
+    }
 
     if(event.target.value=='eliminar'){
 
@@ -91,11 +79,32 @@ const publicacionesAdmi = () => {
       }
     }
 
-    if(event.target.value=='reportar'){
-
-    }
-
     if(event.target.value=='favoritos'){
+
+      const json = JSON.stringify({
+        idPublicacion: idPublicacion,
+        idUsuario: id,
+      });
+      const response = await axios
+        .put(`${process.env.API_URL}/favorito/put/createFavorito`, json, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          Swal.fire({
+            title: "Exito",
+            html: res.data.message,
+            icon: "success",
+          });
+        })
+        .catch((err) => {
+          Swal.fire({
+            title: "Error",
+            html: err.response.data.message,
+            icon: "error",
+          });
+        });
 
     }
     
@@ -113,8 +122,13 @@ const publicacionesAdmi = () => {
 		router.push(`/publicaciones/personales/${id}`)
 	}
 
-  const editarPublicacion = () => {
-    Router.push("/verMisPublicaciones")
+  const pushVerMiPerfil = () => {
+    router.push(`/`)
+  }
+
+  const capturarId = async (idP) => {
+    setIdPublicacion(idP)
+    onEditOpen()
   }
 
   const onGuardar = async (idPublicacion) => {
@@ -145,47 +159,118 @@ const publicacionesAdmi = () => {
       }
     }
   
+    const cargarComentarios = async (idPublicacion) => {
+      setTituloModal("Comentarios");
+      setcomentariosPublicacion([]);
+      setIdPublicacion(idPublicacion);
+      const response = await axios
+        .get(
+          `${process.env.API_URL}/comentario/getFromPublicacion/${idPublicacion}`
+        )
+        .then((res) => {
+          let comentarios = res.data.map((comentario) => {
+            return (
+              <>
+                <Container borderWidth="2px" my={2} maxW="initial">
+                  <Text fontSize={20} my={2}>
+                    Fecha: {comentario.fecha}
+                  </Text>
+                  <Text fontSize={20} my={2}>
+                    Comentario: {comentario.contenido}
+                  </Text>
+                </Container>
+              </>
+            );
+          });
+          setcomentariosPublicacion(comentarios);
+          onComentOpen();
+        });
+    };
+  
+    const nuevoComentario = async (idPublicacion, comentario) => {
+      const json = JSON.stringify({
+        idPublicacion: idPublicacion,
+        contenido: comentario,
+        idUsuario: id,
+      });
+      if (comentario && comentario.length !== 0) {
+        const response = await axios
+          .post(`${process.env.API_URL}/comentario`, json, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then((res) => {
+            Swal.fire({
+              title: "Exito",
+              html: "Comentario agregado",
+              icon: "success",
+            });
+          })
+          .catch((err) => {
+            Swal.fire({
+              title: "Error",
+              html: "Error al agregar comentario",
+              icon: "error",
+            });
+          });
+      } else {
+        Swal.fire({
+          title: "Alerta",
+          html: "El comentario no puede estar vacio",
+          icon: "warning",
+        });
+      }
+    };
+
+    
 
     const mostrarPublicaciones = () => {
-		return publicaciones.map(publicacion => {
-			return (
-        
-      <Box  borderWidth='2px' borderRadius='lg' >
-         <Select placeholder=' ' onChange={() => onChange(event,publicacion._id)} name="opcionElegida" >
-            <option value='reportar'>Reportar</option>
-            <option value='eliminar'>Eliminar</option>
-            <option value='favoritos'>Favoritos</option>
-          </Select> 
-        <Box color='red'>Estado: {publicacion.estado}</Box>
-        <Image src= 'https://bit.ly/dan-abramov' className={styles.postImage}/>
-				<Box p='2' key={publicacion._id} >
-                
-					        <Box
-                  mt='1'
-                  fontWeight='semibold'
-                  as='h4'
-                  lineHeight='tight'
-                  noOfLines='1'>
-                  ID Publicacion: {publicacion._id}</Box>
-                  <Box>Nombre Usuario: {publicacion.nombreUsuario}</Box>
-                  <Box>Fecha creacion:{publicacion.fechaCreacion}</Box>
-                  <Box>Titulo: {publicacion.titulo}</Box>
-					        <Box>Descripcion: {publicacion.descripcion}</Box>
-                  <Box>Etiqueta: {publicacion.etiqueta}</Box>
-                  <Box>Numero de dia visible: {publicacion.diasVisible}</Box>
-                  <Box>Fecha Expiracion: {publicacion.fechaExp}</Box>
-                    
-				<Box
-              as='span'
-              color='gray.600'
-              fontSize='sm'>
-                {publicacion.cantLikes} likes</Box>
+      return publicaciones.map((publicaciones) => {
+        return (
+          <>
+            <Box borderWidth="2px" borderRadius="lg" my={6} border="1px">
               <HStack className={styles.publicacionLabelHorizontal}>
+                <Box className={styles.nombreUsuario}>
+                  {publicaciones.nombreUsuario}
+                </Box>
+                <Select placeholder=' ' width='60px'  onChange={() => onChange(event,publicaciones._id)} name="opcionElegida" >
+                <option value='reportar'>Reportar</option>
+                <option value='favoritos'>Favoritos</option>
+                <option value='eliminar'>Eliminar</option>
+                </Select> 
+              </HStack>
+              <Box className={styles.publicacionTitulo}>
+                {publicaciones.titulo}
+              </Box>
+              <Image
+                src="https://bit.ly/dan-abramov"
+                className={styles.postImage}
+                alt="post image"
+              />
+              <Box p="2" key={publicaciones._id}>
+                <HStack className={styles.etiquetayfecha}>
+                  <Box className={styles.publicacionEtiqueta}>#{publicaciones.etiqueta}</Box>
+                  <Box className={styles.publicacionFecha}>{publicaciones.fechaCreacion}</Box>
+                </HStack>
+                <HStack className={styles.publicacionLabelHorizontal}></HStack>
+                <Box>{publicaciones.descripcion}</Box>
+                <HStack className={styles.publicacionLabelHorizontal}>
+                    <Button marginLeft='-10px'  variant={"ghost"}
+                      onClick={() => {
+                        darLike(publicaciones._id);
+                      }}
+                    >
+                      <Image src="like.png" alt="like" />
+                      <Box as="span" color="gray.600" fontSize="sm">
+                        {publicaciones.cantLikes} likes
+                      </Box>
+                    </Button>
+                    <Button onClick={()=> {capturarId(publicaciones._id)}}  >Editar</Button>
 
-                <Button onClick={onOpen} > Editar</Button>
-                <Modal
-                    isOpen={isOpen}
-                    onClose={onClose}
+                    <Modal
+                    isOpen={isEditOpen}
+                    onClose={onEditClose}
                     scrollBehavior="inside"
                   	>
 					<ModalOverlay />
@@ -196,7 +281,7 @@ const publicacionesAdmi = () => {
                       		</ModalHeader>
 							
 							<ModalFooter>
-                        	<Button colorScheme="red" onClick={onClose}>
+                        	<Button colorScheme="red" onClick={onEditClose}>
                           X
                         	</Button>
                       </ModalFooter>
@@ -224,25 +309,101 @@ const publicacionesAdmi = () => {
                               type="submit"
                               my={2}
                               onClick={() => {
-                                onGuardar(publicacion._id)
-                                  onClose();
+                                onGuardar(idPublicacion)
+                                onEditClose()
                               }}
+                              
                             >
                               Guardar
                             </Button>
 					</ModalContent>
 					</Modal>
 
-          
-                <Button> Reportar</Button>
-              </HStack>
-				</Box>
-      </Box>
-			)
-		})
-	}
+                </HStack>
+                <VStack className={styles.mostrarComentarios} align="normal">
+                  <Button  variant={"ghost"}
+                    onClick={() => {
+                      cargarComentarios(publicaciones._id);
+                    }}
+                  >
+                    Comentarios
+                    <Image src="flecha.png" alt="flecha" />
+                    <Modal
+                      isOpen={isComentOpen}
+                      onClose={onComentClose}
+                      scrollBehavior="inside"
+                      size="full"
+                    >
+                      <ModalOverlay>
+                        <ModalContent>
+                        <ModalHeader>
+                          <Text>Comentarios</Text>
+                        </ModalHeader>
+                        <ModalCloseButton />
+                        <ModalHeader>
+                            <FormControl>
+                              <FormLabel fontSize={20} my={2}>
+                                Nuevo comentario
+                              </FormLabel>
+                              <Input
+                                placeholder="Ingrese comentario"
+                                type={"text"}
+                                my={3}
+                                onChange={handleInput}
+                                name="contenido"
+                              />
+                              <Button
+                                colorScheme="red"
+                                size="md"
+                                type="submit"
+                                my={2}
+                                onClick={() => {
+                                  nuevoComentario(idPublicacion, comentario),
+                                    onComentClose();
+                                }}
+                              >
+                                Comentar
+                              </Button>
+                            </FormControl>
+                            <Divider />
+                        </ModalHeader>
+                        <ModalBody maxW="initial">
+                          {comentariosPublicacion}
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button colorScheme="blue" mr={3} onClick={onComentClose} >
+                            Cerrar
+                          </Button>
+                        </ModalFooter>
+                      </ModalContent>
+                      </ModalOverlay>
+                    </Modal>
+                  </Button>
+                </VStack>
+              </Box>
+            </Box>
+          </>
+        );
+      });
+    };
 
 
+    const cerrarSesion = () => {
+     
+      cookies.remove("id");
+      cookies.remove("rut");
+      cookies.remove("nombre");
+      cookies.remove("correo");
+      cookies.remove("telefono");
+      cookies.remove("direccion");
+      cookies.remove("fechaCumpleanio");
+      cookies.remove("fechaIngreso");
+      cookies.remove("rol");
+      Router.push("/login");
+  }
+
+
+  
 
     return (
 <VStack>
@@ -254,7 +415,9 @@ const publicacionesAdmi = () => {
         <MenuItem onClick={pushPublicacionesReportadas}>Ver publicaciones reportadas</MenuItem>
         <MenuItem onClick={pushCrearPublicacion}>Crear Publicacion</MenuItem>
         <MenuItem onClick={pushVerMisPublicaciones}>Mis Publicaciones</MenuItem>
-        <MenuItem>Mi perfil</MenuItem>
+        <MenuItem onClick={pushVerMiPerfil}>Mi perfil</MenuItem>
+        <MenuItem onClick={cerrarSesion}>Cerrar Sesion</MenuItem>
+        
       </MenuList>
   </Menu>
       

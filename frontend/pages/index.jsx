@@ -48,6 +48,8 @@ const Dashboard = () => {
         cookies.remove("rol");
         Router.push("/login");
     }
+
+    
     return (
         <div >
             <h1>Dashboard</h1>
@@ -62,7 +64,7 @@ const Dashboard = () => {
             <h2>rol: {rol}</h2>
             <Button onClick={() => {
                 eliminarCookies();
-            }}>Eliminar cookies</Button>
+            }}>Cerrar Sesion</Button>
 
         </div>
     )

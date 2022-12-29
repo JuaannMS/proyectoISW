@@ -57,7 +57,7 @@
     font-size: 17px;
     font-family: arial;
     font-weight: bold;
-    margin-left: 5px;
+    margin-left: 7px;
 }
 
 .publicacionEtiqueta{
@@ -111,4 +111,8 @@
 
 .flechaComentario{
     justify-content: center;
+}
+
+.selectDerecha{
+    font-size: 5px;
 }

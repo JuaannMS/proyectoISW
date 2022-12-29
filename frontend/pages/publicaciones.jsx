@@ -39,7 +39,48 @@ const publicaciones = () => {
     setComentario(e.target.value);
   };
 
-  const [estadoModal, setEstadoModal] = useState(false);
+  const onChange = async (event,idPublicacion)=> {
+
+    if(event.target.value=='reportar'){
+
+    }
+
+    if(event.target.value=='favoritos'){
+
+      const json = JSON.stringify({
+        idPublicacion: idPublicacion,
+        idUsuario: id,
+      });
+      const response = await axios
+        .put(`${process.env.API_URL}/favorito/put/createFavorito`, json, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          Swal.fire({
+            title: "Exito",
+            html: res.data.message,
+            icon: "success",
+          });
+        })
+        .catch((err) => {
+          Swal.fire({
+            title: "Error",
+            html: err.response.data.message,
+            icon: "error",
+          });
+        });
+
+    }
+    
+  }
+
+  const buscarImagen = async (idP) => {
+
+    const response = await axios.get(`${process.env.API_URL}/get/file/${idP}`)
+
+  }
 
   const mostrarPublicaciones = () => {
     return publicaciones.map((publicaciones) => {
@@ -50,18 +91,20 @@ const publicaciones = () => {
               <Box className={styles.nombreUsuario}>
                 {publicaciones.nombreUsuario}
               </Box>
-
-              <Button size='sm'>Reportar</Button>
+              <Select placeholder=' ' width='60px'  onChange={() => onChange(event,publicaciones._id)} name="opcionElegida" >
+              <option value='reportar'>Reportar</option>
+              <option value='favoritos'>Favoritos</option>
+              </Select> 
             </HStack>
-            <Box className={styles.publicacionTitulo}>
-              {publicaciones.titulo}
+            <Box className={styles.publicacionTitulo}  >
+              {publicaciones.titulo} 
             </Box>
             <Image
               src="https://bit.ly/dan-abramov"
               className={styles.postImage}
               alt="post image"
             />
-            <Box p="2" key={publicaciones._id}>
+            <Box p="2" key={publicaciones._id} >
               <HStack className={styles.etiquetayfecha}>
                 <Box className={styles.publicacionEtiqueta}>#{publicaciones.etiqueta}</Box>
                 <Box className={styles.publicacionFecha}>{publicaciones.fechaCreacion}</Box>
@@ -69,7 +112,7 @@ const publicaciones = () => {
               <HStack className={styles.publicacionLabelHorizontal}></HStack>
               <Box>{publicaciones.descripcion}</Box>
               <HStack className={styles.publicacionLabelHorizontal}>
-                  <Button variant={"ghost"}
+                  <Button marginLeft='-10px'  variant={"ghost"}
                     onClick={() => {
                       darLike(publicaciones._id);
                     }}
@@ -79,13 +122,6 @@ const publicaciones = () => {
                       {publicaciones.cantLikes} likes
                     </Box>
                   </Button>
-				  <Button variant={"ghost"} align="flex-end"
-                      onClick={() => {
-                        darFavorito(publicaciones._id);
-                      }}
-                    >
-                      <Image src="star.png" alt="favorito" />
-                    </Button>
               </HStack>
               <VStack className={styles.mostrarComentarios} align="normal">
                 <Button  variant={"ghost"}
@@ -100,8 +136,6 @@ const publicaciones = () => {
                     onClose={onClose}
                     scrollBehavior="inside"
                     size="full"
-                    status={estadoModal}
-                    onChange={setEstadoModal}
                   >
                     <ModalOverlay>
                       <ModalContent>
@@ -190,32 +224,6 @@ const publicaciones = () => {
       });
   };
 
-  const darFavorito = async (idPublicacion) => {
-    const json = JSON.stringify({
-      idPublicacion: idPublicacion,
-      idUsuario: id,
-    });
-    const response = await axios
-      .put(`${process.env.API_URL}/favorito/put/createFavorito`, json, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        Swal.fire({
-          title: "Exito",
-          html: res.data.message,
-          icon: "success",
-        });
-      })
-      .catch((err) => {
-        Swal.fire({
-          title: "Error",
-          html: err.response.data.message,
-          icon: "error",
-        });
-      });
-  };
 
   const cargarComentarios = async (idPublicacion) => {
     setTituloModal("Comentarios");
@@ -287,18 +295,6 @@ const publicaciones = () => {
 
   const router = useRouter();
 
-
-  const onChange = (e) => {
-    setValues({
-      ...values,
-      [e.target.name]: e.target.value,
-      idUsuario: id,
-      nombreUsuario: nombre,
-    });
-    // sirve para que los atributos del useState sean inicializados desde el placeholder
-  };
-
-
   const onEtiqueta = (e) => {
     setTag({
       ...tag,
@@ -338,6 +334,26 @@ const publicaciones = () => {
     router.push(`/publicaciones/personales/${id}`)
   }
 
+  const pushVerMiPerfil = () => {
+    router.push(`/`)
+  }
+
+  const cerrarSesion = () => {
+
+      cookies.remove("id");
+      cookies.remove("rut");
+      cookies.remove("nombre");
+      cookies.remove("correo");
+      cookies.remove("telefono");
+      cookies.remove("direccion");
+      cookies.remove("fechaCumpleanio");
+      cookies.remove("fechaIngreso");
+      cookies.remove("rol");
+      Router.push("/login");
+  }
+  
+
+
   return (
 
     <VStack>
@@ -347,12 +363,10 @@ const publicaciones = () => {
           =
         </MenuButton>
         <MenuList>
-          <MenuItem onClick={pushVerMisPublicaciones}>
-            Ver mis publicaciones
-          </MenuItem>
+          <MenuItem onClick={pushVerMisPublicaciones}>Ver mis publicaciones</MenuItem>
           <MenuItem onClick={pushCrearPublicacion}>Crear Publicacion</MenuItem>
-          <MenuItem>Mi perfil</MenuItem>
-          <MenuItem></MenuItem>
+          <MenuItem onClick={pushVerMiPerfil}>Mi perfil</MenuItem>
+          <MenuItem onClick={cerrarSesion}>Cerrar Sesion</MenuItem>
         </MenuList>
       </Menu>
 

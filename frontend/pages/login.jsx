@@ -20,8 +20,6 @@ import Swal from "sweetalert2";
 
 const CFaUserAlt = chakra(FaUserAlt);
 
-
-
 const Login = () => {
 
 
@@ -51,7 +49,13 @@ const Login = () => {
                     cookies.set("fechaCumpleanio", res.data.fechaCumpleanio, { path: "/" });
                     cookies.set("fechaIngreso", res.data.fechaIngreso, { path: "/" });
                     cookies.set("rol", res.data.rol, { path: "/" });
-                    Router.push("../");
+
+                    if((cookies.get("rut"))=="19.896.942-7"){
+                    Router.push("../publicacionesAdmi");
+                    } else {
+                        Router.push("../publicaciones");
+                    }
+                    
                 }
             }).catch((err) => {
                 Swal.fire({

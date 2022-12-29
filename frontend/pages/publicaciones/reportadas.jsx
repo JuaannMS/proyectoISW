@@ -17,7 +17,7 @@ const publicacionesReportadas = () => {
     const [publicaciones, setPublicaciones] = useState([])
 
     const getPublicaciones = async () => {
-		const response = await axios.get(`${process.env.API_URL}/publicaciones`)
+		const response = await axios.get(`${process.env.API_URL}/publicacionesAdmi`)
 		setPublicaciones(response.data)
 	}
 
@@ -25,9 +25,49 @@ const publicacionesReportadas = () => {
 		getPublicaciones()
 	}, [])
 
+    const eliminarPInactivas = async () => {
+
+    const response = await axios.delete(`${process.env.API_URL}/publicacionesDelete`).then((response)=> {
+        Swal.fire({
+          title: "Exito",
+          html: "Publicaciones inactivas eliminadas",
+          icon: "success",
+        })
+      }).catch((err) => {
+        Swal.fire({
+          title: "Error",
+          html: "Error al eliminar",
+          icon: "error",
+        })
+      })
+      
+      
+    }
+      
+    const restaurarPublicacion = async (idP) => {
+
+      const response = await axios.put(`${process.env.API_URL}/publicacionRestaurar/${idP}`).then((response)=> {
+          Swal.fire({
+            title: "Exito",
+            html: "Publicacion restaurada",
+            icon: "success",
+          })
+        }).catch((err) => {
+          Swal.fire({
+            title: "Error",
+            html: "Error al restaurar",
+            icon: "error",
+          })
+        })
+        
+        
+      }
+    
+
     const mostrarPublicaciones = () => {
 		return publicaciones.map(publicacion => {
 			return (
+        
       <Box  borderWidth='2px' borderRadius='lg' >
         <Box color='red'>Estado: {publicacion.estado}</Box>
         <Box color='red'>Numero de Reportes: {publicacion.numReportes}</Box>
@@ -61,8 +101,7 @@ const publicacionesReportadas = () => {
               fontSize='sm'>
                 {publicacion.cantLikes} likes</Box>
               <HStack className={styles.publicacionLabelHorizontal}>
-                <Button > Editar</Button>
-                <Button onClick={() => onEliminar(publicacion._id)}> Eliminar</Button>
+                <Button onClick={()=> restaurarPublicacion(publicacion._id)}> Restaurar</Button>
               </HStack>
 				</Box>
       </Box>
@@ -72,6 +111,7 @@ const publicacionesReportadas = () => {
 
     return (
         <VStack>
+            <Button onClick={()=> eliminarPInactivas()} >Eliminar Publicaciones Inactivas</Button>
             {mostrarPublicaciones()}
         </VStack>
 

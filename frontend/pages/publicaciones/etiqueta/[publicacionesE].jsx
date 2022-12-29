@@ -38,12 +38,17 @@ const publicacionesE = ({data}) => {
     const [id, setId] = useState();
     const [comentario, setComentario] = useState();
     const { isOpen, onOpen, onClose } = useDisclosure();
-	const router = useRouter();
-	const [publicaciones] = useState(data)
+	  const router = useRouter();
+	  const [publicaciones] = useState(data)
     const [values, setValues] = useState();
     const [comentariosPublicacion, setcomentariosPublicacion] = useState([]);
     const [tituloModal, setTituloModal] = useState();
     const [idPublicacion, setIdPublicacion] = useState();
+
+    useEffect(() => {
+      comprobarCookies();
+      setId(cookies.get("id"));
+    }, []);
 
     const handleInput = (e) => {
         setComentario(e.target.value);
@@ -121,31 +126,6 @@ const publicacionesE = ({data}) => {
         }
       };
 
-      const onEliminar = async (idPublicacion) => {
-        console.log(idPublicacion)
-              //const response = await axios.delete(`${process.env.API_URL}/publicacion/`)
-        try {
-          const response = await axios.delete(`${process.env.API_URL}/publicacion/delete/${idPublicacion}`) //values tiene que tener idPublicacion para eliminar
-          console.log(response)
-          if (response.status === 200) {
-            Swal.fire({
-              title: 'Publicacion eliminada',
-              text: 'La publicacion se ha eliminado correctamente',
-              icon: 'success',
-              confirmButtonText: 'Ok'
-            })
-    
-          }
-        } catch (err) {
-          Swal.fire({
-            title: 'Error',
-            text: 'Ha ocurrido un errorzzz', //
-            icon: 'error',
-            confirmButtonText: 'Ok'
-          })
-        }
-      }
-
       const darLike = async (idPublicacion) => {
         const json = JSON.stringify({
           idPublicacion: idPublicacion,
@@ -173,32 +153,43 @@ const publicacionesE = ({data}) => {
           });
       };
     
-      const darFavorito = async (idPublicacion) => {
-        const json = JSON.stringify({
-          idPublicacion: idPublicacion,
-          idUsuario: id,
-        });
-        const response = await axios
-          .put(`${process.env.API_URL}/favorito/put/createFavorito`, json, {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-          .then((res) => {
-            Swal.fire({
-              title: "Exito",
-              html: res.data.message,
-              icon: "success",
-            });
-          })
-          .catch((err) => {
-            Swal.fire({
-              title: "Error",
-              html: err.response.data.message,
-              icon: "error",
-            });
+
+      const onChange = async (event,idPublicacion)=> {
+
+        if(event.target.value=='reportar'){
+
+        }
+    
+        if(event.target.value=='favoritos'){
+  
+          const json = JSON.stringify({
+            idPublicacion: idPublicacion,
+            idUsuario: id,
           });
-      };
+          const response = await axios
+            .put(`${process.env.API_URL}/favorito/put/createFavorito`, json, {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            })
+            .then((res) => {
+              Swal.fire({
+                title: "Exito",
+                html: res.data.message,
+                icon: "success",
+              });
+            })
+            .catch((err) => {
+              Swal.fire({
+                title: "Error",
+                html: err.response.data.message,
+                icon: "error",
+              });
+            });
+    
+        }
+        
+      }
 
 
     return(
@@ -211,7 +202,10 @@ const publicacionesE = ({data}) => {
                 {publicacion.nombreUsuario}
               </Box>
 
-              <Button size='sm' >Reportar</Button>
+              <Select placeholder=' ' width='60px' onChange={() => onChange(event,publicacion._id)} name="opcionElegida" >
+              <option value='reportar'>Reportar</option>
+              <option value='favoritos'>Favoritos</option>
+              </Select> 
 
             </HStack>
             <Box className={styles.publicacionTitulo}>
@@ -240,13 +234,7 @@ const publicacionesE = ({data}) => {
                       {publicacion.cantLikes} likes
                     </Box>
                   </Button>
-				  <Button variant={"ghost"} align="flex-end"
-                      onClick={() => {
-                        darFavorito(publicacion._id);
-                      }}
-                    >
-                      <Image src="star.png" alt="favorito" />
-                    </Button>
+
               </HStack>
               <VStack className={styles.mostrarComentarios} align="normal">
                 <Button  variant={"ghost"}

@@ -11,7 +11,7 @@ import Cookies from "universal-cookie";
 import Router from "next/router";
 import { useDisclosure } from "@chakra-ui/react";
 import {Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalCloseButton,Divider} from "@chakra-ui/react";
-import {getPublicacionesP} from '../../../data/publicaciones'
+
 
 export async function getServerSideProps(context) {
     try {
@@ -36,25 +36,115 @@ const publicacionesP = ({data}) =>{
     const cookies = new Cookies();
     const [id, setId] = useState();
     const [comentario, setComentario] = useState();
-    const { isOpen, onOpen, onClose } = useDisclosure();
-	const router = useRouter();
-	const [publicaciones] = useState(data)
+	  const router = useRouter();
+	  const [publicaciones] = useState(data)
     const [values, setValues] = useState();
     const [comentariosPublicacion, setcomentariosPublicacion] = useState([]);
     const [tituloModal, setTituloModal] = useState();
     const [idPublicacion, setIdPublicacion] = useState();
+    const { isOpen: isEditOpen , onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
+    const { isOpen: isComentOpen , onOpen: onComentOpen, onClose: onComentClose } = useDisclosure()
 
     const handleInput = (e) => {
         setComentario(e.target.value);
       };
 
-	console.log(publicaciones)
+      useEffect(() => {
+        comprobarCookies();
+        setId(cookies.get("id"));
+      }, []);
+
 
     const onCambio = (e) => {
         setValues({
           ...values,
           [e.target.name]: e.target.value,
         });
+
+    }
+
+    const onChange = async (event,idPublicacion)=> {
+
+      if(event.target.value=='eliminar'){
+  
+        try {
+          const response = await axios.delete(`${process.env.API_URL}/publicacion/delete/${idPublicacion}`) //values tiene que tener idPublicacion para eliminar
+          console.log(response)
+          if (response.status === 200) {
+            Swal.fire({
+              title: 'Publicacion eliminada',
+              text: 'La publicacion se ha eliminado correctamente',
+              icon: 'success',
+              confirmButtonText: 'Ok'
+            })
+    
+          }
+        } catch (err) {
+          Swal.fire({
+            title: 'Error',
+            text: 'Ha ocurrido un errorzzz', //
+            icon: 'error',
+            confirmButtonText: 'Ok'
+          })
+        }
+      }
+  
+      if(event.target.value=='favoritos'){
+
+        const json = JSON.stringify({
+          idPublicacion: idPublicacion,
+          idUsuario: id,
+        });
+        const response = await axios
+          .put(`${process.env.API_URL}/favorito/put/createFavorito`, json, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then((res) => {
+            Swal.fire({
+              title: "Exito",
+              html: res.data.message,
+              icon: "success",
+            });
+          })
+          .catch((err) => {
+            Swal.fire({
+              title: "Error",
+              html: err.response.data.message,
+              icon: "error",
+            });
+          });
+  
+      }
+      
+    }
+
+    const onGuardar = async (idPublicacion) => {
+      
+      console.log(idPublicacion)
+      try {
+        const response = await axios.put(`${process.env.API_URL}/publicacion/update/${idPublicacion}`, values)
+        
+        if (response.status === 200) {
+          Swal.fire({
+            title: 'Publicacion modificada',
+            text: 'La publicacion se ha modificado correctamente',
+            icon: 'success',
+            confirmButtonText: 'Ok'
+          }).then((result) => {
+            //router.push('/publicacionesAdmi') //refrescar pagina
+          })
+  
+        }
+      } catch (err) {
+        Swal.fire({
+          title: 'Error',
+          text: 'Ha ocurrido un error',
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        })
+      }
 
     }
 
@@ -82,7 +172,7 @@ const publicacionesP = ({data}) =>{
               );
             });
             setcomentariosPublicacion(comentarios);
-            onOpen();
+            onComentOpen();
           });
       };
     
@@ -122,30 +212,6 @@ const publicacionesP = ({data}) =>{
         }
       };
 
-      const onEliminar = async (idPublicacion) => {
-        console.log(idPublicacion)
-              //const response = await axios.delete(`${process.env.API_URL}/publicacion/`)
-        try {
-          const response = await axios.delete(`${process.env.API_URL}/publicacion/delete/${idPublicacion}`) //values tiene que tener idPublicacion para eliminar
-          console.log(response)
-          if (response.status === 200) {
-            Swal.fire({
-              title: 'Publicacion eliminada',
-              text: 'La publicacion se ha eliminado correctamente',
-              icon: 'success',
-              confirmButtonText: 'Ok'
-            })
-    
-          }
-        } catch (err) {
-          Swal.fire({
-            title: 'Error',
-            text: 'Ha ocurrido un errorzzz', //
-            icon: 'error',
-            confirmButtonText: 'Ok'
-          })
-        }
-      }
 
       const darLike = async (idPublicacion) => {
         const json = JSON.stringify({
@@ -173,34 +239,11 @@ const publicacionesP = ({data}) =>{
             });
           });
       };
-    
-      const darFavorito = async (idPublicacion) => {
-        const json = JSON.stringify({
-          idPublicacion: idPublicacion,
-          idUsuario: id,
-        });
-        const response = await axios
-          .put(`${process.env.API_URL}/favorito/put/createFavorito`, json, {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-          .then((res) => {
-            Swal.fire({
-              title: "Exito",
-              html: res.data.message,
-              icon: "success",
-            });
-          })
-          .catch((err) => {
-            Swal.fire({
-              title: "Error",
-              html: err.response.data.message,
-              icon: "error",
-            });
-          });
-      };
-    
+
+      const capturarId = async (idP) => {
+        setIdPublicacion(idP)
+        onEditOpen()
+      }
 
     return (
         publicaciones.map((publicacion) => {
@@ -211,9 +254,11 @@ const publicacionesP = ({data}) =>{
               <Box className={styles.nombreUsuario}>
                 {publicacion.nombreUsuario}
               </Box>
-
-              <Button size='sm' onClick={() => {onEliminar(publicacion._id)}}>Eliminar</Button>
-
+              
+              <Select placeholder=' ' width='60px' onChange={() => onChange(event,publicacion._id)} name="opcionElegida" >
+              <option value='eliminar'>Eliminar</option>
+              <option value='favoritos'>Favoritos</option>
+          </Select> 
             </HStack>
             <Box className={styles.publicacionTitulo}>
               {publicacion.titulo}
@@ -241,13 +286,60 @@ const publicacionesP = ({data}) =>{
                       {publicacion.cantLikes} likes
                     </Box>
                   </Button>
-				  <Button variant={"ghost"} align="flex-end"
-                      onClick={() => {
-                        darFavorito(publicacion._id);
-                      }}
-                    >
-                      <Image src="star.png" alt="favorito" />
-                    </Button>
+                  <Button onClick={()=> {capturarId(publicacion._id)}}  >Editar</Button>
+
+                  <Modal
+                    isOpen={isEditOpen}
+                    onClose={onEditClose}
+                    scrollBehavior="inside"
+                  	>
+					<ModalOverlay />
+					<ModalContent>
+						<HStack className={styles.publicacionLabelHorizontal}>
+							<ModalHeader>
+                        	Editar_Publicacion
+                      		</ModalHeader>
+							
+							<ModalFooter>
+                        	<Button colorScheme="red" onClick={onEditClose}>
+                          X
+                        	</Button>
+                      </ModalFooter>
+						
+						</HStack>
+					
+					<FormControl isRequired>
+						<FormLabel>Titulo</FormLabel>
+						<Input placeholder="Ingrese un titulo" type={"text"} onChange={onCambio} name={"titulo"} />
+					</FormControl>
+
+					<FormControl isRequired>
+						<FormLabel>Descripcion</FormLabel>
+						<Textarea placeholder="Ingrese una descripcion" type={"text"} onChange={onCambio} name="descripcion" />
+					</FormControl>
+
+					<FormControl>
+						<FormLabel>Etiqueta</FormLabel>
+						<Input placeholder="Ingrese una etiqueta" type={"text"} onChange={onCambio} name="etiqueta" />
+					</FormControl>
+          
+					<Button
+                              colorScheme="blue"
+                              size="md"
+                              type="submit"
+                              my={2}
+                              onClick={() => {
+                                onGuardar(idPublicacion)
+                                onEditClose()
+                              }}
+                              
+                            >
+                              Guardar
+                            </Button>
+					</ModalContent>
+					</Modal>
+
+
               </HStack>
               <VStack className={styles.mostrarComentarios} align="normal">
                 <Button  variant={"ghost"}
@@ -258,8 +350,8 @@ const publicacionesP = ({data}) =>{
                   Comentarios
                   <Image src="flecha.png" alt="flecha" />
                   <Modal
-                    isOpen={isOpen}
-                    onClose={onClose}
+                    isOpen={isComentOpen}
+                    onClose={onComentClose}
                     scrollBehavior="inside"
                     size="full"
                   >
@@ -288,7 +380,7 @@ const publicacionesP = ({data}) =>{
                               my={2}
                               onClick={() => {
                                 nuevoComentario(idPublicacion, comentario),
-                                  onClose();
+                                  onComentClose();
                               }}
                             >
                               Comentar
@@ -300,7 +392,7 @@ const publicacionesP = ({data}) =>{
                         {comentariosPublicacion}
                       </ModalBody>
                       <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={onClose} >
+                        <Button colorScheme="blue" mr={3} onClick={onComentClose} >
                           Cerrar
                         </Button>
                       </ModalFooter>
