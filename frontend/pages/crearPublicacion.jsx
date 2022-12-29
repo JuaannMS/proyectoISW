@@ -6,10 +6,11 @@ import { useRouter } from 'next/router'
 import axios from 'axios'
 import Cookies from "universal-cookie";
 import Router from "next/router";
+import FormData from 'form-data'
 
-const crearPublicacion = () =>{
+const crearPublicacion = () => {
 
-    useEffect(() => {
+	useEffect(() => {
 		comprobarCookies();
 		setId(cookies.get("id"));
 		setNombre(cookies.get("nombre"))
@@ -26,22 +27,22 @@ const crearPublicacion = () =>{
 		}
 	}
 	const [id, setId] = useState()
-    const [nombre, setNombre] = useState()
+	const [nombre, setNombre] = useState()
 
-    const router = useRouter()
+	const router = useRouter()
 
-    const onChange = (e) => {
+	const onChange = (e) => {
 		setValues({
 			...values,
 			[e.target.name]: e.target.value,
-			idUsuario:id,
-			nombreUsuario:nombre
+			idUsuario: id,
+			nombreUsuario: nombre
 
 		})
 		// sirve para que los atributos del useState sean inicializados desde el placeholder
 	}
-
-    const [values, setValues] = useState({
+	const [archivos, setAchivos] = useState(null)
+	const [values, setValues] = useState({
 		idUsuario: '',
 		nombreUsuario: '',
 		titulo: '',
@@ -50,13 +51,26 @@ const crearPublicacion = () =>{
 		diasVisible: ''
 	})
 
-    const onSubmit = async (e) => {
+	const subirImagen = async (id) => {
+		const formData = new FormData()
+		formData.append('archivos', archivos)
+		const response = await axios.post(`${process.env.API_URL}/file/${id}`, archivos, {
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			}
+		}).then((res) => {
+			console.log(res.data)
+		})
+		console.log(response)
+	}
+
+	const onSubmit = async (e) => {
 		e.preventDefault()
-		console.log(values)
-		try {
-			const response = await axios.post(`${process.env.API_URL}/publicacion`, values)
-			console.log(response)
-			if (response.status === 201) {
+
+		const response = await axios.post(`${process.env.API_URL}/publicacion`, values).then((res) => {
+			console.log(res.data._id)
+			subirImagen(res.data._id)
+			if (res.status === 201) {
 				Swal.fire({
 					title: 'Publicacion creada',
 					text: 'La publicacion se ha creado correctamente',
@@ -74,19 +88,21 @@ const crearPublicacion = () =>{
 					confirmButtonText: 'Ok'
 				})
 			}
-		} catch (err) {
+		}).catch((err) => {
 			Swal.fire({
 				title: 'Error',
 				text: 'Ha ocurrido un error',
 				icon: 'error',
 				confirmButtonText: 'Ok'
 			})
-		}
-	}
+		})
 
-return(
-<VStack>
-<Container maxW="Container.xl" width={500} >
+
+	}
+	const handleFileChange = (e) => setAchivos({ [e.target.name]: e.target.files[0] })
+	return (
+		<VStack>
+			<Container maxW="Container.xl" width={500} >
 				<Stack>
 					<FormLabel fontSize={25}>Crea una publicacion</FormLabel>
 					<FormControl isRequired>
@@ -112,14 +128,14 @@ return(
 							<option values='14'> 14 </option>
 						</Select >
 					</FormControl>
-					<Button type="submit" size="sm" width="40%">Seleccionar imagen</Button>
+					<Input className="form-control" type="file" id="formFile" name='archivos' onChange={handleFileChange} accept="image/*" />
 				</Stack>
 				<Button colorScheme="blue" size="md" type="submit" my={5} onClick={onSubmit}>Crear publicacion</Button>
 			</Container>
 
-</VStack>
+		</VStack>
 
-)
+	)
 }
 
 export default crearPublicacion
