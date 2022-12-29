@@ -1,11 +1,11 @@
 const { ObjectId } = require('mongodb');
 const FileModel = require('../models/file');
 
-const uploadNewFile = (req, res,err) => {
+const uploadNewFile = (req, res, err) => {
     let objId
-    try{
-        objId = new ObjectId(""+req.params.id);
-    } catch(err) {
+    try {
+        objId = new ObjectId("" + req.params.id);
+    } catch (err) {
         return res.status(400).send({ message: "Error al subir el archivo" })
     }
     const { files } = req;
@@ -65,10 +65,24 @@ const getGeneralFiles = (req, res) => {
     })
 }
 
-
+const loadImage = (req, res) => {
+    const { id } = req.params
+    FileModel
+        .findById(id)
+        .exec((err, file) => {
+            if (err) {
+                return res.status(400).send({ message: "Error al obtener el archivo" })
+            }
+            if (!file) {
+                return res.status(404).send({ message: "Archivo no existe" })
+            }
+            return res.status(200).send(file)
+        })
+}
 module.exports = {
     uploadNewFile,
     getFiles,
     getSpecificFile,
-    getGeneralFiles
+    getGeneralFiles,
+    loadImage
 }
