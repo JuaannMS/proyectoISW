@@ -402,31 +402,41 @@ const publicacionesAdmi = () => {
       Router.push("/login");
   }
 
-
   
 
+  if((cookies.get("rut"))=="19.896.942-7"){
     return (
-<VStack>
-  <Menu>
-    <MenuButton as={Button}  className={styles.botonIzquierdaSup}>
-      =
-    </MenuButton>
-      <MenuList>
-        <MenuItem onClick={pushPublicacionesReportadas}>Ver publicaciones reportadas</MenuItem>
-        <MenuItem onClick={pushCrearPublicacion}>Crear Publicacion</MenuItem>
-        <MenuItem onClick={pushVerMisPublicaciones}>Mis Publicaciones</MenuItem>
-        <MenuItem onClick={pushVerMiPerfil}>Mi perfil</MenuItem>
-        <MenuItem onClick={cerrarSesion}>Cerrar Sesion</MenuItem>
-        
-      </MenuList>
-  </Menu>
+      <VStack>
+        <Menu>
+          <MenuButton  as={Button}  className={styles.botonIzquierdaSup}>
+            =
+          </MenuButton>
+            <MenuList>
+              <MenuItem onClick={pushPublicacionesReportadas}>Ver publicaciones reportadas</MenuItem>
+              <MenuItem onClick={pushCrearPublicacion}>Crear Publicacion</MenuItem>
+              <MenuItem onClick={pushVerMisPublicaciones}>Mis Publicaciones</MenuItem>
+              <MenuItem onClick={pushVerMiPerfil}>Mi perfil</MenuItem>
+              <MenuItem onClick={cerrarSesion}>Cerrar Sesion</MenuItem>
+              
+            </MenuList>
+        </Menu>
+            
+            <VStack>
+          <Container position='relative' marginTop={100}>
+          {mostrarPublicaciones()} 
+          </Container>
+        </VStack>
+      </VStack>
       
-      <Container>
-        {mostrarPublicaciones()}
-      </Container>
-</VStack>
+          )
+    } else {
+        return (
+          <div>sin permisos</div>
+        )
+    }
 
-    )
+
+    
 }
 
 

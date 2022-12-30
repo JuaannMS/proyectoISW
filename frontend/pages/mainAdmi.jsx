@@ -1,33 +1,38 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import { React, useState, useEffect, useRef } from "react";
-import {Button,Container,Input,Stack,Text,HStack,Heading,FormControl,FormLabel,Select,VStack,Box,Image,button,
-Menu,MenuButton,MenuList,MenuItem,Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalCloseButton,Divider,useColorModeValue,Flex,IconButton
-,} from "@chakra-ui/react";
+import { ReactNode } from 'react';
+import {Box,Flex,Avatar,HStack,Link,IconButton,Button,Menu,MenuButton,MenuList,MenuItem,MenuDivider,
+  useDisclosure,useColorModeValue,Stack, VStack, Container,} from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon, AddIcon } from '@chakra-ui/icons';
-import {Drawer,DrawerBody,DrawerFooter,DrawerHeader,DrawerOverlay,DrawerContent,DrawerCloseButton,
-} from '@chakra-ui/react'
-import Swal from "sweetalert2";
+import Router from "next/router";
 import { useRouter } from "next/router";
+import Cookies from "universal-cookie";
+import { React, useState, useEffect, useRef } from "react";
+import comprobarCookies from "../utils/comprobarCookies";
 import axios from "axios";
 import styles from "../components/publicaciones.module.css";
-import comprobarCookies from "../utils/comprobarCookies";
-import Cookies from "universal-cookie";
-import Router from "next/router";
-import { useDisclosure } from "@chakra-ui/react";
+import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
+  Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalCloseButton,Divider,
+  } from "@chakra-ui/react";
+  import Swal from "sweetalert2";
 
-const publicaciones = () => {
+export default function withAction() {
 
-  const cookies = new Cookies();
-  const [id, setId] = useState();
+  const [idPublicacion, setIdPublicacion] = useState();
+
+  const [values, setValues] = useState()
+  const [tituloModal, setTituloModal] = useState();
+  const { isOpen: isEditOpen , onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
+  const { isOpen: isComentOpen , onOpen: onComentOpen, onClose: onComentClose } = useDisclosure()
   const [publicaciones, setPublicaciones] = useState([]);
   const [nombre, setNombre] = useState();
-  const [comentariosPublicacion, setcomentariosPublicacion] = useState([]);
-  const [tituloModal, setTituloModal] = useState();
-  const [idPublicacion, setIdPublicacion] = useState();
-  const [comentario, setComentario] = useState();
+  const [id, setId] = useState();
+  const cookies = new Cookies()
+  const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [comentariosPublicacion, setcomentariosPublicacion] = useState([]);
 
-
+  const handleInput = (e) => {
+    setComentario(e.target.value);
+  };
 
   useEffect(() => {
     comprobarCookies();
@@ -36,9 +41,44 @@ const publicaciones = () => {
     setNombre(cookies.get("nombre"));
   }, []);
 
-  const handleInput = (e) => {
-    setComentario(e.target.value);
+  const getPublicaciones = async () => {
+    const response = await axios.get(`${process.env.API_URL}/publicaciones`);
+    console.log(response.data)
+    setPublicaciones(response.data);
+
   };
+
+  const pushCrearPublicacion = () => {
+    Router.push("/crearPublicacion")
+  }
+
+  const pushVerMisPublicaciones = () => {
+    router.push(`/publicaciones/personales/${id}`)
+  }
+
+  const pushVerMiPerfil = () => {
+    router.push(`/`)
+  }
+
+  const onCambio = (e) => {
+		setValues({
+			...values,
+			[e.target.name]: e.target.value,
+		})
+	}
+  const cerrarSesion = () => {
+
+      cookies.remove("id");
+      cookies.remove("rut");
+      cookies.remove("nombre");
+      cookies.remove("correo");
+      cookies.remove("telefono");
+      cookies.remove("direccion");
+      cookies.remove("fechaCumpleanio");
+      cookies.remove("fechaIngreso");
+      cookies.remove("rol");
+      Router.push("/login");
+  }
 
   const onChange = async (event,idPublicacion)=> {
 
@@ -77,156 +117,10 @@ const publicaciones = () => {
     
   }
 
-  
-
-  const buscarImagen = async (idP) => {
-
-    const response = await axios.get(`${process.env.API_URL}/get/file/${idP}`)
-
+  const capturarId = async (idP) => {
+    setIdPublicacion(idP)
+    onEditOpen()
   }
-
-  const mostrarPublicaciones = () => {
-    return publicaciones.map((publicaciones) => {
-      return (
-        <>
-          <Box borderWidth="2px" borderRadius="lg" my={6} border="1px">
-            <HStack className={styles.publicacionLabelHorizontal}>
-              <Box className={styles.nombreUsuario}>
-                {publicaciones.nombreUsuario}
-              </Box>
-              <Select placeholder=' ' width='60px'  onChange={() => onChange(event,publicaciones._id)} name="opcionElegida" >
-              <option value='reportar'>Reportar</option>
-              <option value='favoritos'>Favoritos</option>
-              </Select> 
-            </HStack>
-            <Box className={styles.publicacionTitulo}  >
-              {publicaciones.titulo} 
-            </Box>
-            <Image
-              src="https://bit.ly/dan-abramov"
-              className={styles.postImage}
-              alt="post image"
-            />
-            <Box p="2" key={publicaciones._id} >
-              <HStack className={styles.etiquetayfecha}>
-                <Box className={styles.publicacionEtiqueta}>#{publicaciones.etiqueta}</Box>
-                <Box className={styles.publicacionFecha}>{publicaciones.fechaCreacion}</Box>
-              </HStack>
-              <HStack className={styles.publicacionLabelHorizontal}></HStack>
-              <Box>{publicaciones.descripcion}</Box>
-              <HStack className={styles.publicacionLabelHorizontal}>
-                  <Button marginLeft='-10px'  variant={"ghost"}
-                    onClick={() => {
-                      darLike(publicaciones._id);
-                    }}
-                  >
-                    <Image src="like.png" alt="like" />
-                    <Box as="span" color="gray.600" fontSize="sm">
-                      {publicaciones.cantLikes} likes
-                    </Box>
-                  </Button>
-              </HStack>
-              <VStack className={styles.mostrarComentarios} align="normal">
-                <Button  variant={"ghost"}
-                  onClick={() => {
-                    cargarComentarios(publicaciones._id);
-                  }}
-                >
-                  Comentarios
-                  <Image src="flecha.png" alt="flecha" />
-                  <Modal
-                    isOpen={isOpen}
-                    onClose={onClose}
-                    scrollBehavior="inside"
-                    size="full"
-                  >
-                    <ModalOverlay>
-                      <ModalContent>
-                      <ModalHeader>
-                        <Text>Comentarios</Text>
-                      </ModalHeader>
-                      <ModalCloseButton />
-                      <ModalHeader>
-                          <FormControl>
-                            <FormLabel fontSize={20} my={2}>
-                              Nuevo comentario
-                            </FormLabel>
-                            <Input
-                              placeholder="Ingrese comentario"
-                              type={"text"}
-                              my={3}
-                              onChange={handleInput}
-                              name="contenido"
-                            />
-                            <Button
-                              colorScheme="red"
-                              size="md"
-                              type="submit"
-                              my={2}
-                              onClick={() => {
-                                nuevoComentario(idPublicacion, comentario),
-                                  onClose();
-                              }}
-                            >
-                              Comentar
-                            </Button>
-                          </FormControl>
-                          <Divider />
-                      </ModalHeader>
-                      <ModalBody maxW="initial">
-                        {comentariosPublicacion}
-                      </ModalBody>
-                      <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={onClose} >
-                          Cerrar
-                        </Button>
-                      </ModalFooter>
-                    </ModalContent>
-                    </ModalOverlay>
-                  </Modal>
-                </Button>
-              </VStack>
-            </Box>
-          </Box>
-        </>
-      );
-    });
-  };
-
-  const getPublicaciones = async () => {
-    const response = await axios.get(`${process.env.API_URL}/publicaciones`);
-    console.log(response.data)
-    setPublicaciones(response.data);
-
-  };
-
-  const darLike = async (idPublicacion) => {
-    const json = JSON.stringify({
-      idPublicacion: idPublicacion,
-      idUsuario: id,
-    });
-    const response = await axios
-      .post(`${process.env.API_URL}/like`, json, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        Swal.fire({
-          title: "Exito",
-          html: res.data.message,
-          icon: "success",
-        });
-      })
-      .catch((err) => {
-        Swal.fire({
-          title: "Error",
-          html: err.response.data.message,
-          icon: "error",
-        });
-      });
-  };
-
 
   const cargarComentarios = async (idPublicacion) => {
     setTituloModal("Comentarios");
@@ -252,7 +146,7 @@ const publicaciones = () => {
           );
         });
         setcomentariosPublicacion(comentarios);
-        onOpen();
+        onComentOpen();
       });
   };
 
@@ -292,76 +186,230 @@ const publicaciones = () => {
     }
   };
 
-  const [tag, setTag] = useState({
-    etiqueta: "",
-  });
+  const mostrarPublicaciones = () => {
+    return publicaciones.map((publicaciones) => {
+      return (
+        <>
+          <Box borderWidth="2px" borderRadius="lg" my={6} border="1px">
+            <HStack className={styles.publicacionLabelHorizontal}>
+              <Box className={styles.nombreUsuario}>
+                {publicaciones.nombreUsuario}
+              </Box>
+              <Select placeholder=' ' width='60px'  onChange={() => onChange(event,publicaciones._id)} name="opcionElegida" >
+              <option value='reportar'>Reportar</option>
+              <option value='favoritos'>Favoritos</option>
+              <option value='eliminar'>Eliminar</option>
+              </Select> 
+            </HStack>
+            <Box className={styles.publicacionTitulo}>
+              {publicaciones.titulo}
+            </Box>
+            <Image
+              src="https://bit.ly/dan-abramov"
+              className={styles.postImage}
+              alt="post image"
+            />
+            <Box p="2" key={publicaciones._id}>
+              <HStack className={styles.etiquetayfecha}>
+                <Box className={styles.publicacionEtiqueta}>#{publicaciones.etiqueta}</Box>
+                <Box className={styles.publicacionFecha}>{publicaciones.fechaCreacion}</Box>
+              </HStack>
+              <HStack className={styles.publicacionLabelHorizontal}></HStack>
+              <Box>{publicaciones.descripcion}</Box>
+              <HStack className={styles.publicacionLabelHorizontal}>
+                  <Button marginLeft='-10px'  variant={"ghost"}
+                    onClick={() => {
+                      darLike(publicaciones._id);
+                    }}
+                  >
+                    <Image src="like.png" alt="like" />
+                    <Box as="span" color="gray.600" fontSize="sm">
+                      {publicaciones.cantLikes} likes
+                    </Box>
+                  </Button>
+                  <Button onClick={()=> {capturarId(publicaciones._id)}}  >Editar</Button>
 
-  const router = useRouter();
+                  <Modal
+                  isOpen={isEditOpen}
+                  onClose={onEditClose}
+                  scrollBehavior="inside"
+                  >
+        <ModalOverlay />
+        <ModalContent>
+          <HStack className={styles.publicacionLabelHorizontal}>
+            <ModalHeader>
+                        Editar_Publicacion
+                        </ModalHeader>
+            
+            <ModalFooter>
+                        <Button colorScheme="red" onClick={onEditClose}>
+                        X
+                        </Button>
+                    </ModalFooter>
+          
+          </HStack>
+        
+        <FormControl isRequired>
+          <FormLabel>Titulo</FormLabel>
+          <Input placeholder="Ingrese un titulo" type={"text"} onChange={onCambio} name={"titulo"} />
+        </FormControl>
 
-  const onEtiqueta = (e) => {
-    setTag({
-      ...tag,
-      [e.target.name]: e.target.value,
-    });
+        <FormControl isRequired>
+          <FormLabel>Descripcion</FormLabel>
+          <Textarea placeholder="Ingrese una descripcion" type={"text"} onChange={onCambio} name="descripcion" />
+        </FormControl>
 
-    // sirve para que los atributos del useState sean inicializados desde el placeholder
-  }
+        <FormControl>
+          <FormLabel>Etiqueta</FormLabel>
+          <Input placeholder="Ingrese una etiqueta" type={"text"} onChange={onCambio} name="etiqueta" />
+        </FormControl>
+        
+        <Button
+                            colorScheme="blue"
+                            size="md"
+                            type="submit"
+                            my={2}
+                            onClick={() => {
+                              onGuardar(idPublicacion)
+                              onEditClose()
+                            }}
+                            
+                          >
+                            Guardar
+                          </Button>
+        </ModalContent>
+        </Modal>
 
-  const busquedaEtiqueta = async (e) => {
-    e.preventDefault();
-    //console.log(tag.etiqueta)
-    try {
-      const response = await axios.get(
-        `${process.env.API_URL}/publicacionesx/${tag.etiqueta}`
+              </HStack>
+              <VStack className={styles.mostrarComentarios} align="normal">
+                <Button  variant={"ghost"}
+                  onClick={() => {
+                    cargarComentarios(publicaciones._id);
+                  }}
+                >
+                  Comentarios
+                  <Image src="flecha.png" alt="flecha" />
+                  <Modal
+                    isOpen={isComentOpen}
+                    onClose={onComentClose}
+                    scrollBehavior="inside"
+                    size="full"
+                  >
+                    <ModalOverlay>
+                      <ModalContent>
+                      <ModalHeader>
+                        <Text>Comentarios</Text>
+                      </ModalHeader>
+                      <ModalCloseButton />
+                      <ModalHeader>
+                          <FormControl>
+                            <FormLabel fontSize={20} my={2}>
+                              Nuevo comentario
+                            </FormLabel>
+                            <Input
+                              placeholder="Ingrese comentario"
+                              type={"text"}
+                              my={3}
+                              onChange={handleInput}
+                              name="contenido"
+                            />
+                            <Button
+                              colorScheme="red"
+                              size="md"
+                              type="submit"
+                              my={2}
+                              onClick={() => {
+                                nuevoComentario(idPublicacion, comentario),
+                                  onComentClose();
+                              }}
+                            >
+                              Comentar
+                            </Button>
+                          </FormControl>
+                          <Divider />
+                      </ModalHeader>
+                      <ModalBody maxW="initial">
+                        {comentariosPublicacion}
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button colorScheme="blue" mr={3} onClick={onComentClose} >
+                          Cerrar
+                        </Button>
+                      </ModalFooter>
+                    </ModalContent>
+                    </ModalOverlay>
+                  </Modal>
+                </Button>
+              </VStack>
+            </Box>
+          </Box>
+        </>
       );
-     
+    });
+  };
+
+  const darLike = async (idPublicacion) => {
+    const json = JSON.stringify({
+      idPublicacion: idPublicacion,
+      idUsuario: id,
+    });
+    const response = await axios
+      .post(`${process.env.API_URL}/like`, json, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        Swal.fire({
+          title: "Exito",
+          html: res.data.message,
+          icon: "success",
+        });
+      })
+      .catch((err) => {
+        Swal.fire({
+          title: "Error",
+          html: err.response.data.message,
+          icon: "error",
+        });
+      });
+  };
+
+  const pushPublicacionesReportadas = () => {
+		Router.push("/publicaciones/reportadas")
+	}
+
+  const onGuardar = async (idPublicacion) => {
+    console.log(values)
+    console.log("jaja")
+    console.log(idPublicacion)
+    try {
+      const response = await axios.put(`${process.env.API_URL}/publicacion/update/${idPublicacion}`, values)
+      console.log(response)
       if (response.status === 200) {
-        router.push(`/publicaciones/etiqueta/${tag.etiqueta}`)
+        Swal.fire({
+          title: 'Publicacion modificada',
+          text: 'La publicacion se ha modificado correctamente',
+          icon: 'success',
+          confirmButtonText: 'Ok'
+        }).then((result) => {
+          //router.push('/publicacionesAdmi') //refrescar pagina
+        })
+
       }
     } catch (err) {
       Swal.fire({
-        title: "Error",
-        text: "Ha ocurrido un error",
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
+        title: 'Error',
+        text: 'Ha ocurrido un error',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      })
     }
-
   }
-
-  const pushCrearPublicacion = () => {
-    Router.push("/crearPublicacion")
-  }
-
-  const pushVerMisPublicaciones = () => {
-    router.push(`/publicaciones/personales/${id}`)
-  }
-
-  const pushVerMiPerfil = () => {
-    router.push(`/`)
-  }
-
-  const cerrarSesion = () => {
-
-      cookies.remove("id");
-      cookies.remove("rut");
-      cookies.remove("nombre");
-      cookies.remove("correo");
-      cookies.remove("telefono");
-      cookies.remove("direccion");
-      cookies.remove("fechaCumpleanio");
-      cookies.remove("fechaIngreso");
-      cookies.remove("rol");
-      Router.push("/login");
-  }
-  
-
 
   return (
-
     <>
-    
-    <Box position='fixed' width='100%'  bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+      <Box position='fixed' width='100%'  bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <IconButton
             size={'md'}
@@ -379,6 +427,8 @@ const publicaciones = () => {
               <Button onClick={pushVerMisPublicaciones}>Mis publicaciones</Button>
               <Button onClick={pushCrearPublicacion}>Crear Publicacion</Button>
               <Button onClick={pushVerMiPerfil}>Ver mi perfil</Button>
+              <Button onClick={pushPublicacionesReportadas}>Publicaciones Reportadas</Button>
+              
             </HStack>
           </HStack>
           <Flex alignItems={'center'}>
@@ -404,41 +454,11 @@ const publicaciones = () => {
         ) : null}
       </Box>
 
-      <VStack>
-
-      <Container position='relative' marginTop={100} borderWidth="2px">
-        <FormControl>
-          <FormLabel fontSize={20} my={2} >
-            Filtrar por Etiqueta
-          </FormLabel>
-          <HStack>
-            <Input
-              placeholder="Ingrese etiqueta"
-              type={"text"}
-              my={3}
-              onChange={onEtiqueta}
-              name="etiqueta"
-            />
-            <Button
-              colorScheme="red"
-              size="md"
-              ml="400"
-              type="submit"
-              my={2}
-              onClick={busquedaEtiqueta}
-            >
-              Buscar
-            </Button>
-
-          </HStack>
-        </FormControl>
-      </Container>
-      <Container >{mostrarPublicaciones()}</Container>
-    </VStack>
-
+        <VStack>
+          <Container position='relative' marginTop={100}>
+          {mostrarPublicaciones()} 
+          </Container>
+        </VStack>
     </>
-   
   );
-};
-
-export default publicaciones;
+}

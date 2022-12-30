@@ -18,13 +18,25 @@ import {
 } from 'react-icons/fi'
 import { IoPawOutline } from 'react-icons/io5'
 import NavItem from '../components/NavItem'
+import { useRouter } from "next/router";
+import Router from "next/router";
+
+
 
 export default function Sidebar() {
+
+    const router = useRouter();
+
+
+    const pushPublicacionesReportadas = () => {
+		Router.push("../pages/publicaciones/reportadas")
+	}
+
     const [navSize, changeNavSize] = useState("large")
     return (
         <Flex
             pos="sticky"
-            left="5"
+            left="2"
             h="95vh"
             marginTop="2.5vh"
             boxShadow="0 4px 12px 0 rgba(0, 0, 0, 0.05)"
@@ -57,7 +69,7 @@ export default function Sidebar() {
                 <NavItem navSize={navSize} icon={FiUser} title="Clients" />
                 <NavItem navSize={navSize} icon={IoPawOutline} title="Animals" />
                 <NavItem navSize={navSize} icon={FiDollarSign} title="Stocks" />
-                <NavItem navSize={navSize} icon={FiBriefcase} title="Reports" />
+                <NavItem navSize={navSize} icon={FiBriefcase} title="Publicaciones Reportadas"  onClick={pushPublicacionesReportadas()}/>
                 <NavItem navSize={navSize} icon={FiSettings} title="Settings" />
             </Flex>
 

@@ -16,6 +16,7 @@ const publicacionesReportadas = () => {
 
     const [publicaciones, setPublicaciones] = useState([])
 
+    const cookies = new Cookies();
     const getPublicaciones = async () => {
 		const response = await axios.get(`${process.env.API_URL}/publicacionesAdmi`)
 		setPublicaciones(response.data)
@@ -109,13 +110,20 @@ const publicacionesReportadas = () => {
 		})
 	}
 
+  if((cookies.get("rut"))=="19.896.942-7"){
     return (
-        <VStack>
-            <Button onClick={()=> eliminarPInactivas()} >Eliminar Publicaciones Inactivas</Button>
-            {mostrarPublicaciones()}
-        </VStack>
+      <VStack>
+          <Button onClick={()=> eliminarPInactivas()} >Eliminar Publicaciones Inactivas</Button>
+          {mostrarPublicaciones()}
+      </VStack>
+  )
+    } else {
+        return (
+          <div>sin permisos</div>
+        )
+    }
 
-    )
+    
 }
 
 export default publicacionesReportadas
