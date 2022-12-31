@@ -56,11 +56,6 @@ const publicacionSchema = new Schema({
     required: true,
     ref: 'usuario'
     },
-    //idImagen:{
-    //    type:Schema.ObjectId,
-    //    required: true,
-    //    ref: 'file'
-    //},
     numReportes:{
         type:Number,
         require:true,
@@ -76,12 +71,7 @@ const publicacionSchema = new Schema({
         type: [Schema.ObjectId],
         ref: 'comentario',
         default: []
-    },
-    //usuario:[{
-    //    type: Schema.Types.ObjectId,
-    //    required:true,
-    //    ref: 'usuario'
-    //}]
+    }
 },
 {
 timestamps:true //fecha creacion y actualizacion

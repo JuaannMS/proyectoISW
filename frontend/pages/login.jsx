@@ -22,7 +22,7 @@ const CFaUserAlt = chakra(FaUserAlt);
 
 const Login = () => {
 
-
+    
     const cookies = new Cookies;
     const [rutUsuario, setRutUsuario] = useState();
 

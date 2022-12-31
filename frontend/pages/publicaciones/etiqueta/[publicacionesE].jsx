@@ -229,7 +229,7 @@ const publicacionesE = ({data}) => {
                       darLike(publicacion._id);
                     }}
                   >
-                    <Image src="like.png" alt="like" />
+                    <Image src="/like.png" alt="like" />
                     <Box as="span" color="gray.600" fontSize="sm">
                       {publicacion.cantLikes} likes
                     </Box>
@@ -243,7 +243,7 @@ const publicacionesE = ({data}) => {
                   }}
                 >
                   Comentarios
-                  <Image src="flecha.png" alt="flecha" />
+                  <Image src="/flecha.png" alt="flecha" />
                   <Modal
                     isOpen={isOpen}
                     onClose={onClose}

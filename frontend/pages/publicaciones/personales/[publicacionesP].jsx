@@ -14,6 +14,7 @@ import {Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalC
 
 
 export async function getServerSideProps(context) {
+
     try {
         const response = await axios.get(`${process.env.API_URL}/publicacionesP/${context.query.publicacionesP}`);
         return {
@@ -24,7 +25,7 @@ export async function getServerSideProps(context) {
     } catch (err) {
         return {
             redirect: {
-                destination: '/publicaciones',
+                destination: '/',
                 permanent: true
             }
         }
@@ -44,6 +45,7 @@ const publicacionesP = ({data}) =>{
     const [idPublicacion, setIdPublicacion] = useState();
     const { isOpen: isEditOpen , onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
     const { isOpen: isComentOpen , onOpen: onComentOpen, onClose: onComentClose } = useDisclosure()
+    const { publicacionesP } = router.query
 
     const handleInput = (e) => {
         setComentario(e.target.value);
@@ -212,7 +214,6 @@ const publicacionesP = ({data}) =>{
         }
       };
 
-
       const darLike = async (idPublicacion) => {
         const json = JSON.stringify({
           idPublicacion: idPublicacion,
@@ -245,7 +246,8 @@ const publicacionesP = ({data}) =>{
         onEditOpen()
       }
 
-    return (
+    const mostrarPublicaciones = () => {
+      return (
         publicaciones.map((publicacion) => {
             return (
                 <Container>
@@ -281,7 +283,7 @@ const publicacionesP = ({data}) =>{
                       darLike(publicacion._id);
                     }}
                   >
-                    <Image src="like.png" alt="like" />
+                    <Image src="/like.png" alt="like" />
                     <Box as="span" color="gray.600" fontSize="sm">
                       {publicacion.cantLikes} likes
                     </Box>
@@ -348,7 +350,7 @@ const publicacionesP = ({data}) =>{
                   }}
                 >
                   Comentarios
-                  <Image src="flecha.png" alt="flecha" />
+                  <Image src="/flecha.png" alt="flecha" />
                   <Modal
                     isOpen={isComentOpen}
                     onClose={onComentClose}
@@ -403,16 +405,26 @@ const publicacionesP = ({data}) =>{
               </VStack>
             </Box>
           </Box>
-              
                 </Container>
-                
             )
-
-
         })
-		
-        
 	)
+
+    }
+
+    if(publicacionesP == id){
+      return (
+        <Container>
+         {mostrarPublicaciones()}
+        </Container>
+      )
+    } else {
+
+      return (
+
+        <div> acceso denegado</div>
+      )
+    }
 
 }
 

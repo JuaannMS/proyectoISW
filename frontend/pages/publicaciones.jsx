@@ -17,6 +17,8 @@ import { useDisclosure } from "@chakra-ui/react";
 
 const publicaciones = () => {
 
+  axios.put(`${process.env.API_URL}/publcacionesInactivas`)
+
   const cookies = new Cookies();
   const [id, setId] = useState();
   const [publicaciones, setPublicaciones] = useState([]);
@@ -26,12 +28,13 @@ const publicaciones = () => {
   const [idPublicacion, setIdPublicacion] = useState();
   const [comentario, setComentario] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const [imagenes, setImagenes] = useState([]);
 
 
   useEffect(() => {
     comprobarCookies();
     getPublicaciones();
+    imagenes
     setId(cookies.get("id"));
     setNombre(cookies.get("nombre"));
   }, []);
@@ -72,23 +75,15 @@ const publicaciones = () => {
             icon: "error",
           });
         });
-
     }
-    
-  }
-
-  
-
-  const buscarImagen = async (idP) => {
-
-    const response = await axios.get(`${process.env.API_URL}/get/file/${idP}`)
-
   }
 
   const mostrarPublicaciones = () => {
     return publicaciones.map((publicaciones) => {
+
       return (
         <>
+        
           <Box borderWidth="2px" borderRadius="lg" my={6} border="1px">
             <HStack className={styles.publicacionLabelHorizontal}>
               <Box className={styles.nombreUsuario}>
@@ -195,10 +190,20 @@ const publicaciones = () => {
 
   const getPublicaciones = async () => {
     const response = await axios.get(`${process.env.API_URL}/publicaciones`);
-    console.log(response.data)
     setPublicaciones(response.data);
-
   };
+
+  // const buscarImagenn = () => {
+
+  //   publicaciones.map( async (publicacion) => {
+       //const response = await axios.get(`${process.env.API_URL}/file/get/${publicacion._id}`)
+       //setImagenes(response.data)
+  //     console.log(publicacion._id)
+  //   })
+
+  // }
+  
+ 
 
   const darLike = async (idPublicacion) => {
     const json = JSON.stringify({

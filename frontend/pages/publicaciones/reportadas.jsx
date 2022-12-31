@@ -41,8 +41,6 @@ const publicacionesReportadas = () => {
           icon: "error",
         })
       })
-      
-      
     }
       
     const restaurarPublicacion = async (idP) => {
@@ -60,10 +58,7 @@ const publicacionesReportadas = () => {
             icon: "error",
           })
         })
-        
-        
       }
-    
 
     const mostrarPublicaciones = () => {
 		return publicaciones.map(publicacion => {
