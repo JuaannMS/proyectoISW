@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import { Textarea, Button, Container, Input, Stack, Text, HStack, Heading, FormControl, FormLabel, Select, VStack } from '@chakra-ui/react'
+import { Textarea, Button, Container, Input, Stack, Text, HStack, Heading, FormControl, FormLabel, Select, VStack, AspectRatio } from '@chakra-ui/react'
 import Swal from 'sweetalert2'
 import { useRouter } from 'next/router'
 import axios from 'axios'
@@ -265,11 +265,9 @@ const publicacionesP = ({data}) =>{
             <Box className={styles.publicacionTitulo}>
               {publicacion.titulo}
             </Box>
-            <Image
-              src="https://bit.ly/dan-abramov"
-              className={styles.postImage}
-              alt="post image"
-            />
+            <AspectRatio maxW='99%' ratio={1}>
+            <iframe title='imagen' src={`/imagenPublicacion/${publicacion._id}`}  />
+            </AspectRatio>
             <Box p="2" key={publicacion._id}>
               <HStack className={styles.etiquetayfecha}>
                 <Box className={styles.publicacionEtiqueta}>#{publicacion.etiqueta}</Box>
