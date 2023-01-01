@@ -50,11 +50,6 @@ const Login = () => {
                     cookies.set("fechaIngreso", res.data.fechaIngreso, { path: "/" });
                     cookies.set("rol", res.data.rol, { path: "/" });
 
-                    if((cookies.get("rut"))=="19.896.942-7"){
-                    Router.push("../publicacionesAdmi");
-                    } else {
-                        Router.push("../publicaciones");
-                    }
                     
                 }
             }).catch((err) => {

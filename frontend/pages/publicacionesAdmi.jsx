@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import {Box,Flex,Avatar,HStack,Link,IconButton,Button,Menu,MenuButton,MenuList,MenuItem,MenuDivider,
-  useDisclosure,useColorModeValue,Stack, VStack, Container,} from '@chakra-ui/react';
+  useDisclosure,useColorModeValue,Stack, VStack, Container, AspectRatio,} from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon, AddIcon } from '@chakra-ui/icons';
 import Router from "next/router";
 import { useRouter } from "next/router";
@@ -248,11 +248,9 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
             <Box className={styles.publicacionTitulo}>
               {publicaciones.titulo}
             </Box>
-            <Image
-              src="https://bit.ly/dan-abramov"
-              className={styles.postImage}
-              alt="post image"
-            />
+            <AspectRatio maxW='99%' ratio={1}>
+            <iframe title='imagen' src={`/imagenPublicacion/${publicaciones._id}`}  />
+            </AspectRatio>
             <Box p="2" key={publicaciones._id}>
               <HStack className={styles.etiquetayfecha}>
                 <Box className={styles.publicacionEtiqueta}>#{publicaciones.etiqueta}</Box>
