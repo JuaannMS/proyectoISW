@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
-import {Box,Flex,Avatar,HStack,Link,IconButton,Button,Menu,MenuButton,MenuList,MenuItem,MenuDivider,
-  useDisclosure,useColorModeValue,Stack, VStack, Container,} from '@chakra-ui/react';
-import { HamburgerIcon, CloseIcon, AddIcon } from '@chakra-ui/icons';
+import {Box,Flex,Avatar,HStack,Link,IconButton,Button, ListItem, ListIcon, OrderedList, UnorderedList,FormErrorMessage, FormHelperText,MenuItemOption, MenuGroup,MenuOptionGroup,useDisclosure,useColorModeValue,Stack, VStack, Container, TagRightIcon,Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button, Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalCloseButton,Divider,Radio, RadioGroup} from '@chakra-ui/react';
+import { HamburgerIcon, CloseIcon, AddIcon,ChevronDownIcon } from '@chakra-ui/icons';
 import Router from "next/router";
 import { useRouter } from "next/router";
 import Cookies from "universal-cookie";
@@ -9,10 +8,13 @@ import { React, useState, useEffect, useRef } from "react";
 import comprobarCookies from "../utils/comprobarCookies";
 import axios from "axios";
 import styles from "../components/publicaciones.module.css";
-import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
-  Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalCloseButton,Divider,
-  } from "@chakra-ui/react";
-  import Swal from "sweetalert2";
+import Swal from "sweetalert2";
+
+
+
+
+
+
 
   const publicacionesAdmi = () => {
 
@@ -25,6 +27,7 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
   const [tituloModal, setTituloModal] = useState();
   const { isOpen: isEditOpen , onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
   const { isOpen: isComentOpen , onOpen: onComentOpen, onClose: onComentClose } = useDisclosure()
+  const { isOpen: isReportOpen, onOpen: onReportOpen, onClose: onReportClose } = useDisclosure()
   const [publicaciones, setPublicaciones] = useState([]);
   const [nombre, setNombre] = useState();
   const [id, setId] = useState();
@@ -165,7 +168,10 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
     setIdPublicacion(idP)
     onEditOpen()
   }
-
+  const capturarId2 = async (idP) => {
+    setIdPublicacion(idP)
+    onReportOpen()
+  }
   const cargarComentarios = async (idPublicacion) => {
     setTituloModal("Comentarios");
     setcomentariosPublicacion([]);
@@ -230,6 +236,7 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
     }
   };
 
+
   const mostrarPublicaciones = () => {
     return publicaciones.map((publicaciones) => {
       return (
@@ -239,11 +246,15 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
               <Box className={styles.nombreUsuario}>
                 {publicaciones.nombreUsuario}
               </Box>
-              <Select placeholder=' ' width='60px'  onChange={() => onChange(event,publicaciones._id)} name="opcionElegida" >
-              <option value='reportar'>Reportar</option>
-              <option value='favoritos'>Favoritos</option>
-              <option value='eliminar'>Eliminar</option>
-              </Select> 
+              <Select
+                placeholder=" "
+                width="60px"
+                onChange={() => onChange(event, publicaciones._id)}
+                name="opcionElegida"
+              >
+                <option value="favoritos">Favoritos</option>
+                <option value="eliminar">Eliminar</option>
+              </Select>
             </HStack>
             <Box className={styles.publicacionTitulo}>
               {publicaciones.titulo}
@@ -255,78 +266,163 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
             />
             <Box p="2" key={publicaciones._id}>
               <HStack className={styles.etiquetayfecha}>
-                <Box className={styles.publicacionEtiqueta}>#{publicaciones.etiqueta}</Box>
-                <Box className={styles.publicacionFecha}>{publicaciones.fechaCreacion}</Box>
+                <Box className={styles.publicacionEtiqueta}>
+                  #{publicaciones.etiqueta}
+                </Box>
+                <Box className={styles.publicacionFecha}>
+                  {publicaciones.fechaCreacion}
+                </Box>
               </HStack>
               <HStack className={styles.publicacionLabelHorizontal}></HStack>
               <Box>{publicaciones.descripcion}</Box>
               <HStack className={styles.publicacionLabelHorizontal}>
-                  <Button marginLeft='-10px'  variant={"ghost"}
-                    onClick={() => {
-                      darLike(publicaciones._id);
-                    }}
-                  >
-                    <Image src="like.png" alt="like" />
-                    <Box as="span" color="gray.600" fontSize="sm">
-                      {publicaciones.cantLikes} likes
-                    </Box>
-                  </Button>
-                  <Button onClick={()=> {capturarId(publicaciones._id)}}  >Editar</Button>
+                <Button
+                  marginLeft="-10px"
+                  variant={"ghost"}
+                  onClick={() => {
+                    darLike(publicaciones._id);
+                  }}
+                >
+                  <Image src="like.png" alt="like" />
+                  <Box as="span" color="gray.600" fontSize="sm">
+                    {publicaciones.cantLikes} likes
+                  </Box>
+                </Button>
 
-                  <Modal
+                <Flex>
+                  <>
+                    <Button
+                      onClick={() => {
+                        capturarId2(publicaciones._id);
+                      }}
+                    >
+                      Reportar
+                    </Button>
+
+                    <Modal isOpen={isReportOpen} onClose={onReportClose}>
+                      <ModalOverlay />
+                      <ModalContent>
+                        <ModalCloseButton />
+                        <ModalBody></ModalBody>
+                        <UnorderedList marginLeft={5}>
+                          <ListItem marginBottom={10}>
+                            <FormControl>
+                              <FormLabel>Indique el motivo:</FormLabel>
+                              <Input
+                                placeholder="La publicación ..."
+                                type={"text"}
+                              />
+                              <FormHelperText>
+                                Indique en breves palabras el motivo.
+                              </FormHelperText>
+                            </FormControl>
+                          </ListItem>
+                          <ListItem marginBottom={4}>
+                            <FormControl as="fieldset">
+                              <FormLabel as="legend">
+                                La publicación es una falta:
+                              </FormLabel>
+                              <RadioGroup defaultValue="leve">
+                                <HStack spacing="24px">
+                                  <Radio value="leve">leve</Radio>
+                                  <Radio value="Moderada">Moderada</Radio>
+                                  <Radio value="Grave">Grave</Radio>
+                                </HStack>
+                              </RadioGroup>
+                              <FormHelperText>
+                                Seleccione una opción
+                              </FormHelperText>
+                            </FormControl>
+                          </ListItem>
+                        </UnorderedList>
+                        <ModalFooter>
+                          <Button
+                            colorScheme="blue"
+                            mr={3}
+                            onClick={onReportClose}
+                          >
+                            Enviar Reporte
+                          </Button>
+                          <Button variant="ghost">Cancelar</Button>
+                        </ModalFooter>
+                      </ModalContent>
+                    </Modal>
+                  </>
+                </Flex>
+
+                <Button
+                  onClick={() => {
+                    capturarId(publicaciones._id);
+                  }}
+                >
+                  Editar
+                </Button>
+
+                <Modal
                   isOpen={isEditOpen}
                   onClose={onEditClose}
                   scrollBehavior="inside"
-                  >
-        <ModalOverlay />
-        <ModalContent>
-          <HStack className={styles.publicacionLabelHorizontal}>
-            <ModalHeader>
-                        Editar_Publicacion
-                        </ModalHeader>
-            
-            <ModalFooter>
+                >
+                  <ModalOverlay />
+                  <ModalContent>
+                    <HStack className={styles.publicacionLabelHorizontal}>
+                      <ModalHeader>Editar_Publicacion</ModalHeader>
+
+                      <ModalFooter>
                         <Button colorScheme="red" onClick={onEditClose}>
-                        X
+                          X
                         </Button>
-                    </ModalFooter>
-          
-          </HStack>
-        
-        <FormControl isRequired>
-          <FormLabel>Titulo</FormLabel>
-          <Input placeholder="Ingrese un titulo" type={"text"} onChange={onCambio} name={"titulo"} />
-        </FormControl>
+                      </ModalFooter>
+                    </HStack>
 
-        <FormControl isRequired>
-          <FormLabel>Descripcion</FormLabel>
-          <Textarea placeholder="Ingrese una descripcion" type={"text"} onChange={onCambio} name="descripcion" />
-        </FormControl>
+                    <FormControl isRequired>
+                      <FormLabel>Titulo</FormLabel>
+                      <Input
+                        placeholder="Ingrese un titulo"
+                        type={"text"}
+                        onChange={onCambio}
+                        name={"titulo"}
+                      />
+                    </FormControl>
 
-        <FormControl>
-          <FormLabel>Etiqueta</FormLabel>
-          <Input placeholder="Ingrese una etiqueta" type={"text"} onChange={onCambio} name="etiqueta" />
-        </FormControl>
-        
-        <Button
-                            colorScheme="blue"
-                            size="md"
-                            type="submit"
-                            my={2}
-                            onClick={() => {
-                              onGuardar(idPublicacion)
-                              onEditClose()
-                            }}
-                            
-                          >
-                            Guardar
-                          </Button>
-        </ModalContent>
-        </Modal>
+                    <FormControl isRequired>
+                      <FormLabel>Descripcion</FormLabel>
+                      <Textarea
+                        placeholder="Ingrese una descripcion"
+                        type={"text"}
+                        onChange={onCambio}
+                        name="descripcion"
+                      />
+                    </FormControl>
 
+                    <FormControl>
+                      <FormLabel>Etiqueta</FormLabel>
+                      <Input
+                        placeholder="Ingrese una etiqueta"
+                        type={"text"}
+                        onChange={onCambio}
+                        name="etiqueta"
+                      />
+                    </FormControl>
+
+                    <Button
+                      colorScheme="blue"
+                      size="md"
+                      type="submit"
+                      my={2}
+                      onClick={() => {
+                        onGuardar(idPublicacion);
+                        onEditClose();
+                      }}
+                    >
+                      Guardar
+                    </Button>
+                  </ModalContent>
+                </Modal>
               </HStack>
               <VStack className={styles.mostrarComentarios} align="normal">
-                <Button  variant={"ghost"}
+                <Button
+                  variant={"ghost"}
                   onClick={() => {
                     cargarComentarios(publicaciones._id);
                   }}
@@ -341,11 +437,11 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
                   >
                     <ModalOverlay>
                       <ModalContent>
-                      <ModalHeader>
-                        <Text>Comentarios</Text>
-                      </ModalHeader>
-                      <ModalCloseButton />
-                      <ModalHeader>
+                        <ModalHeader>
+                          <Text>Comentarios</Text>
+                        </ModalHeader>
+                        <ModalCloseButton />
+                        <ModalHeader>
                           <FormControl>
                             <FormLabel fontSize={20} my={2}>
                               Nuevo comentario
@@ -371,16 +467,20 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
                             </Button>
                           </FormControl>
                           <Divider />
-                      </ModalHeader>
-                      <ModalBody maxW="initial">
-                        {comentariosPublicacion}
-                      </ModalBody>
-                      <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={onComentClose} >
-                          Cerrar
-                        </Button>
-                      </ModalFooter>
-                    </ModalContent>
+                        </ModalHeader>
+                        <ModalBody maxW="initial">
+                          {comentariosPublicacion}
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button
+                            colorScheme="blue"
+                            mr={3}
+                            onClick={onComentClose}
+                          >
+                            Cerrar
+                          </Button>
+                        </ModalFooter>
+                      </ModalContent>
                     </ModalOverlay>
                   </Modal>
                 </Button>
