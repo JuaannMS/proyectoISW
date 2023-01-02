@@ -3,16 +3,9 @@
 import { useState, useEffect } from 'react'
 import React from 'react'
 import Cookies from 'universal-cookie'
-import Router from 'next/router'
-
-const verificarCookies = () => {
-    const cookies = new Cookies;
-    if (cookies.get("id") === undefined) {
-        Router.push("/login");
-    }
-
-}
-
+import { useEffect, useState } from 'react'
+import Router from 'next/router';
+import { Button } from '@chakra-ui/react';
 
 const Dashboard = () => {
     // si no hay cookies lo redirijo a login
@@ -32,7 +25,6 @@ const Dashboard = () => {
 
 
     useEffect(() => {
-        verificarCookies();
         setId(cookies.get("id"));
         setRut(cookies.get("rut"));
         setNombre(cookies.get("nombre"));
@@ -44,7 +36,20 @@ const Dashboard = () => {
         setRol(cookies.get("rol"));
     }, []);
 
+    const eliminarCookies = () => {
+        cookies.remove("id");
+        cookies.remove("rut");
+        cookies.remove("nombre");
+        cookies.remove("correo");
+        cookies.remove("telefono");
+        cookies.remove("direccion");
+        cookies.remove("fechaCumpleanio");
+        cookies.remove("fechaIngreso");
+        cookies.remove("rol");
+        Router.push("/login");
+    }
 
+    
     return (
         <div >
             <h1>Dashboard</h1>
@@ -57,6 +62,9 @@ const Dashboard = () => {
             <h2>fechaCumpleanio: {fechaCumpleanio}</h2>
             <h2>fechaIngreso: {fechaIngreso}</h2>
             <h2>rol: {rol}</h2>
+            <Button onClick={() => {
+                eliminarCookies();
+            }}>Cerrar Sesion</Button>
 
         </div>
     )

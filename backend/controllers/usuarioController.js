@@ -1,6 +1,7 @@
 const Usuario = require('../models/usuario');
 const express = require('express');
 const { validate, clean, format, getCheckDigit } = require('rut.js');
+const usuario = require('../models/usuario');
 const app = express();
 app.use(express.json());
 
@@ -116,7 +117,7 @@ const deleteUsuario = (req, res) => {
 // gabo
 const getUsuario = (req, res) => {
    const {rut} = req.params
-    Usuario.find({rut : rut}, (error, usuario) => {
+    Usuario.findOne({rut : rut}, (error, usuario) => {
         if (error) {
             return res.status(400).send({ message: "No se pudo encontrar el usuario" })
         }
@@ -128,11 +129,26 @@ const getUsuario = (req, res) => {
     )
 }
 
+const getNombreUsuario = (req, res) => {
+  
+    const { id } = req.params
+    Usuario.findById(id, (error, usuario) => {
+        if (error) {
+            return res.status(400).send({ message: "No se ha podido mostrar al usuario" })
+        }
+        if (!usuario) {
+            return res.status(404).send({ message: "No se ha podido encontrar al usuario" })
+        }
+        return res.status(200).send(usuario)
+    })
+  }
+
 module.exports = {
     createUsuario,
     getUsuarios,
     updateUsuario,
     deleteUsuario,
-    getUsuario
+    getUsuario,
+    getNombreUsuario
 
 }

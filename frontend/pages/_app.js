@@ -1,13 +1,22 @@
 import '../styles/globals.css'
+import { useEffect } from 'react'
+import comprobarCookies from '../utils/comprobarCookies'
 import { ChakraProvider } from '@chakra-ui/react'
-
-
-
+import { RecoilRoot } from "recoil"
 function MyApp({ Component, pageProps }) {
+  useEffect(() => {
+    comprobarCookies()
+  }, [])
+
+
   return (
-    <ChakraProvider>
-      <Component {...pageProps} />
-    </ChakraProvider>
+    <>
+     <RecoilRoot>
+      <ChakraProvider>
+        <Component {...pageProps} />
+      </ChakraProvider>
+     </RecoilRoot>
+    </>
   )
 }
 

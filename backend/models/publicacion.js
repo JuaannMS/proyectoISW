@@ -24,10 +24,14 @@ const publicacionSchema = new Schema({
         minLength:1,
         maxLength:400
     },
+    nombreUsuario:{
+        type: String,
+        require:true,
+    },
     estado:{
-        type: Boolean,
+        type: String,
         required: true,
-        default: true
+        default: "Activa"
     },
     cantLikes:{
         type: Number,
@@ -39,6 +43,10 @@ const publicacionSchema = new Schema({
         type:Number,
         required: true
     },
+    fechaCreacion:{
+        type:String,
+        require:true
+    },
     fechaExp:{
         type:Date,
         require:false
@@ -47,6 +55,12 @@ const publicacionSchema = new Schema({
     type:Schema.ObjectId,
     required: true,
     ref: 'usuario'
+    },
+    numReportes:{
+        type:Number,
+        require:true,
+        minLength:0,
+        default:0
     },
     idReportes:{
         type: [Schema.ObjectId],
@@ -57,12 +71,7 @@ const publicacionSchema = new Schema({
         type: [Schema.ObjectId],
         ref: 'comentario',
         default: []
-    },
-    //usuario:[{
-    //    type: Schema.Types.ObjectId,
-    //    required:true,
-    //    ref: 'usuario'
-    //}]
+    }
 },
 {
 timestamps:true //fecha creacion y actualizacion

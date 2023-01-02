@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import {
@@ -17,31 +16,15 @@ import {
 import axios from "axios";
 import Router from "next/router";
 import Cookies from "universal-cookie";
-import { redirect } from "next/dist/server/api-utils";
+import Swal from "sweetalert2";
 
 const CFaUserAlt = chakra(FaUserAlt);
 
-
-const verificarCookies = () => {
-    const cookies = new Cookies;
-    if (cookies.get("id") !== undefined) {
-        Router.push("../")
-    }
-}
-
 const Login = () => {
 
-
+    
     const cookies = new Cookies;
-    const [usuarios, setUsuarios] = useState();
     const [rutUsuario, setRutUsuario] = useState();
-
-
-
-    useEffect(() => {
-        verificarCookies();
-    }, []);
-
 
     const handleInput = (e) => {
         setRutUsuario(e.target.value)
@@ -49,27 +32,45 @@ const Login = () => {
 
 
     const verificarRut = async (e) => {
-
-        const response = await axios.get(`${process.env.API_URL}/usuario/usr/${rutUsuario}`).then((res) => {
-            if (res.data.length > 0) {
-                //console.log("Usuario encontrado");
-                cookies.set("id", res.data[0]["_id"], { path: "/" });
-                cookies.set("rut", res.data[0]["rut"], { path: "/" });
-                cookies.set("nombre", res.data[0]["nombre"], { path: "/" });
-                cookies.set("correo", res.data[0]["correo"], { path: "/" });
-                cookies.set("telefono", res.data[0]["telefono"], { path: "/" });
-                cookies.set("direccion", res.data[0]["direccion"], { path: "/" });
-                cookies.set("fechaCumpleanio", res.data[0]["fechaCumpleanio"], { path: "/" });
-                cookies.set("fechaIngreso", res.data[0]["fechaIngreso"], { path: "/" });
-                cookies.set("rol", res.data[0]["rol"], { path: "/" });
-                Router.push("../");
-            } else {
-                alert("Usuario no encontrado");
-            }
-        }).catch((err) => {
-            console.log(err);
-        });
-
+        if (rutUsuario) {
+            const response = await axios.get(`${process.env.API_URL}/usuario/usr/${rutUsuario}`).then((res) => {
+                if (res.data) {
+                    Swal.fire({
+                        title: "Exito",
+                        html: "Ingresando...",
+                        icon: "success",
+                      });
+                    cookies.set("id", res.data._id, { path: "/" });
+                    cookies.set("rut", res.data.rut, { path: "/" });
+                    cookies.set("nombre", res.data.nombre, { path: "/" });
+                    cookies.set("correo", res.data.correo, { path: "/" });
+                    cookies.set("telefono", res.data.telefono, { path: "/" });
+                    cookies.set("direccion", res.data.direccion, { path: "/" });
+                    cookies.set("fechaCumpleanio", res.data.fechaCumpleanio, { path: "/" });
+                    cookies.set("fechaIngreso", res.data.fechaIngreso, { path: "/" });
+                    cookies.set("rol", res.data.rol, { path: "/" });
+                    if (res.data.rol === "638e8c823fdb04c7747adbe8") {
+                        Router.push("/publicacionesAdmi");
+                    }
+                    else {
+                        Router.push("/publicaciones");
+                    }
+                    
+                }
+            }).catch((err) => {
+                Swal.fire({
+                    title: "Error",
+                    html: "Usuario no encontrado",
+                    icon: "error",
+                });
+            });
+        }else {
+            Swal.fire({
+                title: "Advertencia",
+                html: "Debe ingresar un rut",
+                icon: "warning",
+            });
+        }
     }
 
     return (

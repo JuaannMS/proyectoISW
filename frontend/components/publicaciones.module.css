@@ -1,38 +1,21 @@
-.publicacion{
-    justify-content: center
-}
-
-.publicacionWrapper{
-    padding: 10px;
-    width: 75%;
-}
-
 .publicacionBarra{
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.publicacionTitulo{
-    font-size: 20;
-    margin: 2px;
-}
+.publicacionLabelHorizontal{
+    justify-content: space-between;
 
-.publicacionNombreUsuario{
-    font-size: 20;
-    font-weight: 500;
-    left:0%;
-    margin: 2px;
+}
+.etiquetayfecha{
+    margin-top: -8px;
+    justify-content: space-between;
+
 }
 
 .publicacionFecha{
     font-size: 14px;
-    position: relative;
-    left:95%;
-}
-
-.publicacionCentro{
-    margin: 20px;
 }
 
 .publicacionDescripcion{
@@ -40,9 +23,10 @@
 }
 
 .postImage{
-    margin-top: 20px;
+    margin-top: 0px;
     width: 100%;
     max-height: 500px;
+    justify-content: center;
 }
 
 .publicacionNumLikes{
@@ -54,8 +38,81 @@
     justify-content: space-between;
 }
 
+
+
+.botonIzquierdaSup{
+    position: absolute;
+    right: 49%;
+}
+
+
+.publicacionTitulo{
+    font-size: 23px;
+    font-weight: bold;
+    margin-top: 0%;
+    text-align: center;
+}
+
+.nombreUsuario{
+    font-size: 17px;
+    font-family: arial;
+    font-weight: bold;
+    margin-left: 7px;
+}
+
+.publicacionEtiqueta{
+    
+    font-weight:bold;
+}
+
+.publicacionFecha{
+
+    
+    color:darkgray;
+    font-weight:bold;
+
+}
+
+.publicacionBotonReportar{
+
+    align-self: flex-end;
+}
+
+.publicacionBotonComentarios{
+
+    border-width: 1px;
+    border-color: royalblue;
+    justify-content: space-between;
+    margin: 1px;
+    border-radius: 5px;
+}
+
+.publicacionLikes{
+
+    border-width: 1px;
+    border-color: royalblue;
+    margin: 1px;
+    border-radius: 13px;
+    width:20%;
+    justify-content: right;
+}
 .likeIcono{
     width: 24px;
     height: 24px;
-    margin-top: 5px;
+}
+
+.mostrarComentarios{
+    border-width: 1px;
+    border-color: royalblue;
+    margin: 1px;
+    border-radius: 13px;
+    width:auto;
+}
+
+.flechaComentario{
+    justify-content: center;
+}
+
+.selectDerecha{
+    font-size: 5px;
 }
