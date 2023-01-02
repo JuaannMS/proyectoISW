@@ -49,7 +49,12 @@ const Login = () => {
                     cookies.set("fechaCumpleanio", res.data.fechaCumpleanio, { path: "/" });
                     cookies.set("fechaIngreso", res.data.fechaIngreso, { path: "/" });
                     cookies.set("rol", res.data.rol, { path: "/" });
-
+                    if (res.data.rol === "638e8c823fdb04c7747adbe8") {
+                        Router.push("/publicacionesAdmi");
+                    }
+                    else {
+                        Router.push("/publicaciones");
+                    }
                     
                 }
             }).catch((err) => {
