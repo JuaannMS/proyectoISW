@@ -1,35 +1,43 @@
-import { ReactNode } from 'react';
-import {Box,Flex,Avatar,HStack,Link,IconButton,Button,Menu,MenuButton,MenuList,MenuItem,MenuDivider,
-  useDisclosure,useColorModeValue,Stack, VStack, Container, AspectRatio,} from '@chakra-ui/react';
-import { HamburgerIcon, CloseIcon, AddIcon} from '@chakra-ui/icons';
-import Router from "next/router";
-import { useRouter } from "next/router";
+import { Box,Flex, HStack, IconButton,Button,useDisclosure,useColorModeValue,
+  Stack,VStack,Container,AspectRatio,Input,Text,Textarea,Heading,FormControl,FormLabel,Select,
+  Image,Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalCloseButton,
+  Divider,Card,CardHeader,CardBody,StackDivider,FormHelperText,Radio,RadioGroup,
+} from "@chakra-ui/react";
+import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
+import {Router, useRouter } from "next/router";
 import Cookies from "universal-cookie";
-import { React, useState, useEffect, useRef } from "react";
+import { React, useState, useEffect } from "react";
 import comprobarCookies from "../utils/comprobarCookies";
 import axios from "axios";
 import styles from "../components/publicaciones.module.css";
-import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,
-  Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalCloseButton,Divider,
-  Card, CardHeader, CardBody, CardFooter, StackDivider,FormHelperText, Radio, RadioGroup} from "@chakra-ui/react";
-  import Swal from "sweetalert2";
+import Swal from "sweetalert2";
 
-  const publicacionesAdmi = () => {
-
-
-  axios.put(`${process.env.API_URL}/publcacionesInactivas`)
+const publicacionesAdmi = () => {
+  axios.put(`${process.env.API_URL}/publcacionesInactivas`);
 
   const [idPublicacion, setIdPublicacion] = useState();
 
-  const [values, setValues] = useState()
+  const [values, setValues] = useState();
   const [tituloModal, setTituloModal] = useState();
-  const { isOpen: isEditOpen , onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
-  const { isOpen: isComentOpen , onOpen: onComentOpen, onClose: onComentClose } = useDisclosure()
-  const { isOpen: isReportOpen, onOpen: onReportOpen, onClose: onReportClose } = useDisclosure();
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure();
+  const {
+    isOpen: isComentOpen,
+    onOpen: onComentOpen,
+    onClose: onComentClose,
+  } = useDisclosure();
+  const {
+    isOpen: isReportOpen,
+    onOpen: onReportOpen,
+    onClose: onReportClose,
+  } = useDisclosure();
   const [publicaciones, setPublicaciones] = useState([]);
   const [nombre, setNombre] = useState();
   const [id, setId] = useState();
-  const cookies = new Cookies()
+  const cookies = new Cookies();
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [comentariosPublicacion, setcomentariosPublicacion] = useState([]);
@@ -51,21 +59,22 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,
 
   const getPublicaciones = async () => {
     const response = await axios.get(`${process.env.API_URL}/publicaciones`);
-    console.log(response.data)
+    console.log(response.data);
     setPublicaciones(response.data);
-
   };
 
   const pushCrearPublicacion = () => {
-    Router.push("/crearPublicacion")
-  }
+    Router.push("/crearPublicacion");
+  };
 
   const pushVerMisPublicaciones = async () => {
     try {
-      const response = await axios.get(`${process.env.API_URL}/publicacionesP/${id}`);
-     
+      const response = await axios.get(
+        `${process.env.API_URL}/publicacionesP/${id}`
+      );
+
       if (response.status === 200) {
-        router.push(`/publicaciones/personales/${id}`)
+        router.push(`/publicaciones/personales/${id}`);
       }
     } catch (err) {
       Swal.fire({
@@ -75,37 +84,33 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,
         confirmButtonText: "Ok",
       });
     }
-  }
+  };
 
   const pushVerMiPerfil = () => {
-    router.push(`/`)
-  }
+    router.push(`/`);
+  };
 
   const onCambio = (e) => {
-		setValues({
-			...values,
-			[e.target.name]: e.target.value,
-		})
-	}
+    setValues({
+      ...values,
+      [e.target.name]: e.target.value,
+    });
+  };
   const cerrarSesion = () => {
+    cookies.remove("id");
+    cookies.remove("rut");
+    cookies.remove("nombre");
+    cookies.remove("correo");
+    cookies.remove("telefono");
+    cookies.remove("direccion");
+    cookies.remove("fechaCumpleanio");
+    cookies.remove("fechaIngreso");
+    cookies.remove("rol");
+    Router.push("/login");
+  };
 
-      cookies.remove("id");
-      cookies.remove("rut");
-      cookies.remove("nombre");
-      cookies.remove("correo");
-      cookies.remove("telefono");
-      cookies.remove("direccion");
-      cookies.remove("fechaCumpleanio");
-      cookies.remove("fechaIngreso");
-      cookies.remove("rol");
-      Router.push("/login");
-  }
-
-  const onChange = async (event,idPublicacion)=> {
-
-
-    if(event.target.value=='favoritos'){
-
+  const onChange = async (event, idPublicacion) => {
+    if (event.target.value == "favoritos") {
       const json = JSON.stringify({
         idPublicacion: idPublicacion,
         idUsuario: id,
@@ -130,45 +135,42 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,
             icon: "error",
           });
         });
-
     }
 
-    if(event.target.value=='eliminar'){
-  
+    if (event.target.value == "eliminar") {
       try {
-        const response = await axios.delete(`${process.env.API_URL}/publicacion/delete/${idPublicacion}`) //values tiene que tener idPublicacion para eliminar
-        console.log(response)
+        const response = await axios.delete(
+          `${process.env.API_URL}/publicacion/delete/${idPublicacion}`
+        ); //values tiene que tener idPublicacion para eliminar
+        console.log(response);
         if (response.status === 200) {
           Swal.fire({
-            title: 'Publicacion eliminada',
-            text: 'La publicacion se ha eliminado correctamente',
-            icon: 'success',
-            confirmButtonText: 'Ok'
-          })
-  
+            title: "Publicacion eliminada",
+            text: "La publicacion se ha eliminado correctamente",
+            icon: "success",
+            confirmButtonText: "Ok",
+          });
         }
       } catch (err) {
         Swal.fire({
-          title: 'Error',
-          text: 'Ha ocurrido un errorzzz', //
-          icon: 'error',
-          confirmButtonText: 'Ok'
-        })
+          title: "Error",
+          text: "Ha ocurrido un errorzzz", //
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
       }
     }
-    
-  }
+  };
 
   const capturarId = async (idP) => {
-    setIdPublicacion(idP)
-    onEditOpen()
-  }
+    setIdPublicacion(idP);
+    onEditOpen();
+  };
 
   const conseguirId = async (idP) => {
-    setIdPublicacion(idP)
-    onReportOpen()
-  }
-
+    setIdPublicacion(idP);
+    onReportOpen();
+  };
 
   const cargarComentarios = async (idPublicacion) => {
     setTituloModal("Comentarios");
@@ -295,10 +297,13 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,
                   >
                     Reportar
                   </Button>
-                  <Modal isOpen={isReportOpen} onClose={onReportClose}>
+                  <Modal
+                    isOpen={isReportOpen}
+                    onClose={onReportClose}
+                    scrollBehavior="inside"
+                  >
                     <ModalOverlay />
                     <ModalContent>
-                      <ModalCloseButton />
                       <ModalBody>
                         <Card>
                           <CardHeader>
@@ -348,18 +353,21 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,
                         <Button
                           colorScheme="blue"
                           mr={3}
-                          onClick={onReportClose}
+                          type="submit"
+                          onClick={() => {
+                            onEnviar(idPublicacion);
+                            onReportClose();
+                          }}
                         >
                           Enviar Reporte
                         </Button>
-                        <Button variant="ghost">Cancelar</Button>
+                        <Button variant="ghost" onClick={onReportClose}>
+                          Cancelar
+                        </Button>
                       </ModalFooter>
                     </ModalContent>
                   </Modal>
                 </Flex>
-
-
-
 
                 <Button
                   onClick={() => {
@@ -534,7 +542,7 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,
       ...tag,
       [e.target.name]: e.target.value,
     });
-  }
+  };
   const busquedaEtiqueta = async (e) => {
     e.preventDefault();
     //console.log(tag.etiqueta)
@@ -542,9 +550,9 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,
       const response = await axios.get(
         `${process.env.API_URL}/publicacionesx/${tag.etiqueta}`
       );
-     
+
       if (response.status === 200) {
-        router.push(`/publicaciones/etiqueta/${tag.etiqueta}`)
+        router.push(`/publicaciones/etiqueta/${tag.etiqueta}`);
       }
     } catch (err) {
       Swal.fire({
@@ -554,81 +562,117 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,
         confirmButtonText: "Ok",
       });
     }
-
-  }
-
+  };
 
   const pushPublicacionesReportadas = () => {
-		Router.push("/publicaciones/reportadas")
-	}
+    Router.push("/publicaciones/reportadas");
+  };
 
-  const onGuardar = async (idPublicacion) => {
-    console.log(values)
-    console.log("jaja")
-    console.log(idPublicacion)
+  const onEnviar = async (idPublicacion) => {
     try {
-      const response = await axios.put(`${process.env.API_URL}/publicacion/update/${idPublicacion}`, values)
-      console.log(response)
+      const response = await axios.put(
+        `${process.env.API_URL}/reporte/${idPublicacion}`,
+        values
+      );
+      console.log(response);
       if (response.status === 200) {
         Swal.fire({
-          title: 'Publicacion modificada',
-          text: 'La publicacion se ha modificado correctamente',
-          icon: 'success',
-          confirmButtonText: 'Ok'
-        }).then((result) => {
-          //router.push('/publicacionesAdmi') //refrescar pagina
-        })
-
+          title: "Reporte Enviado",
+          text: "La publicacion ahora será revisada por el administrador",
+          icon: "success",
+          confirmButtonText: "Ok",
+        }).then((result) => {});
       }
     } catch (err) {
       Swal.fire({
-        title: 'Error',
-        text: 'Ha ocurrido un error',
-        icon: 'error',
-        confirmButtonText: 'Ok'
-      })
+        title: "Error",
+        text: "Ha ocurrido un error",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
     }
-  }
+  };
+
+  const onGuardar = async (idPublicacion) => {
+    console.log(values);
+    console.log("jaja");
+    console.log(idPublicacion);
+    try {
+      const response = await axios.put(
+        `${process.env.API_URL}/publicacion/update/${idPublicacion}`,
+        values
+      );
+      console.log(response);
+      if (response.status === 200) {
+        Swal.fire({
+          title: "Publicacion modificada",
+          text: "La publicacion se ha modificado correctamente",
+          icon: "success",
+          confirmButtonText: "Ok",
+        }).then((result) => {
+          //router.push('/publicacionesAdmi') //refrescar pagina
+        });
+      }
+    } catch (err) {
+      Swal.fire({
+        title: "Error",
+        text: "Ha ocurrido un error",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    }
+  };
 
   return (
     <>
-      <Box position='fixed' width='100%'  bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
-        <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
+      <Box
+        position="fixed"
+        width="100%"
+        bg={useColorModeValue("gray.100", "gray.900")}
+        px={4}
+      >
+        <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <IconButton
-            size={'md'}
+            size={"md"}
             icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-            aria-label={'Open Menu'}
-            display={{ md: 'none' }}
+            aria-label={"Open Menu"}
+            display={{ md: "none" }}
             onClick={isOpen ? onClose : onOpen}
           />
-          <HStack spacing={8} alignItems={'center'}>
-            <Box>  </Box>
+          <HStack spacing={8} alignItems={"center"}>
+            <Box> </Box>
             <HStack
-              as={'nav'}
+              as={"nav"}
               spacing={4}
-              display={{ base: 'none', md: 'flex' }}>
-              <Button onClick={pushVerMisPublicaciones}>Mis publicaciones</Button>
+              display={{ base: "none", md: "flex" }}
+            >
+              <Button onClick={pushVerMisPublicaciones}>
+                Mis publicaciones
+              </Button>
               <Button onClick={pushCrearPublicacion}>Crear Publicacion</Button>
               <Button onClick={pushVerMiPerfil}>Ver mi perfil</Button>
-              <Button onClick={pushPublicacionesReportadas}>Publicaciones Reportadas</Button>
-              
+              <Button onClick={pushPublicacionesReportadas}>
+                Publicaciones Reportadas
+              </Button>
             </HStack>
           </HStack>
-          <Flex alignItems={'center'}>
+          <Flex alignItems={"center"}>
             <Button
-              variant={'solid'}
-              colorScheme={'red'}
-              size={'sm'}
+              variant={"solid"}
+              colorScheme={"red"}
+              size={"sm"}
               mr={4}
-              leftIcon={<AddIcon />} onClick={cerrarSesion}>
+              leftIcon={<AddIcon />}
+              onClick={cerrarSesion}
+            >
               Cerrar Sesion
             </Button>
           </Flex>
         </Flex>
 
         {isOpen ? (
-          <Box pb={4} display={{ md: 'none' }}>
-            <Stack as={'nav'} spacing={4}>
+          <Box pb={4} display={{ md: "none" }}>
+            <Stack as={"nav"} spacing={4}>
               {Links.map((link) => (
                 <NavLink key={link}>{link}</NavLink>
               ))}
@@ -636,40 +680,37 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,
           </Box>
         ) : null}
       </Box>
-        <VStack>
-        <Container position='relative' marginTop={100} borderWidth="2px">
-        <FormControl>
-          <FormLabel fontSize={20} my={2} >
-            Filtrar por Etiqueta
-          </FormLabel>
-          <HStack>
-            <Input
-              placeholder="Ingrese etiqueta"
-              type={"text"}
-              my={3}
-              onChange={onEtiqueta}
-              name="etiqueta"
-            />
-            <Button
-              colorScheme="red"
-              size="md"
-              ml="400"
-              type="submit"
-              my={2}
-              onClick={busquedaEtiqueta}
-            >
-              Buscar
-            </Button>
-
-          </HStack>
-        </FormControl>
-      </Container>
-          <Container>
-          {mostrarPublicaciones()}
-          </Container>
-        </VStack>
+      <VStack>
+        <Container position="relative" marginTop={100} borderWidth="2px">
+          <FormControl>
+            <FormLabel fontSize={20} my={2}>
+              Filtrar por Etiqueta
+            </FormLabel>
+            <HStack>
+              <Input
+                placeholder="Ingrese etiqueta"
+                type={"text"}
+                my={3}
+                onChange={onEtiqueta}
+                name="etiqueta"
+              />
+              <Button
+                colorScheme="red"
+                size="md"
+                ml="400"
+                type="submit"
+                my={2}
+                onClick={busquedaEtiqueta}
+              >
+                Buscar
+              </Button>
+            </HStack>
+          </FormControl>
+        </Container>
+        <Container>{mostrarPublicaciones()}</Container>
+      </VStack>
     </>
   );
-}
+};
 
 export default publicacionesAdmi;
