@@ -623,6 +623,7 @@ const publicacionesAdmi = () => {
     }
   };
 
+
   if(cookies.get("rut") == "19.896.942-7"){
   return (
     <>
@@ -719,5 +720,7 @@ const publicacionesAdmi = () => {
     )
   }
 }
+
+
 
 export default publicacionesAdmi;

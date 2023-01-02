@@ -55,6 +55,13 @@ const Login = () => {
                     }else{
                     Router.push("/publicaciones")
                     }
+                    if (res.data.rol === "638e8c823fdb04c7747adbe8") {
+                        Router.push("/publicacionesAdmi");
+                    }
+                    else {
+                        Router.push("/publicaciones");
+                    }
+                    
                 }
             }).catch((err) => {
                 Swal.fire({
