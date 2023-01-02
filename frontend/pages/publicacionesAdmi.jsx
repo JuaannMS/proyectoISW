@@ -102,9 +102,6 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
 
   const onChange = async (event,idPublicacion)=> {
 
-    if(event.target.value=='reportar'){
-
-    }
 
     if(event.target.value=='favoritos'){
 
@@ -240,7 +237,6 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
                 {publicaciones.nombreUsuario}
               </Box>
               <Select placeholder=' ' width='60px'  onChange={() => onChange(event,publicaciones._id)} name="opcionElegida" >
-              <option value='reportar'>Reportar</option>
               <option value='favoritos'>Favoritos</option>
               <option value='eliminar'>Eliminar</option>
               </Select> 
