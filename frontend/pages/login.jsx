@@ -39,7 +39,7 @@ const Login = () => {
                         title: "Exito",
                         html: "Ingresando...",
                         icon: "success",
-                      });
+                    });
                     cookies.set("id", res.data._id, { path: "/" });
                     cookies.set("rut", res.data.rut, { path: "/" });
                     cookies.set("nombre", res.data.nombre, { path: "/" });

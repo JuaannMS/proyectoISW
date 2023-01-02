@@ -360,7 +360,7 @@ const publicaciones = () => {
     } catch (err) {
       Swal.fire({
         title: "Error",
-        text: "Ha ocurrido un error",
+        text: "No se encuentra ninguna publicacion con esa etiqueta",
         icon: "error",
         confirmButtonText: "Ok",
       });
