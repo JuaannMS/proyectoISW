@@ -590,6 +590,7 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,
     }
   }
 
+  if(cookies.get("rut") == "19.896.942-7"){
   return (
     <>
       <Box position='fixed' width='100%'  bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
@@ -669,7 +670,13 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,
           </Container>
         </VStack>
     </>
-  );
+  )
+  }else {
+
+    return(
+      <div>acceso denegado</div>
+    )
+  }
 }
 
 export default publicacionesAdmi;
