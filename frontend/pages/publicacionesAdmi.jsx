@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import {Box,Flex,Avatar,HStack,Link,IconButton,Button,Menu,MenuButton,MenuList,MenuItem,MenuDivider,
   useDisclosure,useColorModeValue,Stack, VStack, Container, AspectRatio,} from '@chakra-ui/react';
-import { HamburgerIcon, CloseIcon, AddIcon } from '@chakra-ui/icons';
+import { HamburgerIcon, CloseIcon, AddIcon} from '@chakra-ui/icons';
 import Router from "next/router";
 import { useRouter } from "next/router";
 import Cookies from "universal-cookie";
@@ -9,9 +9,9 @@ import { React, useState, useEffect, useRef } from "react";
 import comprobarCookies from "../utils/comprobarCookies";
 import axios from "axios";
 import styles from "../components/publicaciones.module.css";
-import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
+import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,
   Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalCloseButton,Divider,
-  } from "@chakra-ui/react";
+  Card, CardHeader, CardBody, CardFooter, StackDivider,FormHelperText, Radio, RadioGroup} from "@chakra-ui/react";
   import Swal from "sweetalert2";
 
   const publicacionesAdmi = () => {
@@ -25,6 +25,7 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
   const [tituloModal, setTituloModal] = useState();
   const { isOpen: isEditOpen , onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
   const { isOpen: isComentOpen , onOpen: onComentOpen, onClose: onComentClose } = useDisclosure()
+  const { isOpen: isReportOpen, onOpen: onReportOpen, onClose: onReportClose } = useDisclosure();
   const [publicaciones, setPublicaciones] = useState([]);
   const [nombre, setNombre] = useState();
   const [id, setId] = useState();
@@ -102,9 +103,6 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
 
   const onChange = async (event,idPublicacion)=> {
 
-    if(event.target.value=='reportar'){
-
-    }
 
     if(event.target.value=='favoritos'){
 
@@ -165,6 +163,12 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
     setIdPublicacion(idP)
     onEditOpen()
   }
+
+  const conseguirId = async (idP) => {
+    setIdPublicacion(idP)
+    onReportOpen()
+  }
+
 
   const cargarComentarios = async (idPublicacion) => {
     setTituloModal("Comentarios");
@@ -239,92 +243,196 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
               <Box className={styles.nombreUsuario}>
                 {publicaciones.nombreUsuario}
               </Box>
-              <Select placeholder=' ' width='60px'  onChange={() => onChange(event,publicaciones._id)} name="opcionElegida" >
-              <option value='reportar'>Reportar</option>
-              <option value='favoritos'>Favoritos</option>
-              <option value='eliminar'>Eliminar</option>
-              </Select> 
+              <Select
+                placeholder=" "
+                width="60px"
+                onChange={() => onChange(event, publicaciones._id)}
+                name="opcionElegida"
+              >
+                <option value="favoritos">Favoritos</option>
+                <option value="eliminar">Eliminar</option>
+              </Select>
             </HStack>
             <Box className={styles.publicacionTitulo}>
               {publicaciones.titulo}
             </Box>
-            <AspectRatio maxW='99%' ratio={1}>
-            <iframe title='imagen' src={`/imagenPublicacion/${publicaciones._id}`}  />
+            <AspectRatio maxW="99%" ratio={1}>
+              <iframe
+                title="imagen"
+                src={`/imagenPublicacion/${publicaciones._id}`}
+              />
             </AspectRatio>
             <Box p="2" key={publicaciones._id}>
               <HStack className={styles.etiquetayfecha}>
-                <Box className={styles.publicacionEtiqueta}>#{publicaciones.etiqueta}</Box>
-                <Box className={styles.publicacionFecha}>{publicaciones.fechaCreacion}</Box>
+                <Box className={styles.publicacionEtiqueta}>
+                  #{publicaciones.etiqueta}
+                </Box>
+                <Box className={styles.publicacionFecha}>
+                  {publicaciones.fechaCreacion}
+                </Box>
               </HStack>
               <HStack className={styles.publicacionLabelHorizontal}></HStack>
               <Box>{publicaciones.descripcion}</Box>
               <HStack className={styles.publicacionLabelHorizontal}>
-                  <Button marginLeft='-10px'  variant={"ghost"}
+                <Button
+                  marginLeft="-10px"
+                  variant={"ghost"}
+                  onClick={() => {
+                    darLike(publicaciones._id);
+                  }}
+                >
+                  <Image src="like.png" alt="like" />
+                  <Box as="span" color="gray.600" fontSize="sm">
+                    {publicaciones.cantLikes} likes
+                  </Box>
+                </Button>
+
+                <Flex>
+                  <Button
                     onClick={() => {
-                      darLike(publicaciones._id);
+                      conseguirId(publicaciones._id);
                     }}
                   >
-                    <Image src="like.png" alt="like" />
-                    <Box as="span" color="gray.600" fontSize="sm">
-                      {publicaciones.cantLikes} likes
-                    </Box>
+                    Reportar
                   </Button>
-                  <Button onClick={()=> {capturarId(publicaciones._id)}}  >Editar</Button>
+                  <Modal isOpen={isReportOpen} onClose={onReportClose}>
+                    <ModalOverlay />
+                    <ModalContent>
+                      <ModalCloseButton />
+                      <ModalBody>
+                        <Card>
+                          <CardHeader>
+                            <Heading size="md">Reportar Publicación</Heading>
+                          </CardHeader>
+                          <CardBody>
+                            <Stack divider={<StackDivider />} spacing="5">
+                              <Box>
+                                <Heading size="xs" textTransform="uppercase">
+                                  Motivo
+                                </Heading>
+                                <Text pt="2" fontSize="sm">
+                                  <FormControl>
+                                    <Input type={"text"} />
+                                    <FormHelperText>
+                                      Ingrese el motivo de la denuncia.
+                                    </FormHelperText>
+                                  </FormControl>
+                                </Text>
+                              </Box>
+                              <Box>
+                                <Heading size="xs" textTransform="uppercase">
+                                  Gravedad del incidente
+                                </Heading>
+                                <FormControl as="fieldset">
+                                  <FormLabel as="legend">
+                                    La publicacion es una falta:
+                                  </FormLabel>
+                                  <RadioGroup defaultValue="leve">
+                                    <HStack spacing="24px">
+                                      <Radio value="leve">leve</Radio>
+                                      <Radio value="moderada">moderada</Radio>
+                                      <Radio value="grave">grave</Radio>
+                                    </HStack>
+                                  </RadioGroup>
+                                  <FormHelperText>
+                                    Seleccione una alternativa
+                                  </FormHelperText>
+                                </FormControl>
+                              </Box>
+                            </Stack>
+                          </CardBody>
+                        </Card>
+                      </ModalBody>
 
-                  <Modal
+                      <ModalFooter>
+                        <Button
+                          colorScheme="blue"
+                          mr={3}
+                          onClick={onReportClose}
+                        >
+                          Enviar Reporte
+                        </Button>
+                        <Button variant="ghost">Cancelar</Button>
+                      </ModalFooter>
+                    </ModalContent>
+                  </Modal>
+                </Flex>
+
+
+
+
+                <Button
+                  onClick={() => {
+                    capturarId(publicaciones._id);
+                  }}
+                >
+                  Editar
+                </Button>
+
+                <Modal
                   isOpen={isEditOpen}
                   onClose={onEditClose}
                   scrollBehavior="inside"
-                  >
-        <ModalOverlay />
-        <ModalContent>
-          <HStack className={styles.publicacionLabelHorizontal}>
-            <ModalHeader>
-                        Editar_Publicacion
-                        </ModalHeader>
-            
-            <ModalFooter>
+                >
+                  <ModalOverlay />
+                  <ModalContent>
+                    <HStack className={styles.publicacionLabelHorizontal}>
+                      <ModalHeader>Editar_Publicacion</ModalHeader>
+
+                      <ModalFooter>
                         <Button colorScheme="red" onClick={onEditClose}>
-                        X
+                          X
                         </Button>
-                    </ModalFooter>
-          
-          </HStack>
-        
-        <FormControl isRequired>
-          <FormLabel>Titulo</FormLabel>
-          <Input placeholder="Ingrese un titulo" type={"text"} onChange={onCambio} name={"titulo"} />
-        </FormControl>
+                      </ModalFooter>
+                    </HStack>
 
-        <FormControl isRequired>
-          <FormLabel>Descripcion</FormLabel>
-          <Textarea placeholder="Ingrese una descripcion" type={"text"} onChange={onCambio} name="descripcion" />
-        </FormControl>
+                    <FormControl isRequired>
+                      <FormLabel>Titulo</FormLabel>
+                      <Input
+                        placeholder="Ingrese un titulo"
+                        type={"text"}
+                        onChange={onCambio}
+                        name={"titulo"}
+                      />
+                    </FormControl>
 
-        <FormControl>
-          <FormLabel>Etiqueta</FormLabel>
-          <Input placeholder="Ingrese una etiqueta" type={"text"} onChange={onCambio} name="etiqueta" />
-        </FormControl>
-        
-        <Button
-                            colorScheme="blue"
-                            size="md"
-                            type="submit"
-                            my={2}
-                            onClick={() => {
-                              onGuardar(idPublicacion)
-                              onEditClose()
-                            }}
-                            
-                          >
-                            Guardar
-                          </Button>
-        </ModalContent>
-        </Modal>
+                    <FormControl isRequired>
+                      <FormLabel>Descripcion</FormLabel>
+                      <Textarea
+                        placeholder="Ingrese una descripcion"
+                        type={"text"}
+                        name="descripcion"
+                      />
+                    </FormControl>
 
+                    <FormControl>
+                      <FormLabel>Etiqueta</FormLabel>
+                      <Input
+                        placeholder="Ingrese una etiqueta"
+                        type={"text"}
+                        onChange={onCambio}
+                        name="etiqueta"
+                      />
+                    </FormControl>
+
+                    <Button
+                      colorScheme="blue"
+                      size="md"
+                      type="submit"
+                      my={2}
+                      onClick={() => {
+                        onGuardar(idPublicacion);
+                        onEditClose();
+                      }}
+                    >
+                      Guardar
+                    </Button>
+                  </ModalContent>
+                </Modal>
               </HStack>
               <VStack className={styles.mostrarComentarios} align="normal">
-                <Button  variant={"ghost"}
+                <Button
+                  variant={"ghost"}
                   onClick={() => {
                     cargarComentarios(publicaciones._id);
                   }}
@@ -339,11 +447,11 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
                   >
                     <ModalOverlay>
                       <ModalContent>
-                      <ModalHeader>
-                        <Text>Comentarios</Text>
-                      </ModalHeader>
-                      <ModalCloseButton />
-                      <ModalHeader>
+                        <ModalHeader>
+                          <Text>Comentarios</Text>
+                        </ModalHeader>
+                        <ModalCloseButton />
+                        <ModalHeader>
                           <FormControl>
                             <FormLabel fontSize={20} my={2}>
                               Nuevo comentario
@@ -369,16 +477,20 @@ import {Input,Text,Textarea,Heading,FormControl,FormLabel,Select,Image,button,
                             </Button>
                           </FormControl>
                           <Divider />
-                      </ModalHeader>
-                      <ModalBody maxW="initial">
-                        {comentariosPublicacion}
-                      </ModalBody>
-                      <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={onComentClose} >
-                          Cerrar
-                        </Button>
-                      </ModalFooter>
-                    </ModalContent>
+                        </ModalHeader>
+                        <ModalBody maxW="initial">
+                          {comentariosPublicacion}
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button
+                            colorScheme="blue"
+                            mr={3}
+                            onClick={onComentClose}
+                          >
+                            Cerrar
+                          </Button>
+                        </ModalFooter>
+                      </ModalContent>
                     </ModalOverlay>
                   </Modal>
                 </Button>
