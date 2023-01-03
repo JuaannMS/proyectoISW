@@ -1,6 +1,5 @@
 
 //lo unico que hace es mostrar un texto en la pagina de dashboard
-import { useState, useEffect } from 'react'
 import React from 'react'
 import Cookies from 'universal-cookie'
 import { useEffect, useState } from 'react'
