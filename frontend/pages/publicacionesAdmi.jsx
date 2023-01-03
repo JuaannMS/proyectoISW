@@ -565,7 +565,7 @@ const publicacionesAdmi = () => {
   };
 
   const pushPublicacionesReportadas = () => {
-    Router.push("/publicaciones/reportadas");
+    router.push("/publicaciones/reportadas");
   };
 
   const onEnviar = async (idPublicacion) => {

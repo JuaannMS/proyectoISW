@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import React from 'react'
 import Cookies from 'universal-cookie'
-import { useEffect, useState } from 'react'
 import Router from 'next/router';
 import { Button } from '@chakra-ui/react';
 
