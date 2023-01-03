@@ -2,7 +2,6 @@
 //lo unico que hace es mostrar un texto en la pagina de dashboard
 import React from 'react'
 import Cookies from 'universal-cookie'
-import { useEffect, useState } from 'react'
 import Router from 'next/router';
 import { Button } from '@chakra-ui/react';
 
