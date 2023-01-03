@@ -96,6 +96,14 @@ const publicacionesAdmi = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+  const onEntrada = (e) => {
+    setValues({
+      ...values,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const cerrarSesion = () => {
     cookies.remove("id");
     cookies.remove("rut");
@@ -317,7 +325,10 @@ const publicacionesAdmi = () => {
                                 </Heading>
                                 <Text pt="2" fontSize="sm">
                                   <FormControl>
-                                    <Input type={"text"} />
+                                    <Input type={"text"}
+                                    name={"motivo"} 
+                                    onChange={onEntrada}
+                                    />
                                     <FormHelperText>
                                       Ingrese el motivo de la denuncia.
                                     </FormHelperText>
@@ -328,8 +339,8 @@ const publicacionesAdmi = () => {
                                 <Heading size="xs" textTransform="uppercase">
                                   Gravedad del incidente
                                 </Heading>
-                                <FormControl as="fieldset">
-                                  <FormLabel as="legend">
+                                <FormControl as="gravedad">
+                                  <FormLabel as="gravedad">
                                     La publicacion es una falta:
                                   </FormLabel>
                                   <RadioGroup defaultValue="leve">
@@ -569,9 +580,10 @@ const publicacionesAdmi = () => {
   };
 
   const onEnviar = async (idPublicacion) => {
+    console.log(values);
     try {
-      const response = await axios.put(
-        `${process.env.API_URL}/reporte/${idPublicacion}`,
+      const response = await axios.post(
+        `${process.env.API_URL}/reporte/`,
         values
       );
       console.log(response);
