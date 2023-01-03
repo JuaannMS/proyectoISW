@@ -202,15 +202,6 @@ const publicaciones = () => {
     setPublicaciones(response.data);
   };
 
-  // const buscarImagenn = () => {
-
-  //   publicaciones.map( async (publicacion) => {
-  //const response = await axios.get(`${process.env.API_URL}/file/get/${publicacion._id}`)
-  //setImagenes(response.data)
-  //     console.log(publicacion._id)
-  //   })
-
-  // }
 
   const darFavorito = async (idPublicacion) => {
     const json = JSON.stringify({
@@ -377,7 +368,7 @@ const publicaciones = () => {
   }
 
   const pushVerMiPerfil = () => {
-    router.push(`/`)
+    router.push("/")
   }
 
   const cerrarSesion = () => {

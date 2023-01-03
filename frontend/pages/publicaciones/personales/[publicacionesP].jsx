@@ -419,7 +419,6 @@ const publicacionesP = ({data}) =>{
     } else {
 
       return (
-
         <div> acceso denegado</div>
       )
     }

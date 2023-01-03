@@ -6,11 +6,13 @@ import { HStack,useDisclosure,Container,Input,Text,Textarea,Heading,FormControl,
   } from "@chakra-ui/react";
   import styles from "../components/publicaciones.module.css";
   import Swal from "sweetalert2";
+  import Cookies from "universal-cookie";
 
 
 
 const usuarios = () =>{
 
+  const cookies = new Cookies();
 const [usuarios , setUsuarios]= useState([])
 const [values , setValues]= useState([])
 const [id, setId]= useState([])
@@ -184,8 +186,7 @@ scrollBehavior="inside"
     })
 }
 
-
-
+if((cookies.get("rut"))=="19.896.942-7"){
 return (
     <Container maxW="container.xl" centerContent>
         <Heading textAlign={"center"} my={10}>Usuarios</Heading>
@@ -207,6 +208,11 @@ return (
         </Table>
     </Container>
 )
+} else {
+  return (
+    <div>sin permisos</div>
+  )
+}
 }
 
 

@@ -13,6 +13,8 @@ import styles from "../components/publicaciones.module.css";
 import Swal from "sweetalert2";
 
 const publicacionesAdmi = () => {
+
+  
   axios.put(`${process.env.API_URL}/publcacionesInactivas`);
 
   const [idPublicacion, setIdPublicacion] = useState();
@@ -46,6 +48,8 @@ const publicacionesAdmi = () => {
     etiqueta: "",
   });
 
+  
+
   const handleInput = (e) => {
     setComentario(e.target.value);
   };
@@ -64,8 +68,10 @@ const publicacionesAdmi = () => {
   };
 
   const pushCrearPublicacion = () => {
-    Router.push("/crearPublicacion");
+    router.push("/crearPublicacion");
   };
+
+  
 
   const pushVerMisPublicaciones = async () => {
     try {
@@ -106,7 +112,7 @@ const publicacionesAdmi = () => {
     cookies.remove("fechaCumpleanio");
     cookies.remove("fechaIngreso");
     cookies.remove("rol");
-    Router.push("/login");
+    router.push("/login");
   };
 
   const onChange = async (event, idPublicacion) => {
@@ -568,6 +574,10 @@ const publicacionesAdmi = () => {
     router.push("/publicaciones/reportadas");
   };
 
+  const pushVerUsuario = () => {
+    router.push("/usuariosSuspension");
+  };
+
   const onEnviar = async (idPublicacion) => {
     try {
       const response = await axios.put(
@@ -624,7 +634,6 @@ const publicacionesAdmi = () => {
   };
 
 
-  if(cookies.get("rut") == "19.896.942-7"){
   return (
     <>
       <Box
@@ -648,14 +657,11 @@ const publicacionesAdmi = () => {
               spacing={4}
               display={{ base: "none", md: "flex" }}
             >
-              <Button onClick={pushVerMisPublicaciones}>
-                Mis publicaciones
-              </Button>
+              <Button onClick={pushVerMisPublicaciones}>Mis publicaciones</Button>
               <Button onClick={pushCrearPublicacion}>Crear Publicacion</Button>
               <Button onClick={pushVerMiPerfil}>Ver mi perfil</Button>
-              <Button onClick={pushPublicacionesReportadas}>
-                Publicaciones Reportadas
-              </Button>
+              <Button onClick={pushPublicacionesReportadas}>Publicaciones Reportadas</Button>
+              <Button onClick={pushVerUsuario}>Ver usuarios</Button>
             </HStack>
           </HStack>
           <Flex alignItems={"center"}>
@@ -713,12 +719,6 @@ const publicacionesAdmi = () => {
       </VStack>
     </>
   )
-  }else {
-
-    return(
-      <div>acceso denegado</div>
-    )
-  }
 }
 
 
