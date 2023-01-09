@@ -117,7 +117,7 @@ scrollBehavior="inside"
 >
 <ModalOverlay />
 <ModalContent>
-  <HStack className={styles.usuarioLabelHorizontal}>
+  <HStack className={styles.publicacionLabelHorizontal}>
     <ModalHeader>Editar_Usuario</ModalHeader>
 
     <ModalFooter>

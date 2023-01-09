@@ -268,6 +268,7 @@ const publicacionesAdmi = () => {
               <iframe
                 title="imagen"
                 src={`/imagenPublicacion/${publicaciones._id}`}
+                opacity = "0"
               />
             </AspectRatio>
             <Box p="2" key={publicaciones._id}>
@@ -637,9 +638,9 @@ const publicacionesAdmi = () => {
   return (
     <>
       <Box
-        position="fixed"
+        position="aboslute"
         width="100%"
-        bg={useColorModeValue("gray.100", "gray.900")}
+        bg={useColorModeValue("gray.100", "gray.100")}
         px={4}
       >
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
@@ -660,7 +661,7 @@ const publicacionesAdmi = () => {
               <Button onClick={pushVerMisPublicaciones}>Mis publicaciones</Button>
               <Button onClick={pushCrearPublicacion}>Crear Publicacion</Button>
               <Button onClick={pushVerMiPerfil}>Ver mi perfil</Button>
-              <Button onClick={pushPublicacionesReportadas}>Publicaciones Reportadas</Button>
+              <Button onClick={pushPublicacionesReportadas}>Ver todas las publicaciones</Button>
               <Button onClick={pushVerUsuario}>Ver usuarios</Button>
             </HStack>
           </HStack>
