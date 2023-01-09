@@ -9,7 +9,7 @@ const comprobarCookies = () => {
 
     }
     else if (cookies.get("id") && window.location.pathname == "/login") {
-        Router.push("../");
+        Router.push("/publicaciones");
     }
 }
 

@@ -13,6 +13,7 @@ api.get('/publicacionesP/:idU', publicacionController.getPublicacionesPersonales
 api.get('/publicacionesReportadas', publicacionController.getPublicacionesReportadas);
 api.delete('/publicacionesDelete', publicacionController.eliminarPublicacionesInactivas);
 api.put('/publicacionRestaurar/:id' , publicacionController.restaurarPublicacion);
+api.put('/publcacionesInactivas' , publicacionController.validarFechaExp)
 
 
 

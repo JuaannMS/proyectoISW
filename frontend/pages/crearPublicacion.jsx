@@ -48,7 +48,8 @@ const crearPublicacion = () => {
 		titulo: '',
 		descripcion: '',
 		etiqueta: '',
-		diasVisible: ''
+		diasVisible: '',
+		idImagen:''
 	})
 
 	const subirImagen = async (id) => {
@@ -77,29 +78,27 @@ const crearPublicacion = () => {
 					icon: 'success',
 					confirmButtonText: 'Ok'
 				}).then((result) => {
-					router.push('/publicaciones') //refrescar pagina
+					if(id == '639a7553f96c2243c5a151f9'){
+						router.push('/publicacionesAdmi')
+					}else{
+						router.push('/publicaciones')
+					}
+					 //refrescar pagina
 				})
-
-			} else {
+			}
+		}).catch((err) => {
 				Swal.fire({
 					title: 'Error',
 					text: 'Ha ocurrido un error',
 					icon: 'error',
 					confirmButtonText: 'Ok'
 				})
-			}
-		}).catch((err) => {
-			Swal.fire({
-				title: 'Error',
-				text: 'Ha ocurrido un error',
-				icon: 'error',
-				confirmButtonText: 'Ok'
-			})
+
 		})
 
 
 	}
-	const handleFileChange = (e) => setAchivos({ [e.target.name]: e.target.files[0] })
+	const handleFileChange = (e) => setAchivos({ [e.target.name]: e.target.files[0]})
 	return (
 		<VStack>
 			<Container maxW="Container.xl" width={500} >

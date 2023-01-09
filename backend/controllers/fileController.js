@@ -1,8 +1,10 @@
 const { ObjectId } = require('mongodb');
 const FileModel = require('../models/file');
 
+
 const uploadNewFile = (req, res, err) => {
     let objId
+    
     try {
         objId = new ObjectId("" + req.params.id);
     } catch (err) {
@@ -25,7 +27,6 @@ const uploadNewFile = (req, res, err) => {
     })
     return res.status(200).send(aux)
 }
-
 const getFiles = (req, res) => {
     FileModel.find({}, (err, file) => {
         if (err) {
@@ -34,7 +35,6 @@ const getFiles = (req, res) => {
         return res.status(200).send(file)
     })
 }
-
 // descarga un archivo en especifico
 const getSpecificFile = (req, res) => {
     const { id } = req.params
@@ -49,7 +49,6 @@ const getSpecificFile = (req, res) => {
         return res.download('./' + file.url, file.name)
     })
 }
-
 // obtiene los archivos de una publicacion en especifico
 const getGeneralFiles = (req, res) => {
     const { idPublicacion } = req.params
@@ -64,6 +63,9 @@ const getGeneralFiles = (req, res) => {
         return res.status(200).send(file)
     })
 }
+
+
+
 
 const loadImage = (req, res) => {
     const { id } = req.params

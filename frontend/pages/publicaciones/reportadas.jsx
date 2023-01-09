@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import { Badge, StarIcon, Textarea, Button, Container, Input, Stack, Text, HStack, Heading, FormControl, FormLabel, Select, VStack } from '@chakra-ui/react'
+import { Badge, StarIcon, Textarea, Button, Container, Input, Stack, Text, HStack, Heading, FormControl, FormLabel, Select, VStack, AspectRatio } from '@chakra-ui/react'
 import Swal from 'sweetalert2'
 import { useRouter } from 'next/router'
 import axios from 'axios'
@@ -15,14 +15,16 @@ import Router from "next/router";
 const publicacionesReportadas = () => {
 
     const [publicaciones, setPublicaciones] = useState([])
-
+    const [rol, setRol] = useState([])
+    const cookies = new Cookies();
     const getPublicaciones = async () => {
 		const response = await axios.get(`${process.env.API_URL}/publicacionesAdmi`)
 		setPublicaciones(response.data)
 	}
 
     useEffect(() => {
-		getPublicaciones()
+		getPublicaciones(),
+        setRol(cookies.get("rol"))
 	}, [])
 
     const eliminarPInactivas = async () => {
@@ -40,8 +42,6 @@ const publicacionesReportadas = () => {
           icon: "error",
         })
       })
-      
-      
     }
       
     const restaurarPublicacion = async (idP) => {
@@ -59,10 +59,7 @@ const publicacionesReportadas = () => {
             icon: "error",
           })
         })
-        
-        
       }
-    
 
     const mostrarPublicaciones = () => {
 		return publicaciones.map(publicacion => {
@@ -71,7 +68,9 @@ const publicacionesReportadas = () => {
       <Box  borderWidth='2px' borderRadius='lg' >
         <Box color='red'>Estado: {publicacion.estado}</Box>
         <Box color='red'>Numero de Reportes: {publicacion.numReportes}</Box>
-        <Image src= 'https://bit.ly/dan-abramov' className={styles.postImage}/>
+        <AspectRatio maxW='99%' ratio={1}>
+            <iframe title='imagen' src={`/imagenPublicacion/${publicaciones._id}`}  />
+            </AspectRatio>
 				<Box p='2' key={publicacion._id} >
           <Box
               color='gray.500'
@@ -109,13 +108,20 @@ const publicacionesReportadas = () => {
 		})
 	}
 
+  if (rol === "638e8c823fdb04c7747adbe8") {
     return (
-        <VStack>
-            <Button onClick={()=> eliminarPInactivas()} >Eliminar Publicaciones Inactivas</Button>
-            {mostrarPublicaciones()}
-        </VStack>
+      <VStack>
+          <Button onClick={()=> eliminarPInactivas()} >Eliminar Publicaciones Inactivas</Button>
+          {mostrarPublicaciones()}
+      </VStack>
+  )
+    } else {
+        return (
+          <div>sin permisos</div>
+        )
+    }
 
-    )
+    
 }
 
 export default publicacionesReportadas

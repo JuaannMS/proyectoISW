@@ -15,7 +15,7 @@ const comentarioRoutes = require('./routes/comentarioRoutes');
 const favoritosRoutes = require('./routes/favoritosRoutes');
 const likesRoutes = require('./routes/likesRoutes');
 const rolRoutes = require('./utils/rolSetup');
-
+const baneoRoutes =require('./routes/baneoRoutes');
 
 app.use(cors());
 app.use(express.json());
@@ -30,6 +30,7 @@ app.use('/api', comentarioRoutes);
 app.use('/api', favoritosRoutes);
 app.use('/api', likesRoutes);
 app.use('/api', rolRoutes);
+app.use('/api', baneoRoutes);
 
 const options = {
     useNewUrlParser: true,

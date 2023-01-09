@@ -22,7 +22,7 @@ const CFaUserAlt = chakra(FaUserAlt);
 
 const Login = () => {
 
-
+    
     const cookies = new Cookies;
     const [rutUsuario, setRutUsuario] = useState();
 
@@ -39,7 +39,7 @@ const Login = () => {
                         title: "Exito",
                         html: "Ingresando...",
                         icon: "success",
-                      });
+                    });
                     cookies.set("id", res.data._id, { path: "/" });
                     cookies.set("rut", res.data.rut, { path: "/" });
                     cookies.set("nombre", res.data.nombre, { path: "/" });
@@ -50,10 +50,16 @@ const Login = () => {
                     cookies.set("fechaIngreso", res.data.fechaIngreso, { path: "/" });
                     cookies.set("rol", res.data.rol, { path: "/" });
 
-                    if((cookies.get("rut"))=="19.896.942-7"){
-                    Router.push("../publicacionesAdmi");
-                    } else {
-                        Router.push("../publicaciones");
+                    if(cookies.get("rut") == "19.896.942-7"){
+                    Router.push("/publicacionesAdmi")
+                    }else{
+                    Router.push("/publicaciones")
+                    }
+                    if (res.data.rol === "638e8c823fdb04c7747adbe8") {
+                        Router.push("/publicacionesAdmi");
+                    }
+                    else {
+                        Router.push("/publicaciones");
                     }
                     
                 }
