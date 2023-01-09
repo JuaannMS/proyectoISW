@@ -43,7 +43,7 @@ const publicacionesAdmi = () => {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [comentariosPublicacion, setcomentariosPublicacion] = useState([]);
-
+  const [comentario, setComentario] = useState();
   const [tag, setTag] = useState({
     etiqueta: "",
   });
@@ -272,12 +272,11 @@ const publicacionesAdmi = () => {
             <Box className={styles.publicacionTitulo}>
               {publicaciones.titulo}
             </Box>
-            <AspectRatio maxW="99%" ratio={1}>
-              <iframe
-                title="imagen"
-                src={`/imagenPublicacion/${publicaciones._id}`}
-              />
+            <Box  align="center" marginTop={"15%"}>
+            <AspectRatio maxW='90%' ratio={1} >
+            <iframe title='imagen' src={`/imagenPublicacion/${publicaciones._id}`} />
             </AspectRatio>
+            </Box>
             <Box p="2" key={publicaciones._id}>
               <HStack className={styles.etiquetayfecha}>
                 <Box className={styles.publicacionEtiqueta}>

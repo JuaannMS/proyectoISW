@@ -265,9 +265,11 @@ const publicacionesP = ({data}) =>{
             <Box className={styles.publicacionTitulo}>
               {publicacion.titulo}
             </Box>
-            <AspectRatio maxW='99%' ratio={1}>
-            <iframe title='imagen' src={`/imagenPublicacion/${publicacion._id}`}  />
+            <Box  align="center" marginTop={"15%"}>
+            <AspectRatio maxW='90%' ratio={1} >
+            <iframe title='imagen' src={`/imagenPublicacion/${publicacion._id}`} />
             </AspectRatio>
+            </Box>
             <Box p="2" key={publicacion._id}>
               <HStack className={styles.etiquetayfecha}>
                 <Box className={styles.publicacionEtiqueta}>#{publicacion.etiqueta}</Box>

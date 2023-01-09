@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
-import { Center } from '@chakra-ui/react'
+import { Box, Center, Img } from '@chakra-ui/react'
 
 const imagenPublicacion = () => {
     const router = useRouter()
@@ -33,10 +33,12 @@ const imagenPublicacion = () => {
     imagenesPublicacion()
 
     return (<>
-    <Center>
-        <img src={`data:image/jpeg;base64,${imagen}`} display='auto'/>
-    </Center>
-        
+        <Box >
+            <Center >
+                <Img src={`data:image/jpeg;base64,${imagen}`} display='auto' borderRadius='15px' />
+            </Center>
+        </Box>
+
     </>)
 
 }

@@ -99,9 +99,11 @@ const publicaciones = () => {
             <Box className={styles.publicacionTitulo}  >
               {publicaciones.titulo}
             </Box>
-            <AspectRatio maxW='99%' ratio={1}>
+            <Box align="center" marginTop={"15%"}>
+            <AspectRatio maxW='90%' ratio={1} >
             <iframe title='imagen' src={`/imagenPublicacion/${publicaciones._id}`}  />
             </AspectRatio>
+            </Box>
 
             <Box p="2" key={publicaciones._id} >
               <HStack className={styles.etiquetayfecha}>
