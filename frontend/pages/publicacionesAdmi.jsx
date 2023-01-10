@@ -328,7 +328,7 @@ const publicacionesAdmi = () => {
                             Motivo
                           </Heading>
                           <Text pt="2" fontSize="sm">
-                          <FormControl>
+                          <FormControl isRequired>
                                     <Input type={"text"}
                                     name={"motivo"}
                                     value={motivo}
@@ -583,13 +583,15 @@ const publicacionesAdmi = () => {
     console.log(values);
     console.log("valores para reporte");
     console.log(idPublicacion);
-    const json = JSON.stringify({
-      idPublicacion: idPublicacion,
-      'motivo': values.motivo,
-      "gravedad": values.gravedad,
-    });
-    console.log(json);
-    const response = await axios
+    try {
+      const json = JSON.stringify({
+        idPublicacion: idPublicacion,
+        "motivo": values.motivo,
+        "gravedad": values.gravedad,
+      });
+
+    try {
+      const response = await axios
         .post(`${process.env.API_URL}/reporte`, json, {
           headers: {
             "Content-Type": "application/json",
@@ -602,13 +604,22 @@ const publicacionesAdmi = () => {
             icon: "success",
           });
         })
-        .catch((err) => {
-          Swal.fire({
-            title: "Error",
-            html: "Error al realizar el reporte",
-            icon: "error",
-          });
-        });
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        html: "Error al realizar el reporte",
+        icon: "error",
+      });
+    }
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        html: "Reporte sin contenido",
+        icon: "error",
+      });
+    }
+
+  
   };
 
   const onGuardar = async (idPublicacion) => {
