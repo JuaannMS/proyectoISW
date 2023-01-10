@@ -1,7 +1,7 @@
 import { Box,Flex, HStack, IconButton,Button,useDisclosure,useColorModeValue,
   Stack,VStack,Container,AspectRatio,Input,Text,Textarea,Heading,FormControl,FormLabel,Select,
   Image,Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalCloseButton,
-  Divider,Card,CardHeader,CardBody,StackDivider,FormHelperText,Radio,RadioGroup,
+  Divider,StackDivider,FormHelperText,Radio,RadioGroup
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import {Router, useRouter } from "next/router";
@@ -11,15 +11,17 @@ import comprobarCookies from "../utils/comprobarCookies";
 import axios from "axios";
 import styles from "../components/publicaciones.module.css";
 import Swal from "sweetalert2";
-
+import { Card, CardHeader, CardBody, CardFooter } from '@chakra-ui/react'
 const publicacionesAdmi = () => {
 
-  
   axios.put(`${process.env.API_URL}/publcacionesInactivas`);
 
   const [idPublicacion, setIdPublicacion] = useState();
 
   const [values, setValues] = useState();
+  const [reporte, setReporte] = useState();
+  const [motivo, setMotivo] = useState();
+  const [gravedad, setGravedad] = useState();
   const [tituloModal, setTituloModal] = useState();
   const {
     isOpen: isEditOpen,
@@ -48,7 +50,7 @@ const publicacionesAdmi = () => {
     etiqueta: "",
   });
 
-  
+
 
   const handleInput = (e) => {
     setComentario(e.target.value);
@@ -303,90 +305,79 @@ const publicacionesAdmi = () => {
                   </Box>
                 </Button>
 
-                <Flex>
-                  <Button
-                    onClick={() => {
-                      conseguirId(publicaciones._id);
-                    }}
-                  >
-                    Reportar
-                  </Button>
-                  <Modal
-                    isOpen={isReportOpen}
-                    onClose={onReportClose}
-                    scrollBehavior="inside"
-                  >
-                    <ModalOverlay />
-                    <ModalContent>
-                      <ModalBody>
-                        <Card>
-                          <CardHeader>
-                            <Heading size="md">Reportar Publicación</Heading>
-                          </CardHeader>
-                          <CardBody>
-                            <Stack divider={<StackDivider />} spacing="5">
-                              <Box>
-                                <Heading size="xs" textTransform="uppercase">
-                                  Motivo
-                                </Heading>
-                                <Text pt="2" fontSize="sm">
-                                  <FormControl>
+                <Button
+                  onClick={() => {
+                    conseguirId(publicaciones._id);
+                  }}
+                >
+                  Reportar
+                </Button>
+
+                <Modal
+                  isOpen={isReportOpen}
+                  onClose={onReportClose}
+                  scrollBehavior="inside"
+                >
+                  <ModalOverlay />
+                  <ModalContent>
+                    <ModalHeader>Reportar La Publicación</ModalHeader>
+
+                    <ModalBody>
+                      <Stack divider={<StackDivider />} spacing="6">
+                        <Box>
+                          <Heading size="xs" textTransform="uppercase">
+                            Motivo
+                          </Heading>
+                          <Text pt="2" fontSize="sm">
+                          <FormControl>
                                     <Input type={"text"}
-                                    name={"motivo"} 
+                                    name={"motivo"}
+                                    value={motivo}
                                     onChange={onEntrada}
                                     />
                                     <FormHelperText>
                                       Ingrese el motivo de la denuncia.
                                     </FormHelperText>
                                   </FormControl>
-                                </Text>
-                              </Box>
-                              <Box>
-                                <Heading size="xs" textTransform="uppercase">
-                                  Gravedad del incidente
-                                </Heading>
-                                <FormControl as="gravedad">
+                          </Text>
+                        </Box>
+                        <Box>
+                          <Heading size="xs" textTransform="uppercase">
+                          Gravedad del incidente
+                          </Heading>
+                          <FormControl as="gravedad">
                                   <FormLabel as="gravedad">
                                     La publicacion es una falta:
                                   </FormLabel>
-                                  <RadioGroup defaultValue="leve">
+                                  <RadioGroup >
                                     <HStack spacing="24px">
-                                      <Radio value="leve">leve</Radio>
-                                      <Radio value="moderada">moderada</Radio>
-                                      <Radio value="grave">grave</Radio>
+                                      <Radio value="leve" name="gravedad"  onChange={onEntrada}>leve</Radio>
+                                      <Radio value="moderada" name="gravedad"  onChange={onEntrada}>moderada</Radio>
+                                      <Radio value="grave" name="gravedad"  onChange={onEntrada}>grave</Radio>
                                     </HStack>
                                   </RadioGroup>
                                   <FormHelperText>
                                     Seleccione una alternativa
                                   </FormHelperText>
                                 </FormControl>
-                              </Box>
-                            </Stack>
-                          </CardBody>
-                        </Card>
-                      </ModalBody>
+                        </Box>
+                      </Stack>
+                    </ModalBody>
 
-                      <ModalFooter>
-                        <Button
-                          colorScheme="blue"
-                          mr={3}
-                          type="submit"
-                          onClick={() => {
-                            onEnviar(idPublicacion);
-                            onReportClose();
-                          }}
-                        >
-                          Enviar Reporte
-                        </Button>
-                        <Button variant="ghost" onClick={onReportClose}>
-                          Cancelar
-                        </Button>
-                      </ModalFooter>
-                    </ModalContent>
-                  </Modal>
-                </Flex>
+                    <ModalFooter>
+                      <Button colorScheme="blue" mr={3} onClick={() => {
+                        onEnviar(idPublicacion);
+                        onReportClose();
+                      }}>
+                        Enviar
+                      </Button>
+                      <Button variant="ghost" onClick={onReportClose}>Cancelar</Button>
+                    </ModalFooter>
+                  </ModalContent>
+                </Modal>
 
                 <Button
+                  type="submit"
                   onClick={() => {
                     capturarId(publicaciones._id);
                   }}
@@ -591,28 +582,34 @@ const publicacionesAdmi = () => {
 
   const onEnviar = async (idPublicacion) => {
     console.log(values);
-    try {
-      const response = await axios.post(
-        `${process.env.API_URL}/reporte/`,
-        values
-      );
-      console.log(response);
-      if (response.status === 200) {
-        Swal.fire({
-          title: "Reporte Enviado",
-          text: "La publicacion ahora será revisada por el administrador",
-          icon: "success",
-          confirmButtonText: "Ok",
-        }).then((result) => {});
-      }
-    } catch (err) {
-      Swal.fire({
-        title: "Error",
-        text: "Ha ocurrido un error",
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
-    }
+    console.log("valores para reporte");
+    console.log(idPublicacion);
+    const json = JSON.stringify({
+      idPublicacion: idPublicacion,
+      'motivo': values.motivo,
+      "gravedad": values.gravedad,
+    });
+    console.log(json);
+    const response = await axios
+        .post(`${process.env.API_URL}/reporte`, json, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          Swal.fire({
+            title: "Exito",
+            html: "reporte enviado para su revisión",
+            icon: "success",
+          });
+        })
+        .catch((err) => {
+          Swal.fire({
+            title: "Error",
+            html: "Error al realizar el reporte",
+            icon: "error",
+          });
+        });
   };
 
   const onGuardar = async (idPublicacion) => {
@@ -644,6 +641,7 @@ const publicacionesAdmi = () => {
       });
     }
   };
+
 
 
   return (

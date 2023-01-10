@@ -2,8 +2,7 @@
 import { React, useState, useEffect, useRef } from "react";
 import {
   Button, Container, Input, Stack, Text, HStack, Heading, FormControl, FormLabel, Select, VStack, Box, Image, button,
-  Menu, MenuButton, MenuList, MenuItem, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Divider, useColorModeValue, Flex, IconButton
-  ,
+  Menu, MenuButton, MenuList, MenuItem, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Divider, StackDivider, useColorModeValue, Flex, IconButton, FormHelperText, RadioGroup,Radio, Spacer,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from '@chakra-ui/icons';
 import {
@@ -32,6 +31,18 @@ const publicaciones = () => {
   const [comentario, setComentario] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [imagenes, setImagenes] = useState([]);
+
+//---------------reporte----------------
+  const {
+    isOpen: isReportOpen,
+    onOpen: onReportOpen,
+    onClose: onReportClose,
+  } = useDisclosure();
+   const [reporte, setReporte] = useState();
+  const [motivo, setMotivo] = useState();
+  const [gravedad, setGravedad] = useState();
+  const [values, setValues] = useState();
+//--------------------------------------
 
 
   useEffect(() => {
@@ -110,8 +121,10 @@ const publicaciones = () => {
               </HStack>
               <HStack className={styles.publicacionLabelHorizontal}></HStack>
               <Box>{publicaciones.descripcion}</Box>
-              <HStack className={styles.publicacionLabelHorizontal}>
-              <Button marginLeft='-10px' variant={"ghost"}
+              <HStack className={styles.publicacionLabelHorizontal } >
+              <Button
+                  marginLeft="-10px"
+                  variant={"ghost"}
                   onClick={() => {
                     darLike(publicaciones._id);
                   }}
@@ -121,6 +134,79 @@ const publicaciones = () => {
                     {publicaciones.cantLikes} likes
                   </Box>
                 </Button>
+
+              <Button
+                  onClick={() => {
+                    conseguirId(publicaciones._id);
+                  }}
+                >
+                  Reportar
+                </Button>
+
+                <Modal
+                  isOpen={isReportOpen}
+                  onClose={onReportClose}
+                  scrollBehavior="inside"
+                >
+                  <ModalOverlay />
+                  <ModalContent>
+                    <ModalHeader>Reportar La Publicación</ModalHeader>
+
+                    <ModalBody>
+                      <Stack divider={<StackDivider />} spacing="6">
+                        <Box>
+                          <Heading size="xs" textTransform="uppercase">
+                            Motivo
+                          </Heading>
+                          <Text pt="2" fontSize="sm">
+                          <FormControl>
+                                    <Input type={"text"}
+                                    name={"motivo"}
+                                    value={motivo}
+                                    onChange={onEntrada}
+                                    />
+                                    <FormHelperText>
+                                      Ingrese el motivo de la denuncia.
+                                    </FormHelperText>
+                                  </FormControl>
+                          </Text>
+                        </Box>
+                        <Box>
+                          <Heading size="xs" textTransform="uppercase">
+                          Gravedad del incidente
+                          </Heading>
+                          <FormControl as="gravedad">
+                                  <FormLabel as="gravedad">
+                                    La publicacion es una falta:
+                                  </FormLabel>
+                                  <RadioGroup>
+                                    <HStack spacing="24px">
+                                      <Radio value="leve" name="gravedad"  onChange={onEntrada}>leve</Radio>
+                                      <Radio value="moderada" name="gravedad"  onChange={onEntrada}>moderada</Radio>
+                                      <Radio value="grave" name="gravedad"  onChange={onEntrada}>grave</Radio>
+                                    </HStack>
+                                  </RadioGroup>
+                                  <FormHelperText>
+                                    Seleccione una alternativa
+                                  </FormHelperText>
+                                </FormControl>
+                        </Box>
+                      </Stack>
+                    </ModalBody>
+
+                    <ModalFooter>
+                      <Button colorScheme="blue" mr={3} onClick={() => {
+                        onEnviar(idPublicacion);
+                        onReportClose();
+                      }}>
+                        Enviar
+                      </Button>
+                      <Button variant="ghost" onClick={onReportClose}>Cancelar</Button>
+                    </ModalFooter>
+                  </ModalContent>
+                </Modal>
+
+
                 <Button variant={"ghost"} align="flex-end"
                       onClick={() => {
                         darFavorito(publicaciones._id);
@@ -128,7 +214,7 @@ const publicaciones = () => {
                     >
                       <Image src="star.png" alt="favorito" />
                     </Button>
-                
+
               </HStack>
               <VStack className={styles.mostrarComentarios} align="normal">
                 <Button variant={"ghost"}
@@ -286,12 +372,65 @@ const publicaciones = () => {
       });
   };
 
+//-----------reporte------------------
+ const onEntrada = (e) => {
+    setValues({
+      ...values,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+
+ const conseguirId = async (idP) => {
+    setIdPublicacion(idP);
+    onReportOpen();
+  };
+
+
+ const onEnviar = async (idPublicacion) => {
+    console.log(values);
+    console.log("valores para reporte");
+    console.log(idPublicacion);
+    const json = JSON.stringify({
+      idPublicacion: idPublicacion,
+      'motivo': values.motivo,
+      "gravedad": values.gravedad,
+    });
+    console.log(json);
+    const response = await axios
+        .post(`${process.env.API_URL}/reporte`, json, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          Swal.fire({
+            title: "Exito",
+            html: "reporte enviado para su revisión",
+            icon: "success",
+          });
+        })
+        .catch((err) => {
+          Swal.fire({
+            title: "Error",
+            html: "Error al realizar el reporte",
+            icon: "error",
+          });
+        });
+  };
+
+//-------------------------------
+
+
+
+
   const nuevoComentario = async (idPublicacion, comentario) => {
     const json = JSON.stringify({
       idPublicacion: idPublicacion,
       contenido: comentario,
       idUsuario: id,
     });
+
     if (comentario && comentario.length !== 0) {
       const response = await axios
         .post(`${process.env.API_URL}/comentario`, json, {
