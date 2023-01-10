@@ -114,14 +114,14 @@ const usuarios = () => {
           <Td><Button colorScheme="teal" size="md" onClick={() => { idUsuario(usuarios._id, !usuarios.estado), window.location.reload(true) }}>{guardarMensaje}</Button></Td>
           <Td><Button colorScheme="teal" size="md" onClick={() => { capturarId(usuarios._id) }}>Editar Usuario</Button><Modal
 
-            isOpen={isEditOpen}
-            onClose={onEditClose}
-            scrollBehavior="inside"
-          >
-            <ModalOverlay />
-            <ModalContent>
-              <HStack className={styles.usuarioLabelHorizontal}>
-                <ModalHeader>Editar_Usuario</ModalHeader>
+isOpen={isEditOpen}
+onClose={onEditClose}
+scrollBehavior="inside"
+>
+<ModalOverlay />
+<ModalContent>
+  <HStack className={styles.publicacionLabelHorizontal}>
+    <ModalHeader>Editar_Usuario</ModalHeader>
 
                 <ModalFooter>
                   <Button colorScheme="red" onClick={onEditClose}>

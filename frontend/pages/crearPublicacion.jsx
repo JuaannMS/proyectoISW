@@ -106,9 +106,9 @@ const crearPublicacion = () => {
 					<FormLabel fontSize={25}>Crea una publicacion</FormLabel>
 					<FormControl isRequired>
 						<FormLabel>Titulo</FormLabel>
-						<Input placeholder="Ingrese un titulo" type={"text"} onChange={onChange} name={"titulo"} />
+						<Input placeholder="Ingrese un titulo" type={"text"} onChange={onChange} name={"titulo"}  />
 					</FormControl>
-
+					<FormLabel fontWeight={4}>El titulo debe contener solo letras</FormLabel>
 					<FormControl isRequired>
 						<FormLabel>Descripcion</FormLabel>
 						<Textarea placeholder="Ingrese una descripcion" type={"text"} onChange={onChange} name="descripcion" />

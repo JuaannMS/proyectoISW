@@ -68,9 +68,11 @@ const publicacionesReportadas = () => {
       <Box  borderWidth='2px' borderRadius='lg' >
         <Box color='red'>Estado: {publicacion.estado}</Box>
         <Box color='red'>Numero de Reportes: {publicacion.numReportes}</Box>
-        <AspectRatio maxW='99%' ratio={1}>
-            <iframe title='imagen' src={`/imagenPublicacion/${publicaciones._id}`}  />
+        <Box  align="center" marginTop={"15%"}>
+            <AspectRatio maxW='90%' ratio={1} >
+            <iframe title='imagen' src={`/imagenPublicacion/${publicacion._id}`} />
             </AspectRatio>
+            </Box>
 				<Box p='2' key={publicacion._id} >
           <Box
               color='gray.500'

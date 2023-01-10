@@ -2,6 +2,7 @@ const Publicacion = require('../models/publicacion');
 
 const createPublicacion = (req, res) => {
 
+  let errores = []
   const now = new Date()
   const Usuario = require('../models/usuario')
 
@@ -39,6 +40,20 @@ const createPublicacion = (req, res) => {
         fechaCreacion
       })
 
+      const validarTitulo = (titulo)=>{
+        var regex = /^[a-zA-ZÀ-ÿ ]+$/;
+        if(!regex.test(titulo)){
+        errores.push("Nombre ingresado NO valido")
+        }
+        if(titulo.length>30 || titulo.length<1){
+        errores.push("Cantidad de caracteres no valida")
+        }
+
+    }
+
+    validarTitulo(titulo)
+
+    if (errores.length == 0){
       newPublicacion.save((error, publicacion) => {
         if (error) {
           return res.status(400).send({ message: "No se pudo crear la publicacion" + error })
@@ -52,6 +67,12 @@ const createPublicacion = (req, res) => {
           return res.status(201).send(publicacion)
       }
       )
+    } else {
+      return res.status(400).send({ message: "No se pudo crear la publicacion"})
+    }
+
+      
+    
     } else {
       return res.status(409).send({message : "Mas de 3 publicaciones"})
     }
